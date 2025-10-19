@@ -1,7 +1,18 @@
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+
+import { Error, Home, Login, Signup, Products, ProductView, ProductEdit, ProductCreate } from './pages/index.ts';
 import { store } from './store.ts';
+
+
+import {action as loginAction} from './pages/Login/Login';
+import {action as registerAction} from './pages/Signup/Signup';
+
+import {loader as productsLoader} from './pages/Products/Products.tsx';
+import {loader as productViewAction} from './pages/Products/ProductView.tsx';
+import {loader as productEditAction} from './pages/Products/ProductEdit.tsx';
+import {loader as productCreateAction} from './pages/Products/ProductCreate.tsx';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -16,22 +27,38 @@ const router = createBrowserRouter([
   {
     // localhost:3000/
     path: '/',
-    // element: <Home />,
-    // errorElement: <Error />,
+    element: <Home />,
+    errorElement: <Error />,
     children: [
       {
         index: true,
         // element: <FeaturedProducts />
       },
       {
+        // index
         path: 'products',
-        // element: <Products />,
-        // loader: productsLoader(queryClient, store),
+        element: <Products />,
+        loader: productsLoader(queryClient, store),
       },          
       {
+        // show / destroy
         path: 'products/:id',
-        // element: <ProductView />,
+        element: <ProductView />,
+        loader: productViewAction(queryClient, store),
+      },        
+      {
+        // edit / update
+        path: 'products/edit/:id',
+        element: <ProductEdit  />,
         // loader: productViewAction(queryClient, store),
+        loader: productEditAction(queryClient, store)
+      },        
+      {
+        // edit / update
+        path: 'products/create',
+        element: <ProductCreate  />,
+        // loader: productViewAction(queryClient, store),
+        loader: productCreateAction(queryClient, store)
       },
       {
         path: 'dashboard',
@@ -66,7 +93,7 @@ const router = createBrowserRouter([
           },
           {
             path: 'cart',
-            element: <Cart />
+            // element: <Cart />
           },
         ]
       }

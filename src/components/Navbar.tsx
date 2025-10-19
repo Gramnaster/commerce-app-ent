@@ -4,17 +4,12 @@ import userIcon from '../assets/images/icon-user.png';
 import languageIcon from '../assets/images/icon-language.png';
 import hamburgerIcon from '../assets/images/icon-hamburger.png';
 import NavLinks from './NavLinks';
-// import { useState } from 'react';
-// import { useDispatch, useSelector } from 'react-redux';
-import type { RootState } from '../store';
 import { logoutUser } from '../features/user/userSlice';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 const Navbar = () => {
-  // const [theme, setTheme] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const user = useSelector((state: RootState) => state.userState.user);
 
   const handleLogout = () => {
     navigate('/');
@@ -49,7 +44,7 @@ const Navbar = () => {
                 <path d="m21 21-4.3-4.3"></path>
               </g>
             </svg>
-            <input type="search" required placeholder="Search" />
+            <input type="search" required placeholder="Search" onKeyDown={}/>
           </label>
           <div className="dropdown">
             <label tabIndex={0} className="btn btn-ghost lg:hidden">
@@ -70,24 +65,6 @@ const Navbar = () => {
         </div>
         <div className="navbar-end">
           <div className="flex gap-x-y justify-center items-center ">
-            {/* {user ? (
-              <div className="flex gap-x-2 sm:gap-x-8 items-center">
-                <p className="text-xs sm:text-sm">Hello, {user.first_name}</p>
-                <button className="btn btn-xs" onClick={handleLogout}>
-                  Logout
-                </button>
-              </div>
-            ) : (
-              <button className="btn btn-primary h-[33px]">
-                <Link
-                  to="/login"
-                  className="link link-hover text-cs sm:text-sm"
-                >
-                  Login
-                </Link>
-              </button>
-            )} */}
-
             <button className="btn bg-transparent h-[28px] ml-4">
               <Link to='/login'>
                 <img src={userIcon} alt="user-icon" />
