@@ -27,10 +27,10 @@ export const action =
     try {
       // Convert to FormData to avoid preflight
       const formData = new FormData();
-      formData.append('user[email]', data.email);
-      formData.append('user[password]', data.password);
+      formData.append('admin_user[email]', data.email);
+      formData.append('admin_user[password]', data.password);
 
-      const response = await customFetch.post('/users/login', formData);
+      const response = await customFetch.post('/admin_users/login', formData);
       console.log(response);
 
       // Data and Token extraction
@@ -61,7 +61,7 @@ const Login = () => {
       formData.append('user[email]', 'manuel@test.com');
       formData.append('user[password]', 'test123456');
 
-      const response = await customFetch.post('/users/login', formData);
+      const response = await customFetch.post('/admin_users/login', formData);
       
       // Extract token and user data (same as form submission)
       const token = response.headers.authorization; // Keep the full "Bearer <token>" format
