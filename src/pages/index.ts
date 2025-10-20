@@ -6,6 +6,15 @@ export { default as Products } from './Products/Products';
 export { default as ProductView } from './Products/ProductView';
 export { default as ProductEdit } from './Products/ProductEdit';
 export { default as ProductCreate } from './Products/ProductCreate';
+export { default as Producers } from './Producers/Producers';
+export { default as ProducerView } from './Producers/ProducerView';
+export { default as ProducerEdit } from './Producers/ProducerEdit';
+export { default as ProducerCreate } from './Producers/ProducerCreate';
+export { default as Categories } from './Categories/Categories';
+export { default as CategoryView } from './Categories/CategoryView';
+export { default as CategoryEdit } from './Categories/CategoryEdit';
+export { default as CategoryCreate } from './Categories/CategoryCreate';
+
 // export {default as Profile} from "./Profile/Profile";
 // export {default as ProfileView} from "./Profile/ProfileView";
 // export {default as ProfileEdit} from "./Profile/ProfileEdit";

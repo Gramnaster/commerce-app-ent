@@ -73,19 +73,13 @@ const Products = () => {
     allProducts: Product[],
     ProductCategories: ProductCategory[]
   };
-  const [products, setProducts] = useState(allProducts.data)
-  const [ productCategories, SetProductCategories] = useState(ProductCategories.data)
-  console.log('Products products :', products)
-  console.log('Products ProductCategoriesDetails :', productCategories)
-
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-
-  const filteredProducts = products.filter((product: Product) => selectedCategory ? product.product_category.title === selectedCategory : true );
+  const filteredProducts = allProducts.data.filter((product: Product) => selectedCategory ? product.product_category.title === selectedCategory : true );
 
   return (
     <div>
       <button onClick={() => setSelectedCategory(null)} className='m-1'>All</button>
-      {productCategories.map((category: ProductCategory) => {
+      {ProductCategories.data.map((category: ProductCategory) => {
         const { id, title } = category;
         return (
           <button onClick={() => setSelectedCategory(`${title}`)} className='m-1' key={id}>{title}</button>

@@ -2,7 +2,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-import { Error, Home, Login, Signup, Products, ProductView, ProductEdit, ProductCreate } from './pages/index.ts';
+import { Error, Home, Login, Signup, Products, ProductView, ProductEdit, ProductCreate, Producers, ProducerView, ProducerEdit, ProducerCreate, Categories, CategoryView, CategoryCreate, CategoryEdit  } from './pages/index.ts';
 import { store } from './store.ts';
 
 
@@ -13,6 +13,16 @@ import {loader as productsLoader} from './pages/Products/Products.tsx';
 import {loader as productViewAction} from './pages/Products/ProductView.tsx';
 import {loader as productEditAction} from './pages/Products/ProductEdit.tsx';
 import {loader as productCreateAction} from './pages/Products/ProductCreate.tsx';
+
+import {loader as producersLoader} from './pages/Producers/Producers.tsx';
+import {loader as producerViewLoader} from './pages/Producers/ProducerView.tsx';
+import {loader as producerCreateLoader} from './pages/Producers/ProducerCreate.tsx';
+import {loader as producerEditLoader} from './pages/Producers/ProducerEdit.tsx';
+
+import {loader as categoriesLoader} from './pages/Categories/Categories.tsx';
+import {loader as categoryViewLoader} from './pages/Categories/CategoryView.tsx';
+import {loader as categoryCreateLoader} from './pages/Categories/CategoryCreate.tsx';
+import {loader as categoryEditLoader} from './pages/Categories/CategoryEdit.tsx';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -41,24 +51,70 @@ const router = createBrowserRouter([
         loader: productsLoader(queryClient, store),
       },          
       {
-        // show / destroy
+        // show
         path: 'products/:id',
         element: <ProductView />,
         loader: productViewAction(queryClient, store),
       },        
       {
-        // edit / update
+        // edit / update / delete
         path: 'products/edit/:id',
         element: <ProductEdit  />,
-        // loader: productViewAction(queryClient, store),
         loader: productEditAction(queryClient, store)
       },        
       {
-        // edit / update
+        // create
         path: 'products/create',
         element: <ProductCreate  />,
-        // loader: productViewAction(queryClient, store),
         loader: productCreateAction(queryClient, store)
+      },   
+      {
+        // index
+        path: 'producers',
+        element: <Producers  />,
+        loader: producersLoader(queryClient, store)
+      },        
+      {
+        // show
+        path: 'producers/:id',
+        element: <ProducerView  />,
+        loader: producerViewLoader(queryClient, store)
+      },
+      {
+        // create
+        path: 'producers/create',
+        element: <ProducerCreate  />,
+        loader: producerCreateLoader(queryClient, store)
+      },
+      {
+        // edit / update / delete
+        path: 'producers/edit/:id',
+        element: <ProducerEdit  />,
+        loader: producerEditLoader(queryClient, store)
+      },
+      {
+        // index
+        path: 'categories',
+        element: <Categories  />,
+        loader: categoriesLoader(queryClient, store)
+      },        
+      {
+        // show
+        path: 'categories/:id',
+        element: <CategoryView  />,
+        loader: categoryViewLoader(queryClient, store)
+      },
+      {
+        // create
+        path: 'categories/create',
+        element: <CategoryCreate  />,
+        loader: categoryCreateLoader(queryClient, store)
+      },
+      {
+        // edit / update / delete
+        path: 'categories/edit/:id',
+        element: <CategoryEdit  />,
+        loader: categoryEditLoader(queryClient, store)
       },
       {
         path: 'dashboard',
