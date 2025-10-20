@@ -11,28 +11,35 @@ interface ProductCategory {
   title: string;
 }
 
+interface Address {
+  id: number,
+  unit_no: string;
+  street_no: string;
+  address_line1: string;
+  address_line2: string;
+  city: string;
+  region: string;
+  zipcode: string;
+  country_id: number;
+  country: string;
+}
+
 interface Producer {
   id: number;
   title: string;
-}
-
-
-interface Product {
-  id: number;
-  title: string;
-  product_category_id: number;
-  producer_id: number;
-  discount_percentage: number;
-  discount_amount_dollars: number;
-  description: string;
-  price: number;
-  promotion_id: boolean;
-  product_image_url: string;
+  products_count: number
+  address: Address
 }
 
 export interface User {
   id: number;
   email: string;
+}
+
+interface Country {
+  id: number;
+  name: string;
+  code: string;
 }
 
 export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
@@ -41,90 +48,73 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 
   const id = params.id;
 
-  const ProductDetailsQuery = {
-    queryKey: ['ProductDetails', id],
-    queryFn: async () => {
-      const response = await customFetch.get(`/products/${id}`, {
-        headers: {
-          Authorization: admin_user.token,
-        },
-      });
-      console.log(`ProductEdit ProductDetails`, response.data)
-      return response.data;
-    },
-  };
-
   const ProducersQuery = {
-    queryKey: ['ProducersDetails', id],
+    queryKey: ['ProducerDetails', id],
     queryFn: async () => {
-      const response = await customFetch.get(`/producers`, {
+      const response = await customFetch.get(`/producers/${id}`, {
         headers: {
           Authorization: admin_user.token,
         },
       });
-      console.log(`ProductEdit producers`, response.data)
+      console.log(`ProducerEdit response.data`, response.data)
       return response.data;
     },
   };
 
-  const ProductCategoriesQuery = {
-    queryKey: ['ProductCategoriesDetails', id],
+  const countriesQuery = {
+    queryKey: ['countries'],
     queryFn: async () => {
-      const response = await customFetch.get(`/product_categories`, {
-        headers: {
-          Authorization: admin_user.token,
-        },
-      });
-      console.log(`ProductEdit product_categories`, response.data)
+      const response = await customFetch.get('/countries');
       return response.data;
     },
   };
 
   try {
-    const [ProductDetails, ProducersDetails, ProductCategoriesDetails] = await  Promise.all([
-      queryClient.ensureQueryData(ProductDetailsQuery),
+    const [ countries, ProducerDetails] = await Promise.all([
+      queryClient.ensureQueryData(countriesQuery),
       queryClient.ensureQueryData(ProducersQuery),
-      queryClient.ensureQueryData(ProductCategoriesQuery)
     ])
-    console.log(`ProductEdit ProducersDetails`, ProducersDetails)
-    console.log(`ProductEdit ProductCategoriesDetails`, ProductCategoriesDetails)
-    return { ProductDetails, ProducersDetails, ProductCategoriesDetails };
+    return { countries, ProducerDetails };
   } catch (error: any) {
-    console.error('Failed to load product:', error);
-    toast.error('Failed to load product details');
+    console.error('Failed to load producer:', error);
+    toast.error('Failed to load producer details');
     return redirect('/products');
   }
 };
 
-const ProductView = () => {
-  const { ProductDetails, userDetails, ProducersDetails, ProductCategoriesDetails } = useLoaderData() as {
-    ProductDetails: Product;
-    ProducersDetails: Producer;
-    ProductCategoriesDetails: ProductCategory;
-    userDetails: User;
+const ProducerEdit = () => {
+  const { ProducerDetails, countries } = useLoaderData() as {
+    ProducerDetails: Producer;
+    countries: Country[];
   }
+  console.log(`ProducerEdit ProducerDetails`, ProducerDetails)
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const {title, description, price, product_image_url, product_category, discount_percentage, discount_amount_dollars, producer, promotion} = ProductDetails.data
+  const { id, title, address: { id: address_id, unit_no, street_no, address_line1, address_line2, city, region, zipcode, country_id, country} } = ProducerDetails.data
 
   const user = useSelector((state: RootState) => state.userState.user);
 
   const [formData, setFormData] = useState({
     title: title,
-    description: description,
-    price: price,
-    product_image_url: product_image_url,
-    product_category_id:  product_category.id,
-    producer_id: producer.id,
-    promotion_id: promotion?.id || null
+    address_attributes: {
+      id: address_id,
+      unit_no: unit_no,
+      street_no: street_no,
+      address_line1: address_line1,
+      address_line2: address_line2,
+      city: city,
+      region: region,
+      zipcode: zipcode,
+      country_id: country_id
+    }
   })
 
   const updateProductMutation = useMutation({
-    mutationFn: async (productData: any) => {
+    mutationFn: async (producerData: any) => {
       const response = await customFetch.patch(
-        `/products/${ProductDetails.data.id}`,
+        `/producers/${id}`,
         {
-          product: productData,
+          producer: producerData,
         },
         {
           headers: {
@@ -136,31 +126,50 @@ const ProductView = () => {
       return response.data;
     },
     onSuccess: () => {
-      toast.success('Product Details updated successfully');
-      queryClient.invalidateQueries({ queryKey: ['products', ProductDetails.data.id] });
-      navigate(`/products/${ProductDetails.data.id}`);
+      toast.success('Producer Details updated successfully');
+      queryClient.invalidateQueries({ queryKey: ['producers', id] });
+      navigate(`/producers/${id}`);
     },
     onError: (error: any) => {
       console.error('Update failed:', error);
       const errorMessage =
-        error.response?.data?.message || 'Failed to update user';
+        error.response?.data?.message || 'Failed to update producer';
       toast.error(errorMessage);
     },
   });
-
-  console.log(`ProductView ProductDetails`, ProductDetails)
+  
+  const NESTED_FIELDS: Record<string, string> = {
+      unit_no: "address_attributes",
+      street_no: "address_attributes",
+      address_line1: "address_attributes",
+      address_line2: "address_attributes",
+      city: "address_attributes",
+      region: "address_attributes",
+      zipcode:  "address_attributes",
+      country_id: "address_attributes"
+  };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
+    const parentKey = NESTED_FIELDS[name];
 
     setFormData((prev) => {
-      return {
-        ...prev,
-        [name]: value,
-      };
-    });
+      if (parentKey) {
+        return {
+      ...prev,
+      [parentKey]: {
+      ...prev[parentKey],
+      [name]: value,
+        },
+      }
+    }
+    return {
+      ...prev,
+      [name]: value,
+    }
+  });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -170,18 +179,18 @@ const ProductView = () => {
     const payload = {
       ...formData,
     };
-    console.log(`handleSubmit payload:`, payload)
+    console.log(`ProducerEdit payload:`, payload)
     updateProductMutation.mutate(payload);
   };
 
   const handleDelete = async (e: React.FormEvent) => {
-  if (!confirm("Are you sure you want to delete this product?")) return;
+  if (!confirm("Are you sure you want to delete this producer?")) return;
   
     console.log(`handleSubmit formData:`, formData)
-    navigate(`/products`)
+    navigate(`/producers`)
     // Create the payload matching the API format
    try {
-      const response = await customFetch.delete(`/products/${ProductDetails.data.id}`,
+      const response = await customFetch.delete(`/producers/${id}`,
         {
           headers: {
             Authorization: user?.token,
@@ -189,23 +198,23 @@ const ProductView = () => {
           },
         }
       );
-      redirect('/products');
-      toast.success('Product deleted successfully');
+      redirect('/producers');
+      toast.success('Producer deleted successfully');
       return response.data;
     } catch (error: any) {
-      console.error('Failed to load product:', error);
-      toast.error('Failed to load product details');
-      return redirect('/products');
+      console.error('Failed to load producer:', error);
+      toast.error('Failed to load producer details');
+      return redirect('/producers');
     }
   };
 
   return (
-<div className="min-h-screen bg-[#161420] text-white p-6">
+    <div className="min-h-screen bg-[#161420] text-white p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
           <button
-            onClick={() => navigate('/products')}
+            onClick={() => navigate('/producers')}
             className="mb-4 flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
           >
             <svg
@@ -221,12 +230,13 @@ const ProductView = () => {
                 d="M10 19l-7-7m0 0l7-7m-7 7h18"
               />
             </svg>
-            Back to Traders List
+            Back to Producer List
           </button>
-          <h1 className="text-3xl font-bold text-white mb-2">Edit Product Info</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">Create Producer Interface</h1>
           <p className="text-gray-400">
-            Editing {ProductDetails.data.title || ''}{' '}
+            Create a Producer
           </p>
+          <button type="button" onClick={handleDelete}>Delete Producer?</button>
         </div>
 
         {/* Edit Form */}
@@ -234,12 +244,12 @@ const ProductView = () => {
           {/* Personal Information */}
           <div className="bg-[#1e1b2e] rounded-lg p-6 border border-gray-700">
             <h2 className="text-xl font-bold text-white mb-4 pb-2 border-b border-gray-700">
-              Product Information
+              Producer Information
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-gray-400 text-sm font-medium mb-2">
-                  Product Name
+                  Producer's Name
                 </label>
                 <input
                   type="text"
@@ -250,27 +260,21 @@ const ProductView = () => {
                   required
                 />
               </div>
+            </div>
+          </div>
+          <div className="bg-[#1e1b2e] rounded-lg p-6 border border-gray-700">
+            <h2 className="text-xl font-bold text-white mb-4 pb-2 border-b border-gray-700">
+              Producer Address
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-gray-400 text-sm font-medium mb-2">
-                  description
-                </label>
-                <input
-                  type="textarea"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  className="w-full bg-[#2a2740] border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-gray-400 text-sm font-medium mb-2">
-                  Price
+                  Unit No
                 </label>
                 <input
                   type="text"
-                  name="price"
-                  value={formData.price}
+                  name="unit_no"
+                  value={formData.address_attributes.unit_no}
                   onChange={handleInputChange}
                   className="w-full bg-[#2a2740] border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                   required
@@ -278,12 +282,12 @@ const ProductView = () => {
               </div>
               <div>
                 <label className="block text-gray-400 text-sm font-medium mb-2">
-                  Product image URL
+                  Street No
                 </label>
                 <input
                   type="text"
-                  name="product_image_url"
-                  value={formData.product_image_url}
+                  name="street_no"
+                  value={formData.address_attributes.street_no}
                   onChange={handleInputChange}
                   className="w-full bg-[#2a2740] border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                   required
@@ -291,67 +295,106 @@ const ProductView = () => {
               </div>
               <div>
                 <label className="block text-gray-400 text-sm font-medium mb-2">
-                  Producers
+                  Address Line 1
+                </label>
+                <input
+                  type="text"
+                  name="address_line1"
+                  value={formData.address_attributes.address_line1}
+                  onChange={handleInputChange}
+                  className="w-full bg-[#2a2740] border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-gray-400 text-sm font-medium mb-2">
+                  Address Line 2
+                </label>
+                <input
+                  type="text"
+                  name="address_line2"
+                  value={formData.address_attributes.address_line2}
+                  onChange={handleInputChange}
+                  className="w-full bg-[#2a2740] border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-gray-400 text-sm font-medium mb-2">
+                  City
+                </label>
+                <input
+                  type="text"
+                  name="city"
+                  value={formData.address_attributes.city}
+                  onChange={handleInputChange}
+                  className="w-full bg-[#2a2740] border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-gray-400 text-sm font-medium mb-2">
+                  Region
+                </label>
+                <input
+                  type="text"
+                  name="region"
+                  value={formData.address_attributes.region}
+                  onChange={handleInputChange}
+                  className="w-full bg-[#2a2740] border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-gray-400 text-sm font-medium mb-2">
+                  Zipcode
+                </label>
+                <input
+                  type="text"
+                  name="zipcode"
+                  value={formData.address_attributes.zipcode}
+                  onChange={handleInputChange}
+                  className="w-full bg-[#2a2740] border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-gray-400 text-sm font-medium mb-2">
+                  Country *
                 </label>
                 <select
-                  name="producer_id"
-                  value={formData.producer_id || ''}
-                  onChange={handleInputChange}>
-                    <option value="">Select a producer</option>
-                      {ProducersDetails.data?.map((producer: any) => (
-                        <option key={producer.id} value={producer.id}>
-                          {producer.title}
-                        </option>
+                  name="country_id"
+                  value={formData.address_attributes.country_id}
+                  onChange={(e) => handleInputChange(e)}
+                  className="w-full bg-[#2a2740] border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  required
+                >
+                  <option value="">Select Country...</option>
+                  {countries
+                    .slice()
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .map((country) => (
+                      <option key={country.id} value={country.id}>
+                        {country.name} ({country.code})
+                      </option>
                     ))}
                 </select>
-              </div>
-              <div>
-                <label className="block text-gray-400 text-sm font-medium mb-2">
-                  Product Category
-                </label>
-                <select
-                  name="product_category_id"
-                  value={formData.product_category_id || ''}
-                  onChange={handleInputChange}>
-                    <option value="">Select a category</option>
-                      {ProductCategoriesDetails.data?.map((product_category: any) => (
-                        <option key={product_category.id} value={product_category.id}>
-                          {product_category.title}
-                        </option>
-                    ))}
-              </select>
-              </div>
-              <div>
-                <label className="block text-gray-400 text-sm font-medium mb-2">
-                  Promotion ID
-                </label>
-                <input
-                  type="text"
-                  name="promotion_id"
-                  value={formData.promotion_id}
-                  onChange={handleInputChange}
-                  className="w-full bg-[#2a2740] border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                  required
-                />
-              </div>
+              </div>              
             </div>
           </div>
           <div className="flex items-center justify-end gap-4 pt-6">
             <button
               type="button"
-              onClick={() => navigate(`/products/edit/${ProductDetails.data.id}`)}
+              onClick={() => navigate(`/products`)}
               className="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
-              disabled={updateProductMutation.isPending}
               className="px-6 py-3 bg-pink-600 hover:bg-pink-700 disabled:bg-gray-600 text-white font-semibold rounded-lg transition-colors"
-            >
-              {updateProductMutation.isPending ? 'Updating...' : 'Update Product'}
+            >Submit
             </button>
-            <button type="button" onClick={handleDelete}>Delete</button>
           </div>
         </form>
       </div>
@@ -359,4 +402,4 @@ const ProductView = () => {
   )
 }
 
-export default ProductView
+export default ProducerEdit
