@@ -22,6 +22,11 @@ export { default as Admins } from './Admin/Admins';
 export { default as AdminCreate } from './Admin/AdminCreate';
 export { default as AdminView } from './Admin/AdminView';
 export { default as AdminEdit } from './Admin/AdminEdit';
+export { default as PromotionsHome } from './Promotions/PromotionsHome';
+export { default as Promotions } from './Promotions/Promotions';
+export { default as PromotionCreate } from './Promotions/PromotionCreate';
+export { default as PromotionView } from './Promotions/PromotionView';
+export { default as PromotionEdit } from './Promotions/PromotionEdit';
 
 // export {default as Profile} from "./Profile/Profile";
 // export {default as ProfileView} from "./Profile/ProfileView";

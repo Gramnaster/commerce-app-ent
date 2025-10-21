@@ -2,7 +2,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-import { Error, Home, Login, Signup, ProductsHome, Products, ProductView, ProductEdit, ProductCreate, ProducersHome, Producers, ProducerView, ProducerEdit, ProducerCreate, CategoriesHome, Categories, CategoryView, CategoryCreate, CategoryEdit, Admins, AdminView, AdminCreate, AdminEdit, AdminsHome } from './pages/index.ts';
+import { Error, Home, Login, Signup, ProductsHome, Products, ProductView, ProductEdit, ProductCreate, ProducersHome, Producers, ProducerView, ProducerEdit, ProducerCreate, CategoriesHome, Categories, CategoryView, CategoryCreate, CategoryEdit, Admins, AdminView, AdminCreate, AdminEdit, AdminsHome, PromotionsHome, Promotions, PromotionCreate, PromotionEdit, PromotionView } from './pages/index.ts';
 import { store } from './store.ts';
 
 
@@ -30,10 +30,16 @@ import {loader as categoryEditLoader} from './pages/Categories/CategoryEdit.tsx'
 import {loader as adminsHomeLoader} from './pages/Admin/AdminsHome.tsx';
 import {loader as adminsLoader} from './pages/Admin/Admins.tsx';
 import {action as adminsCreateAction} from './pages/Admin/AdminCreate.tsx';
-// import {loader as categoryViewLoader} from './pages/Categories/CategoryView.tsx';
-// import {loader as categoryCreateLoader} from './pages/Categories/CategoryCreate.tsx';
-// import {loader as categoryEditLoader} from './pages/Categories/CategoryEdit.tsx';
+import {loader as adminViewLoader} from './pages/Admin/AdminView.tsx';
+import {loader as adminEditLoader} from './pages/Admin/AdminEdit.tsx';
 
+import {loader as promotionsHomeLoader} from './pages/Promotions/PromotionsHome.tsx';
+import {loader as promotionsLoader} from './pages/Promotions/Promotions.tsx';
+import {loader as promotionViewLoader} from './pages/Promotions/PromotionView.tsx';
+// import {loader as adminsLoader} from './pages/Admin/Admins.tsx';
+// import {action as adminsCreateAction} from './pages/Admin/AdminCreate.tsx';
+// import {loader as adminViewLoader} from './pages/Admin/AdminView.tsx';
+// import {loader as adminEditLoader} from './pages/Admin/AdminEdit.tsx';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -164,7 +170,7 @@ const router = createBrowserRouter([
             // show
             path: ':id',
             element: <AdminView />,
-            loader: adminsLoader(queryClient, store)
+            loader: adminViewLoader(queryClient, store)
           },
           {
             // create
@@ -176,7 +182,38 @@ const router = createBrowserRouter([
             // edit / update / delete
             path: 'edit/:id',
             element: <AdminEdit />,
-            loader: adminsLoader(queryClient, store)
+            loader: adminEditLoader(queryClient, store)
+          },
+        ]
+      },      
+      {
+        path: 'promotions',
+        element: <PromotionsHome />,
+        loader: promotionsHomeLoader(queryClient, store),
+        children: [
+          {
+            // index
+            index: true,
+            element: <Promotions />,
+            loader: promotionsLoader(queryClient, store),
+          },
+          {
+            // show
+            path: ':id',
+            element: <PromotionView />,
+            loader: promotionViewLoader(queryClient, store)
+          },
+          {
+            // create
+            path: 'create',
+            element: <PromotionCreate />,
+            action: adminsCreateAction
+          },
+          {
+            // edit / update / delete
+            path: 'edit/:id',
+            element: <PromotionEdit />,
+            loader: adminEditLoader(queryClient, store)
           },
         ]
       },

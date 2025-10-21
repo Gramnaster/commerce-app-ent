@@ -14,7 +14,8 @@ const links: LinksType[] = [
   { id: 4, url: '/dashboard/cart', text: 'Cart' },
   { id: 6, url: 'producers', text: 'Producers' },
   { id: 7, url: 'categories', text: 'Categories' },
-  { id: 8, url: 'admins', text: 'Admins' }
+  { id: 8, url: 'admins', text: 'Admins' },
+  { id: 9, url: 'promotions', text: 'Promotions' }
 ];
 
 const NavLinks = () => {

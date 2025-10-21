@@ -97,15 +97,14 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 };
 
 const ProductView = () => {
-  const { ProductDetails, userDetails, ProducersDetails, ProductCategoriesDetails } = useLoaderData() as {
+  const { ProductDetails, ProducersDetails, ProductCategoriesDetails } = useLoaderData() as {
     ProductDetails: Product;
     ProducersDetails: Producer;
     ProductCategoriesDetails: ProductCategory;
-    userDetails: User;
   }
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const {title, description, price, product_image_url, product_category, discount_percentage, discount_amount_dollars, producer, promotion} = ProductDetails.data
+  const {title, description, price, product_image_url, product_category, producer, promotion} = ProductDetails.data
 
   const user = useSelector((state: RootState) => state.userState.user);
 
