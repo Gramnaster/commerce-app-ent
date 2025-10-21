@@ -1,4 +1,4 @@
-import { useLoaderData } from 'react-router-dom';
+import { redirect, useLoaderData } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
 import { useState } from 'react';
@@ -29,6 +29,11 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
   const storeState = store.getState();
   const user = storeState.userState?.user;
   const id = params.id;
+
+  if (!user || user.admin_role !== 'management') {
+    toast.warn('There must be something wrong. Please refresh the page.');
+    return redirect('/');
+  }
 
   const allProductsQuery = {
     queryKey: ['allProducts'],

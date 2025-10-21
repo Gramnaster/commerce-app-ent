@@ -6,6 +6,7 @@ export interface User {
   id: number;
   jti: string;
   token: string;
+  admin_role: "management" | "warehouse";
 }
 
 interface UserState {
