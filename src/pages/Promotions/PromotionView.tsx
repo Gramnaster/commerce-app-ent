@@ -19,20 +19,16 @@ interface Promotion {
   product_categories: ProductCategory[];
 }
 
-export const loader = (queryClient: any, store: any) => async () => {
+export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
   const storeState = store.getState();
   const admin_user = storeState.userState?.user;
   console.log(`Admins admin_user`, admin_user)
-
-  if (!admin_user || admin_user.admin_role !== 'management') {
-    toast.warn('There must be something wrong. Please refresh the page.');
-    return redirect('/');
-  }
+  const id = params.id;
 
   const PromotionViewQuery = {
-    queryKey: ['Promotions', admin_user.id],
+    queryKey: ['Promotions', id],
     queryFn: async () => {
-      const response = await customFetch.get(`/promotions/${admin_user.id}`, {
+      const response = await customFetch.get(`/promotions/${id}`, {
         headers: {
           Authorization: admin_user.token,
         },

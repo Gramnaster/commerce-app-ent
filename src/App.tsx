@@ -36,6 +36,8 @@ import {loader as adminEditLoader} from './pages/Admin/AdminEdit.tsx';
 import {loader as promotionsHomeLoader} from './pages/Promotions/PromotionsHome.tsx';
 import {loader as promotionsLoader} from './pages/Promotions/Promotions.tsx';
 import {loader as promotionViewLoader} from './pages/Promotions/PromotionView.tsx';
+import {action as promotionCreateAction} from './pages/Promotions/PromotionCreate.tsx';
+import {loader as promotionEditLoader} from './pages/Promotions/PromotionEdit.tsx';
 // import {loader as adminsLoader} from './pages/Admin/Admins.tsx';
 // import {action as adminsCreateAction} from './pages/Admin/AdminCreate.tsx';
 // import {loader as adminViewLoader} from './pages/Admin/AdminView.tsx';
@@ -207,13 +209,13 @@ const router = createBrowserRouter([
             // create
             path: 'create',
             element: <PromotionCreate />,
-            action: adminsCreateAction
+            action: promotionCreateAction
           },
           {
             // edit / update / delete
             path: 'edit/:id',
             element: <PromotionEdit />,
-            loader: adminEditLoader(queryClient, store)
+            loader: promotionEditLoader(queryClient, store)
           },
         ]
       },
