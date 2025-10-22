@@ -138,7 +138,7 @@ const CategoryEdit = () => {
         {/* Header */}
         <div className="mb-6">
           <button
-            onClick={() => navigate('/producers')}
+            onClick={() => navigate('/categories')}
             className="mb-4 flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
           >
             <svg

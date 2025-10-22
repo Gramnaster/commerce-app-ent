@@ -14,10 +14,11 @@ interface Promotion {
   product_categories: ProductCategory[];
 }
 
-export const loader = (queryClient: any, store: any) => async () => {
+export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
   const storeState = store.getState();
   const admin_user = storeState.userState?.user;
   console.log(`Admins admin_user`, admin_user)
+  const id = params.id;
 
   if (!admin_user || admin_user.admin_role !== 'management') {
     toast.warn('There must be something wrong. Please refresh the page.');
@@ -25,7 +26,7 @@ export const loader = (queryClient: any, store: any) => async () => {
   }
 
   const PromotionsQuery = {
-    queryKey: ['Promotions', admin_user.id],
+    queryKey: ['Promotions', id],
     queryFn: async () => {
       const response = await customFetch.get('/promotions', {
         headers: {
@@ -49,24 +50,29 @@ export const loader = (queryClient: any, store: any) => async () => {
   }
 };
 
-const Admins = () => {
+const Promotions = () => {
   const { promotions } = useLoaderData() as {
    promotions: Promotion[];
   }
-  // const promotionsList = Object.values(promotions.data)
 
   return (
     <div>
-      <NavLink to={`/admins/create`}>Create Admin</NavLink>
+      <NavLink to={`/promotions/create`}>Create Promotion</NavLink>
       <div>
         {promotions.data.map((promotion: any) => {
           const { id, discount_amount, products_count, product_categories } = promotion
           return (
             <div key={id} className='m-1 border-b-[1px] flex flex-col'>
-              Discount Amount: {discount_amount}
-              Products Count: {products_count}
-              Categories: {product_categories}
-              <NavLink to={`/promotions/${id}`}>View Promotion details</NavLink>
+              <div>Discount Amount: {discount_amount}</div>
+              <div>Products Count: {products_count}</div>
+              <div>Categories: {product_categories.length !== 0 ? product_categories.map((category: ProductCategory) => {
+                return (
+                  <div key={category.id}>
+                    Category Name: {category.title}
+                  </div>
+                )
+              }) : 'Currently not applied to any categories'}</div>
+              <div><NavLink to={`/promotions/${id}`}>View Promotion details</NavLink></div>
             </div>
           )
         })}
@@ -75,4 +81,4 @@ const Admins = () => {
   )
 }
 
-export default Admins
+export default Promotions
