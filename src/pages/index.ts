@@ -2,6 +2,8 @@ export {default as Error} from "./ZZMisc/Error";
 export {default as Login} from "./Login/Login";
 export {default as Signup} from "./Signup/Signup";
 export {default as Home} from "./Home/Home";
+export {default as Landing} from "./Home/Landing";
+export {default as Dashboard} from "./Home/Dashboard";
 export { default as ProductsHome } from './Products/ProductsHome';
 export { default as Products } from './Products/Products';
 export { default as ProductView } from './Products/ProductView';

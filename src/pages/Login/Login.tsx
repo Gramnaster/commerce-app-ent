@@ -13,9 +13,7 @@ import { loginUser } from '../../features/user/userSlice';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../store';
 
-export const action =
-  (store: { dispatch: AppDispatch }) =>
-  async ({ request }: ActionFunctionArgs) => {
+export const action =  (store: { dispatch: AppDispatch }) => async ({ request }: ActionFunctionArgs) => {
     console.log(store);
     // const {request} = store;
     const requestFormData = await request.formData();
@@ -49,7 +47,7 @@ export const action =
       toast.error(errorMessage);
       return null;
     }
-  };
+};
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -69,7 +67,7 @@ const Login = () => {
 
       dispatch(loginUser({ user: userData, token }));
       toast.success('Welcome, guest user');
-      navigate('/dashboard');
+      navigate('/');
     } catch (error) {
       console.log(error);
       toast.error('Please try again')
@@ -80,10 +78,10 @@ const Login = () => {
     <section className="h-screen grid place-items-center">
       <Form
         method="post"
-        className="card w-96 p-8 shadow-lg flex flex-col gap-y-5 outline-blue-800"
+        className="card w-96 p-8 shadow-lg flex flex-col gap-y-5 outline-blue-800 h-[50%] bg-[#ffffff]"
       >
         <h4 className="text-center text-3x1 font-bold">
-          Login to Orbital Finances
+          Login
         </h4>
         <FormInput
           type="email"
@@ -100,25 +98,6 @@ const Login = () => {
         <div className="mt-4 flex flex-col gap-y-5 items-center w-full">
           <SubmitBtn text="Login" />
           {/* <button type="button" className="btn btn-primary btn-block" onClick={loginAsGuestUser}> */}
-          <button type="button" className="btn btn-primary btn-block">
-            Google
-          </button><button type="button" className="btn btn-primary btn-block">
-            Facebook
-          </button>
-          <Link to="/">
-            <button type="button" className="btn bg-neutral-800 btn-block">
-              Cancel
-            </button>
-          </Link>
-          <p>
-            Not yet registered?
-            <Link
-              to="/signup"
-              className="ml-2 link link-hover link-secondary capitalize"
-            >
-              Register
-            </Link>
-          </p>
         </div>
       </Form>
     </section>
