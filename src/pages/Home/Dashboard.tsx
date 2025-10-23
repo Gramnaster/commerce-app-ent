@@ -33,10 +33,10 @@ export const loader = (queryClient: any, store: any) => async () => {
   const storeState = store.getState();
   const user = storeState.userState?.user;
 
-  // if (user.admin_role !== 'management' ||  user.admin_role !== 'warehouse') {
-  //   toast.warn('There must be something wrong. Please refresh the page.');
-  //   return redirect('/');
-  // }
+  if (!user || user.admin_role !== 'management' ||  user.admin_role !== 'warehouse') {
+    toast.warn('There must be something wrong. Please refresh the page.');
+    return redirect('/');
+  }
 
   const userCartOrdersQuery = {
     queryKey: ['UserCartOrders', user.id],
