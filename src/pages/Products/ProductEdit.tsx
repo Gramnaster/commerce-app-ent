@@ -199,13 +199,13 @@ const ProductView = () => {
   };
 
   return (
-<div className="min-h-screen bg-[#161420] text-white p-6">
+<div className="min-h-screen bg-[hsl(5,100%,98%)] text-white p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-6">
+        <div className="mb-6 text-black">
           <button
-            onClick={() => navigate('/products')}
-            className="mb-4 flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+            onClick={() => navigate(`/products/${ProductDetails.data.id}`)}
+            className="mb-4 flex items-center gap-2 hover:underline transition-colors text-black"
           >
             <svg
               className="w-5 h-5"
@@ -220,10 +220,10 @@ const ProductView = () => {
                 d="M10 19l-7-7m0 0l7-7m-7 7h18"
               />
             </svg>
-            Back to Traders List
+            Back to Product View
           </button>
-          <h1 className="text-3xl font-bold text-white mb-2">Edit Product Info</h1>
-          <p className="text-gray-400">
+          <h1 className="text-3xl font-bold text-black mb-2">Edit Product Info</h1>
+          <p className=" text-black">
             Editing {ProductDetails.data.title || ''}{' '}
           </p>
         </div>
@@ -231,13 +231,13 @@ const ProductView = () => {
         {/* Edit Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Personal Information */}
-          <div className="bg-[#1e1b2e] rounded-lg p-6 border border-gray-700">
-            <h2 className="text-xl font-bold text-white mb-4 pb-2 border-b border-gray-700">
+          <div className="bg-[#BE493D] rounded-lg p-6 border border-gray-700">
+            <h2 className="text-xl font-bold text-white mb-4 pb-2 border-b border-white">
               Product Information
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-gray-400 text-sm font-medium mb-2">
+                <label className="block text-white text-sm font-medium mb-2">
                   Product Name
                 </label>
                 <input
@@ -245,12 +245,12 @@ const ProductView = () => {
                   name="title"
                   value={formData.title}
                   onChange={handleInputChange}
-                  className="w-full bg-[#2a2740] border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                   required
                 />
               </div>
               <div>
-                <label className="block text-gray-400 text-sm font-medium mb-2">
+                <label className="block text-white text-sm font-medium mb-2">
                   description
                 </label>
                 <input
@@ -258,12 +258,12 @@ const ProductView = () => {
                   name="description"
                   value={formData.description}
                   onChange={handleInputChange}
-                  className="w-full bg-[#2a2740] border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                   required
                 />
               </div>
               <div>
-                <label className="block text-gray-400 text-sm font-medium mb-2">
+                <label className="block text-white text-sm font-medium mb-2">
                   Price
                 </label>
                 <input
@@ -271,12 +271,12 @@ const ProductView = () => {
                   name="price"
                   value={formData.price}
                   onChange={handleInputChange}
-                  className="w-full bg-[#2a2740] border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                   required
                 />
               </div>
               <div>
-                <label className="block text-gray-400 text-sm font-medium mb-2">
+                <label className="block text-white text-sm font-medium mb-2">
                   Product image URL
                 </label>
                 <input
@@ -284,12 +284,12 @@ const ProductView = () => {
                   name="product_image_url"
                   value={formData.product_image_url}
                   onChange={handleInputChange}
-                  className="w-full bg-[#2a2740] border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                   required
                 />
               </div>
               <div>
-                <label className="block text-gray-400 text-sm font-medium mb-2">
+                <label className="block text-white text-sm font-medium mb-2">
                   Producers
                 </label>
                 <select
@@ -298,14 +298,14 @@ const ProductView = () => {
                   onChange={handleInputChange}>
                     <option value="">Select a producer</option>
                       {ProducersDetails.data?.map((producer: any) => (
-                        <option key={producer.id} value={producer.id}>
+                        <option key={producer.id} value={producer.id} className="text-black">
                           {producer.title}
                         </option>
                     ))}
                 </select>
               </div>
               <div>
-                <label className="block text-gray-400 text-sm font-medium mb-2">
+                <label className="block text-white text-sm font-medium mb-2">
                   Product Category
                 </label>
                 <select
@@ -314,14 +314,14 @@ const ProductView = () => {
                   onChange={handleInputChange}>
                     <option value="">Select a category</option>
                       {ProductCategoriesDetails.data?.map((product_category: any) => (
-                        <option key={product_category.id} value={product_category.id}>
+                        <option key={product_category.id} value={product_category.id} className="text-black">
                           {product_category.title}
                         </option>
                     ))}
               </select>
               </div>
               <div>
-                <label className="block text-gray-400 text-sm font-medium mb-2">
+                <label className="block text-white text-sm font-medium mb-2">
                   Promotion ID
                 </label>
                 <input
@@ -329,7 +329,7 @@ const ProductView = () => {
                   name="promotion_id"
                   value={formData.promotion_id}
                   onChange={handleInputChange}
-                  className="w-full bg-[#2a2740] border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                   required
                 />
               </div>
@@ -338,7 +338,7 @@ const ProductView = () => {
           <div className="flex items-center justify-end gap-4 pt-6">
             <button
               type="button"
-              onClick={() => navigate(`/products/edit/${ProductDetails.data.id}`)}
+              onClick={() => navigate(`/products/${ProductDetails.data.id}`)}
               className="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg transition-colors"
             >
               Cancel
@@ -346,7 +346,7 @@ const ProductView = () => {
             <button
               type="submit"
               disabled={updateProductMutation.isPending}
-              className="px-6 py-3 bg-pink-600 hover:bg-pink-700 disabled:bg-gray-600 text-white font-semibold rounded-lg transition-colors"
+              className="px-6 py-3 bg-[#11bb11] hover:bg-[#248324] disabled:bg-gray-600 text-white font-semibold rounded-lg transition-colors"
             >
               {updateProductMutation.isPending ? 'Updating...' : 'Update Product'}
             </button>

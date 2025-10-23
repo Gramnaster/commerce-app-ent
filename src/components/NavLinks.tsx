@@ -8,14 +8,11 @@ interface LinksType {
   text: string;
 }
 const links: LinksType[] = [
-  { id: 0, url: '/', text: 'Home' },
   { id: 1, url: 'products', text: 'Products' },
-  { id: 3, url: '/dashboard/profile', text: 'Profile' },
-  { id: 4, url: '/dashboard/cart', text: 'Cart' },
-  { id: 6, url: 'producers', text: 'Producers' },
-  { id: 7, url: 'categories', text: 'Categories' },
-  { id: 8, url: 'admins', text: 'Admins' },
-  { id: 9, url: 'promotions', text: 'Promotions' }
+  { id: 2, url: 'producers', text: 'Producers' },
+  { id: 3, url: 'categories', text: 'Categories' },
+  { id: 4, url: 'admins', text: 'Admins' },
+  { id: 5, url: 'promotions', text: 'Promotions' }
 ];
 
 const NavLinks = () => {
@@ -47,7 +44,7 @@ const NavLinks = () => {
         // if (url === 'about') return null;
         return (
           <li key={id}>
-            <NavLink to={url} className="capitalize">
+            <NavLink to={url} className="capitalize text-[white]">
               {text}
             </NavLink>
           </li>

@@ -1,5 +1,5 @@
 import { Link, Navigate, NavLink, useNavigate } from 'react-router-dom';
-import logoIcon from '../assets/images/logo-1.png';
+import logoIcon from '../assets/images/7dc5e18325bc176bbed1a92319e1f7eed2a78b4a.png';
 import userIcon from '../assets/images/icon-user.png';
 import languageIcon from '../assets/images/icon-language.png';
 import hamburgerIcon from '../assets/images/icon-hamburger.png';
@@ -13,25 +13,24 @@ const Navbar = () => {
 
   const handleLogout = () => {
     navigate('/');
-    // dispatch()
     dispatch(logoutUser());
 
     console.log("logout function here")
   };
 
   return (
-    <nav className="bg-neutral px-10 max-h-[75px]">
+    <nav className="bg-[#BE493D] px-10 max-h-[75px]">
       <div className="navbar align-element">
         <div className="navbar-start">
           <NavLink
-            to="/"
-            className="hidden lg:flex btn text-2xl bg-transparent text-secondary items-center"
+            to="dashboard"
+            className="hidden lg:flex btn text-2xl bg-transparent text-white items-center border-[0px]"
           >
-            <img src={logoIcon} alt="Logo" className="w-[42px] h-[42px]" />
-            ORBITAL.FINANCES
+            <img src={logoIcon} alt="Logo" className="w-[84px] h-[42px]" />
+            Enterprise Tools
           </NavLink>
           {/* Dropdown Menu */}
-          <label className="input">
+          <label className="input bg-[white] text-[#353535]">
             <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <g
                 strokeLinejoin="round"
@@ -44,7 +43,7 @@ const Navbar = () => {
                 <path d="m21 21-4.3-4.3"></path>
               </g>
             </svg>
-            <input type="search" required placeholder="Search"/>
+            <input type="search" required placeholder="Search" className='bg-[white]'/>
           </label>
           <div className="dropdown">
             <label tabIndex={0} className="btn btn-ghost lg:hidden">
@@ -52,29 +51,21 @@ const Navbar = () => {
             </label>
             <ul
               tabIndex={0}
-              className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-200 rounded-box"
+              className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-200 rounded-box border-base-300"
             >
               <NavLinks />
             </ul>
           </div>
         </div>
         <div className="navbar-center hidden lg:flex">
-          <ul className="menu menu-horizontal">
+          <ul className="menu menu-horizontal [&_li>*:not(ul):not(.menu-title):not(details):active]:bg-[#DD9A94]">
             <NavLinks />
           </ul>
         </div>
         <div className="navbar-end">
           <div className="flex gap-x-y justify-center items-center ">
-            <button className="btn bg-transparent h-[28px] ml-4">
-              <Link to='/login'>
-                <img src={userIcon} alt="user-icon" />
-              </Link>
-            </button>
             <button className="btn btn-xs" onClick={handleLogout}>
                   Logout
-            </button>
-            <button className="btn bg-transparent h-[30px]">
-              <img src={languageIcon} alt="language-icon" />
             </button>
           </div>
         </div>

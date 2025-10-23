@@ -15,7 +15,7 @@ interface FormInputType {
 const FormInput = ({ label, name, type = 'text', placeholder = '', as = 'input', options = [] }: FormInputType) => {
   return (
     <fieldset className="fieldset">
-      <legend className="fieldset-legend">{label}</legend>
+      <legend className="fieldset-legend text-[#707070]">{label}</legend>
       {as === 'select' ? (
         <select name={name} className="input h-6 max-w-[375px] w-full">
           <option value="">Select...</option>
@@ -26,7 +26,7 @@ const FormInput = ({ label, name, type = 'text', placeholder = '', as = 'input',
           ))}
         </select>
       ) : (
-        <input type={type} name={name} className="input h-6 max-w-[375px] w-full" placeholder={placeholder} />
+        <input type={type} name={name} className="input h-6 max-w-[375px] w-full bg-[#b5becb]" placeholder={placeholder} />
       )}
       {/* <p className="label">Optional</p> */}
     </fieldset>
