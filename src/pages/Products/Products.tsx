@@ -89,7 +89,7 @@ const Products = () => {
 
   const user = useSelector((state: RootState) => state.userState.user);
 
-     const { data: products = [] } = useQuery({
+    const { data: products = [] } = useQuery({
       queryKey: ['Products', user?.id],
       queryFn: async () => {
         const response = await customFetch.get('/products', {
@@ -118,8 +118,8 @@ const Products = () => {
       : true;
 
     return matchesSearch && matchesCategory;
-  })
-  .sort(
+    })
+    .sort(
     (a: Product, b: Product) =>
       new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
   ) || [];
@@ -127,6 +127,9 @@ const Products = () => {
   return (
     <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
       <div className="max-w-7xl mx-auto">
+        <NavLink to={`/products/create`} className={'btn bg-[#BE493D] border-[#BE493D] rounded-[8px] text-white p-2 pt-1 pb-1 m-1 hover:bg-[hsl(5,100%,98%)] hover:text-[#BE493D] hover:border-[#BE493D]'}>
+           Create Product  
+        </NavLink>
         <div className='text-[#BE493D] font-bold'>
           <button onClick={() => setSelectedCategory(null)} className='m-1 px-2 py-2 border-2 border-[#BE493D] rounded-2xl hover:cursor-pointer hover:bg-[#BE493D] hover:text-white' >All</button>
           {ProductCategories.data.map((category: ProductCategory) => {

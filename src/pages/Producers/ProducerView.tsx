@@ -1,4 +1,4 @@
-import { NavLink, redirect, useLoaderData } from "react-router-dom";
+import { NavLink, redirect, useLoaderData, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { customFetch } from "../../utils";
 
@@ -23,19 +23,9 @@ interface Address {
 interface Producer {
   id: number;
   title: string;
-  products_count: number
-  address: Address
-}
-
-interface Product {
-  id: number;
-  title: string;
-  product_category: ProductCategory;
-  producer: Producer;
-  description: string;
-  price: number;
-  promotion_id: boolean;
-  product_image_url: string;
+  products_count: number;
+  address: Address;
+  created_at: string;
 }
 
 export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
@@ -43,19 +33,6 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
   const admin_user = storeState.userState?.user;
 
   const id = params.id;
-
-  const ProducersQuery = {
-    queryKey: ['ProducersDetails', id],
-    queryFn: async () => {
-      const response = await customFetch.get(`/producers`, {
-        headers: {
-          Authorization: admin_user.token,
-        },
-      });
-      console.log(`ProductEdit producers`, response.data)
-      return response.data;
-    },
-  };
 
   const ProducerViewQuery = {
     queryKey: ['ProductDetails', id],
@@ -71,13 +48,12 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
   console.log(`ProducerView ProducerViewQuery`, ProducerViewQuery)
 
   try {
-    const AllProducersDetails = await queryClient.ensureQueryData(ProducersQuery);
     const ProducerDetails = await queryClient.ensureQueryData(ProducerViewQuery);
     return { ProducerDetails };
   } catch (error: any) {
-    console.error('Failed to load product:', error);
-    toast.error('Failed to load product details');
-    return redirect('/products');
+    console.error('Failed to load producer:', error);
+    toast.error('Failed to load producer details');
+    return redirect('/producers');
   }
 };
 
@@ -85,29 +61,96 @@ const ProducerView = () => {
   const { ProducerDetails } = useLoaderData() as {
     ProducerDetails: Producer;
   }
+  const navigate = useNavigate();
+  const { id, title, products_count, address: { unit_no, street_no, address_line1, address_line2, city, region, zipcode, country }, created_at } = ProducerDetails.data;
 
-  const { id, title, products_count, address: { unit_no, street_no, address_line1, address_line2, city, region, zipcode, country } } = ProducerDetails.data;
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
+  };
 
-  console.log(`ProducerView ProducerDetails`, ProducerDetails.data)
   return (
-    <div>
-      <div>
-        <div>Producer Name: {title}</div>
-        <div>Products Count: {products_count}</div>
-        <div>
-          <div>Address:</div>
-          <div>Unit #: {unit_no}</div>
-          <div>Street #: {street_no}</div>
-          <div>Address line 1: {address_line1}</div>
-          <div>Address line 2: {address_line2}</div>
-          <div>City: {city}</div>
-          <div>Region: {region}</div>
-          <div>Zipcode:{zipcode}</div>
-          <div>Country: {country}</div>
+    <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
+      <div className="max-w-7xl mx-auto place-items-center ">
+        <div className="mb-6 text-black">
+          <button
+          onClick={() => navigate(`/producers`)}
+          className="mb-4 flex items-center gap-2 hover:underline transition-colors text-black">
+          <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M10 19l-7-7m0 0l7-7m-7 7h18"
+            />
+          </svg>
+          Back to Producers list
+        </button>
         </div>
-      </div>
-      <NavLink to={`/producers/edit/${id}`}>Edit Producer</NavLink>
-    </div>
+
+          <div className="w-[60%] bg-[#BE493D] rounded-lg p-6 border border-gray-700">
+            <div className=" mb-4 pb-2 border-b border-white flex items-center justify-between gap-1">
+              <h2 className="text-xl font-bold text-white">
+                Producer Information
+              </h2>
+              <NavLink to={`/producers/edit/${id}`}>
+                <button className="btn bg-[hsl(5,100%,98%)] border-[#BE493D] text-l rounded-[8px] text-[#BE493D] p-2 pt-1 pb-1 m-1 hover:border-[hsl(5,100%,98%)] hover:bg-[#BE493D] hover:text-white">
+                  Edit Producer Info
+                </button>
+              </NavLink>
+            </div>
+            <div>
+
+                <div className="place-items-center text-[black] w-full">
+                  <div className=" px-6 py-3 rounded-2xl bg-[hsl(5,100%,98%)] w-full">
+                    <div className="m-1">
+                      <label className="block text-l font-bold mb-2">
+                        Producer Name:
+                      </label>
+                      <div>
+                        {title}
+                      </div>
+                    </div>
+                    <div className="m-1">
+                      <label className="block text-l font-bold mb-2">
+                        Products Count:
+                      </label>
+                      {products_count}
+                    </div>
+                    <div className="m-1">
+                      <label className="block text-l font-bold mb-2">
+                        Address:
+                      </label>
+                      <div>
+                      <div>Unit #: {unit_no}</div>
+                      <div>Street #: {street_no}</div>
+                      <div>Address Line 1: {address_line1}</div>
+                      <div>Address Line 2: {address_line2}</div>
+                      <div>City: {city}</div>
+                      <div>Region: {region}</div>
+                      <div>Country: {country}</div>
+                      </div>
+                    </div>
+                    <div className="m-1">
+                      <label className="block text-l font-bold mb-2">
+                        Creation/Addition Date:
+                      </label>
+                      {formatDate(created_at)}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
   )
 }
 
