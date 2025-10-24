@@ -16,7 +16,6 @@ interface Producer {
   title: string;
 }
 
-
 interface Product {
   id: number;
   title: string;
@@ -199,7 +198,7 @@ const ProductView = () => {
   };
 
   return (
-<div className="min-h-screen bg-[hsl(5,100%,98%)] text-white p-6">
+    <div className="min-h-screen bg-[hsl(5,100%,98%)] text-white p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6 text-black">
@@ -226,12 +225,14 @@ const ProductView = () => {
           <p className=" text-black">
             Editing {ProductDetails.data.title || ''}{' '}
           </p>
+          <button type="button" onClick={handleDelete} className="text-[#BE493D] hover:underline hover:cursor-pointer">Delete Product?</button>
         </div>
 
         {/* Edit Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Personal Information */}
           <div className="bg-[#BE493D] rounded-lg p-6 border border-gray-700">
+
             <h2 className="text-xl font-bold text-white mb-4 pb-2 border-b border-white">
               Product Information
             </h2>
@@ -295,13 +296,14 @@ const ProductView = () => {
                 <select
                   name="producer_id"
                   value={formData.producer_id || ''}
-                  onChange={handleInputChange}>
-                    <option value="">Select a producer</option>
-                      {ProducersDetails.data?.map((producer: any) => (
-                        <option key={producer.id} value={producer.id} className="text-black">
-                          {producer.title}
-                        </option>
-                    ))}
+                  onChange={handleInputChange}
+                >
+                <option value="">Select a producer</option>
+                  {ProducersDetails.data?.map((producer: any) => (
+                    <option key={producer.id} value={producer.id} className="text-black">
+                      {producer.title}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>
@@ -334,6 +336,7 @@ const ProductView = () => {
                 />
               </div>
             </div>
+
           </div>
           <div className="flex items-center justify-end gap-4 pt-6">
             <button

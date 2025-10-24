@@ -6,6 +6,7 @@ import hamburgerIcon from '../assets/images/icon-hamburger.png';
 import NavLinks from './NavLinks';
 import { logoutUser } from '../features/user/userSlice';
 import { useDispatch } from 'react-redux';
+import logoutIcon from '../assets/images/logout-icon2.png'
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -64,8 +65,8 @@ const Navbar = () => {
         </div>
         <div className="navbar-end">
           <div className="flex gap-x-y justify-center items-center ">
-            <button className="btn btn-xs" onClick={handleLogout}>
-                  Logout
+            <button className="" onClick={handleLogout}>
+                  <img src={logoutIcon} className='max-w-[25px] hover:underline hover:cursor-pointer' />
             </button>
           </div>
         </div>
