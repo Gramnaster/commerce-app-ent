@@ -53,15 +53,6 @@ const CategoryView = () => {
   };
 
   return (
-    // <div>
-    //   <div>
-    //     <div>Category Name: {title}</div>
-    //     <div>Products Count: {products_count}</div>
-    //   </div>
-    //   <NavLink to={`/categories/edit/${id}`}>Edit Category name</NavLink>
-    // </div>
-
-
     <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
       <div className="max-w-7xl mx-auto place-items-center ">
         <div className="mb-6 text-black">
@@ -97,7 +88,6 @@ const CategoryView = () => {
               </NavLink>
             </div>
             <div>
-
                 <div className="place-items-center text-[black] w-full">
                   <div className=" px-6 py-3 rounded-2xl bg-[hsl(5,100%,98%)] w-full">
                     <div className="m-1">

@@ -80,8 +80,8 @@ const PromotionEdit = () => {
       return response.data;
     },
     onSuccess: () => {
-      toast.success('Category Details updated successfully');
-      queryClient.invalidateQueries({ queryKey: ['category', promotion.data.id] });
+      toast.success('Promotion updated successfully');
+      queryClient.invalidateQueries({ queryKey: ['promotion', promotion.data.id] });
       navigate(`/promotions/${promotion.data.id}`);
     },
     onError: (error: any) => {
@@ -141,13 +141,13 @@ const PromotionEdit = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#161420] text-white p-6">
+    <div className="min-h-screen bg-[hsl(5,100%,98%)] text-white p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-6">
+        <div className="mb-6 text-black">
           <button
             onClick={() => navigate('/promotions')}
-            className="mb-4 flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+            className="mb-4 flex items-center gap-2 hover:underline transition-colors text-black"
           >
             <svg
               className="w-5 h-5"
@@ -164,8 +164,8 @@ const PromotionEdit = () => {
             </svg>
             Back to Promotions List
           </button>
-          <h1 className="text-3xl font-bold text-white mb-2">Edit Category Interface</h1>
-          <p className="text-gray-400">
+          <h1 className="text-3xl font-bold text-black mb-2">Edit Promotion Interface</h1>
+          <p className="text-black">
             Edit Promotion value
           </p>
           <button type="button" onClick={handleDelete}>Delete Promotion?</button>
@@ -174,21 +174,21 @@ const PromotionEdit = () => {
         {/* Edit Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Personal Information */}
-          <div className="bg-[#1e1b2e] rounded-lg p-6 border border-gray-700">
-            <h2 className="text-xl font-bold text-white mb-4 pb-2 border-b border-gray-700">
-              Category Information
+          <div className="bg-[#BE493D] rounded-lg p-6">
+            <h2 className="text-xl font-bold text-white mb-4 pb-2 border-b border-white">
+              Promotion Information
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-gray-400 text-sm font-medium mb-2">
-                  Category Name
+                <label className="block text-white text-sm font-medium mb-2">
+                  Promotion discount amount
                 </label>
                 <input
                   type="text"
                   name="discount_amount"
                   value={formData.discount_amount}
                   onChange={handleInputChange}
-                  className="w-full bg-[#2a2740] border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                   required
                 />
               </div>
@@ -204,7 +204,7 @@ const PromotionEdit = () => {
             </button>
             <button
               type="submit"
-              className="px-6 py-3 bg-pink-600 hover:bg-pink-700 disabled:bg-gray-600 text-white font-semibold rounded-lg transition-colors"
+              className="px-6 py-3 bg-[#11bb11] hover:bg-[#248324] disabled:bg-gray-600 text-white font-semibold rounded-lg transition-colors"
             >Submit
             </button>
           </div>
