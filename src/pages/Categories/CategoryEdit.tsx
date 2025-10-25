@@ -154,7 +154,7 @@ const CategoryEdit = () => {
                 d="M10 19l-7-7m0 0l7-7m-7 7h18"
               />
             </svg>
-            Back to Category List
+            Back to Category View
           </button>
           <h1 className="text-3xl font-bold text-black mb-2">Edit Category Interface</h1>
           <p className="text-black">

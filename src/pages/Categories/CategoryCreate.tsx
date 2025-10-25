@@ -58,7 +58,7 @@ const CategoryCreate = () => {
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+    ) => {
     const { name, value } = e.target;
 
     setFormData((prev) => {
@@ -88,7 +88,7 @@ const CategoryCreate = () => {
       navigate('/categories');
       return response.data;
     } catch (error: any) {
-      console.error('Failed to load caategory:', error);
+      console.error('Failed to load category:', error);
       toast.error('Failed to load category details');
       return redirect('/categories');
     }
