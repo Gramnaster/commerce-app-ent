@@ -33,10 +33,10 @@ export const loader = (queryClient: any, store: any) => async () => {
   const storeState = store.getState();
   const user = storeState.userState?.user;
 
-  // if (!user || user.admin_role !== 'management' ||  user.admin_role !== 'warehouse') {
-  //   toast.warn('There must be something wrong. Please refresh the page.');
-  //   return redirect('/');
-  // }
+  if (!user || user.admin_role !== 'management' &&  user.admin_role !== 'warehouse') {
+    toast.warn('There must be something wrong. Please refresh the page.');
+    return redirect('/');
+  }
 
   const userCartOrdersQuery = {
     queryKey: ['UserCartOrders', user.id],
@@ -159,7 +159,7 @@ const Dashboard = () => {
   };
   // console.log(`cartOrders`, cartOrders)
     
-    const filteredOrders = activeTab !== 'create' ? cartOrders.data
+    const filteredOrders = activeTab !== 'create' && cartOrders.data !== undefined ? cartOrders.data
     .filter((order: UserCartOrder) => {
       const matchesSearch =
         order.cart_status.toLowerCase().includes(searchWord.toLowerCase()) ||

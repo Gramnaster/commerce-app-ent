@@ -5,7 +5,7 @@ import { Navbar } from '../../components'
 const Home = () => {
   const navigation = useNavigation();
   const isPageLoading = navigation.state === 'loading';
-    let currentPath = useLocation();
+  let currentPath = useLocation();
   
   return (
     <div className='h-full'>

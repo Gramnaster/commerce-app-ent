@@ -75,10 +75,10 @@ const Categories = () => {
 
   const filteredCategories = categories.data.filter((category: ProductCategory) => {
         const matchesSearch =
-        category.id.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
-        category.title.toLowerCase().includes(searchWord.toLowerCase()) ||
-        category.products_count.toString().includes(searchWord.toLowerCase()) ||
-        category.created_at.toString().includes(searchWord.toLowerCase());
+        category.id?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
+        category.title?.toLowerCase().includes(searchWord.toLowerCase()) ||
+        category.products_count?.toString().includes(searchWord.toLowerCase()) ||
+        category.created_at?.toString().includes(searchWord.toLowerCase());
 
       return matchesSearch;
       })

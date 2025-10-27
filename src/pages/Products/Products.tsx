@@ -34,10 +34,6 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
   const user = storeState.userState?.user;
   const id = params.id;
 
-  if (!user || user.admin_role !== 'management') {
-    toast.warn('There must be something wrong. Please refresh the page.');
-    return redirect('/');
-  }
 
   const allProductsQuery = {
     queryKey: ['allProducts'],
@@ -105,13 +101,13 @@ const Products = () => {
 
   const filteredProds = products.data.filter((product: Product) => {
         const matchesSearch =
-        product.id.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
-        product.title.toLowerCase().includes(searchWord.toLowerCase()) ||
-        product.description.toLowerCase().includes(searchWord.toLowerCase()) ||
-        product.price.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
-        product.product_category.title.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
-        product.producer.title.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
-        product.promotion_id.toString().toLowerCase().includes(searchWord.toLowerCase())
+        product.id?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
+        product.title?.toLowerCase().includes(searchWord.toLowerCase()) ||
+        product.description?.toLowerCase().includes(searchWord.toLowerCase()) ||
+        product.price?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
+        product.product_category?.title.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
+        product.producer?.title.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
+        product.promotion_id?.toString().toLowerCase().includes(searchWord.toLowerCase())
 
     const matchesCategory = selectedCategory
       ? product.product_category.title === selectedCategory

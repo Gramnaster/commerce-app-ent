@@ -89,18 +89,18 @@ const Producers = () => {
 
   const filteredProducers = producers.data.filter((producer: Producer) => {
         const matchesSearch =
-        producer.id.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
-        producer.title.toLowerCase().includes(searchWord.toLowerCase()) ||
-        producer.products_count.toString().includes(searchWord.toLowerCase()) ||
-        producer.address.unit_no.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
-        producer.address.street_no.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
-        producer.address.address_line1.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
-        producer.address.address_line2.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
-        producer.address.city.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
-        producer.address.region.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
-        producer.address.zipcode.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
-        producer.address.country.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
-        producer.address.city.toString().toLowerCase().includes(searchWord.toLowerCase());
+        producer.id?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
+        producer.title?.toLowerCase().includes(searchWord.toLowerCase()) ||
+        producer.products_count?.toString().includes(searchWord.toLowerCase()) ||
+        producer.address?.unit_no?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
+        producer.address?.street_no?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
+        producer.address?.address_line1?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
+        producer.address?.address_line2?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
+        producer.address?.city?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
+        producer.address?.region?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
+        producer.address?.zipcode?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
+        producer.address?.country?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
+        producer.address?.city?.toString().toLowerCase().includes(searchWord.toLowerCase());
 
       return matchesSearch;
       })

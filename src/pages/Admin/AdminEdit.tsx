@@ -260,49 +260,27 @@ const handleInputChange = (
       };
     }
     if (parentKey === 'admin_addresses_attributes' && addressIndex !== undefined) {
-      const updatedAddresses = [...prev.admin_addresses_attributes];
-      const currentAddress = updatedAddresses[addressIndex];
-
-      updatedAddresses[addressIndex] = {
-        ...currentAddress,
+      const updated = [...prev.admin_addresses_attributes];
+      updated[addressIndex] = {
+        ...updated[addressIndex],
         address_attributes: {
-          ...currentAddress.address_attributes,
+          ...updated[addressIndex].address_attributes,
           [name]: value,
         },
       };
-
-      return {
-        ...prev,
-        admin_addresses_attributes: updatedAddresses,
-      };
+      return { ...prev, admin_addresses_attributes: updated };
     }
 
-    if (parentKey === 'admin_users_company_sites_attributes' && siteIndex !== undefined ) {
-      const updatedSites = [...prev.admin_users_company_sites_attributes];
-      const currentSites = updatedSites[siteIndex];
-
-      updatedSites[siteIndex] = {
-        ...currentSites,
-        [name]: value,
-      };
-      return {
-        ...prev,
-        admin_users_company_sites_attributes: updatedSites,
-      };
+    if (parentKey === 'admin_users_company_sites_attributes' && siteIndex !== undefined) {
+      const updated = [...prev.admin_users_company_sites_attributes];
+      updated[siteIndex] = { ...updated[siteIndex], [name]: value };
+      return { ...prev, admin_users_company_sites_attributes: updated };
     }
   
     if (parentKey === 'admin_phones_attributes' && phoneIndex !== undefined) {
-      const updatedPhones = [...prev.admin_phones_attributes];
-      const currentPhone = updatedPhones[phoneIndex];
-
-      updatedPhones[phoneIndex] = {
-        ...currentPhone,
-        [name]: value,
-      };
-      return {
-        ...prev,
-        admin_phones_attributes: updatedPhones,
-      };
+      const updated = [...prev.admin_phones_attributes];
+      updated[phoneIndex] = { ...updated[phoneIndex], [name]: value };
+      return { ...prev, admin_phones_attributes: updated };
     }
       return { ...prev, [name]: value };
     });
