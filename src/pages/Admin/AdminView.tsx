@@ -262,7 +262,7 @@ const AdminView = () => {
                       {admin_role}
                     </div>
                     <div className="pl-2">
-                      <div className="border-b border-white p-1 font-bold">
+                      <div className="border-b border-black p-1 font-bold">
                         Admin Details:
                       </div>
                       <div className="m-1">
