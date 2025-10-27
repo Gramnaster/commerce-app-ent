@@ -41,8 +41,6 @@ import {loader as promotionEditLoader} from './pages/Promotions/PromotionEdit.ts
 
 import {action as landingAction} from './pages/Home/Landing.tsx';
 
-
-
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

@@ -81,10 +81,10 @@ const Admins = () => {
 
     const filteredAdmins = Object.values(admins.admin_users as AdminUser).filter((admin: AdminUser) => {
       const matchesSearch =
-        admin.id.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
-        admin.email.toLowerCase().includes(searchWord.toLowerCase()) ||
-        admin.admin_role.toString().includes(searchWord.toLowerCase()) ||
-        admin.created_at.toString().includes(searchWord.toLowerCase());
+        admin.id?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
+        admin.email?.toLowerCase().includes(searchWord.toLowerCase()) ||
+        admin.admin_role?.toString().includes(searchWord.toLowerCase()) ||
+        admin.created_at?.toString().includes(searchWord.toLowerCase());
 
       return matchesSearch;
       })

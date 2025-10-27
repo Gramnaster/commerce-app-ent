@@ -73,7 +73,7 @@ const CategoryCreate = () => {
     e.preventDefault();
 
     try {
-      const response = await customFetch.post('/categories', 
+      const response = await customFetch.post('/product_categories', 
         { 
           product_category: formData
         },

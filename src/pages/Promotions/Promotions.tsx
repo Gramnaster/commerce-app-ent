@@ -22,7 +22,6 @@ interface Promotion {
 export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
   const storeState = store.getState();
   const admin_user = storeState.userState?.user;
-  console.log(`Admins admin_user`, admin_user)
   const id = params.id;
 
   if (!admin_user || admin_user.admin_role !== 'management') {
@@ -41,6 +40,7 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
       return response.data;
     },
   };
+    console.log(`Promotions admin_user.token`, admin_user.token)
 
   try {
     const [ promotions ] = await Promise.all([
@@ -60,16 +60,18 @@ const Promotions = () => {
    promotions: Promotion[];
   }
   const [searchWord, setSearchWord] = useState('');
-  const user = useSelector((state: RootState) => state.userState.user);
+  const admin_user = useSelector((state: RootState) => state.userState?.user);
+  console.log(`Promotions`, admin_user)
 
   const { data: promotions = [] } = useQuery({
-    queryKey: ['promotion', user?.id],
+    queryKey: ['promotion', admin_user?.id],
     queryFn: async () => {
       const response = await customFetch.get('/promotions', {
         headers: {
-          Authorization: user?.token,
+          Authorization: admin_user?.token,
         },
       });
+      console.log(`Promotions response.data`, response.data)
       return response.data;
     },
     initialData: initialPromotions,
@@ -84,19 +86,21 @@ const Promotions = () => {
     });
   };
 
-  const filteredPromotions = promotions.data.filter((promotion: Promotion) => {
+  console.log(`promotions.data`, promotions.data)
+
+  const filteredPromotions = promotions.data !== 0 && promotions.data !== undefined ? promotions.data.filter((promotion: Promotion) => {
         const matchesSearch =
-        promotion.id.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
-        promotion.discount_amount.toLowerCase().includes(searchWord.toLowerCase()) ||
-        promotion.products_count.toString().includes(searchWord.toLowerCase()) ||
-        promotion.product_categories.toString().includes(searchWord.toLowerCase());
+        promotion.id?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
+        promotion.discount_amount?.toLowerCase().includes(searchWord.toLowerCase()) ||
+        promotion.products_count?.toString().includes(searchWord.toLowerCase()) ||
+        promotion.product_categories?.toString().includes(searchWord.toLowerCase());
 
       return matchesSearch;
       })
       .sort(
         (a: Promotion, b: Promotion) =>
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-  ) || [];
+  ) : [] ;
 
   return (
     <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
@@ -214,7 +218,7 @@ const Promotions = () => {
                           colSpan={6}
                           className="p-8 w-full text-center text-black text-m bg-[hsl(5,100%,98%)]"
                         >
-                          No category found
+                          No promotions found
                         </td>
                       </tr>
                     )}

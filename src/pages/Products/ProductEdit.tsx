@@ -332,7 +332,6 @@ const ProductView = () => {
                   value={formData.promotion_id}
                   onChange={handleInputChange}
                   className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                  required
                 />
               </div>
             </div>

@@ -65,7 +65,7 @@ const Landing = () => {
   }
 
   return (
-    <div className='grid grid-cols-[0.33fr_1fr] grid-rows-1 gap-0 h-full bg-gradient-to-t from-[#8d8d8d2a] to-[#e6e6e6]'>
+    <div className='grid grid-cols-[0.33fr_1fr] gri d-rows-1 gap-0 h-full bg-gradient-to-t from-[#8d8d8d2a] to-[#e6e6e6]'>
      <div className='flex flex-col items-center justify-center font-[Aleo] p-2 gap-2 bg-gradient-to-t from-[#AE2012] to-[#BE493D] h-full'><img src={LogoNoSun} className='max-w-[120px]'/> <div className='text-4xl font-[380] text-[white]'>Enterprise Tool</div> </div>
       <div className="mt-4 flex flex-col gap-y-5 items-center w-full h-full">
           { 

@@ -76,6 +76,7 @@ const PromotionCreate = () => {
           },
         }
       );
+      console.log(`PromotionsCreate response`, response)
       toast.success('promotion created successfully');
       navigate('/promotions');
       return response.data;
