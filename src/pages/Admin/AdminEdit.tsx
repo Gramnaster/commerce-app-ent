@@ -108,63 +108,36 @@ const AdminEdit = () => {
     const user = useSelector((state: RootState) => state.userState.user);
     const navigate = useNavigate();
     const queryClient = useQueryClient();
-    const { 
-      email, 
-      admin_role,
-      admin_detail: {
-        first_name, 
-        middle_name, 
-        last_name, 
-        dob 
-      }
-    } = AdminDetails.data
+    //   const { 
+    //   email, 
+    //   admin_role,
+    //   admin_detail: {
+    //     first_name, 
+    //     middle_name, 
+    //     last_name, 
+    //     dob 
+    //   }
+    // } = AdminDetails.data
 
-    console.log(`AdminEdit AdminDetails`, AdminDetails)
-    console.log(`AdminEdit Countries`, Countries)
-    console.log(`AdminEdit CompanySites`, CompanySites)
-  
+    // console.log(`AdminEdit AdminDetails`, AdminDetails)
+    // console.log(`AdminEdit Countries`, Countries)
+    // console.log(`AdminEdit CompanySites`, CompanySites)
+
     const [formData, setFormData] = useState({
-      email: email,
-      admin_role: admin_role,
+      email: AdminDetails.data.email || '',
+      admin_role: AdminDetails.data.admin_role || '',
       admin_detail_attributes: {
-        first_name: first_name,
-        middle_name: middle_name || '',
-        last_name: last_name,
-        dob: dob
+        first_name: AdminDetails.data.admin_detail?.first_name || '',
+        middle_name: AdminDetails.data.admin_detail?.middle_name || '',
+        last_name: AdminDetails.data.admin_detail?.last_name || '',
+        dob: AdminDetails.data.admin_detail?.dob || ''
       },
-      admin_phones_attributes:
-        (AdminDetails.data.admin_phones?.length
-          ? AdminDetails.data.admin_phones.map((phone_number: AdminPhone) => ({
-              id: phone_number.id || '',
-              phone_no: phone_number.phone_no || '',
-              phone_type: phone_number.phone_type || ''
-            }))
-          : [
-          {
-            id: '',
-            phone_no: '',
-            phone_type: ''
-          },
-        ]),
-      admin_addresses_attributes:
-    (AdminDetails.data.admin_addresses?.length
-      ? AdminDetails.data.admin_addresses.map(({ id, is_default, address: { unit_no, street_no, address_line1, address_line2, city, region, zipcode, country_id } }: AdminAddress) => ({
-          id: id,
-          is_default: is_default || false,
-          address_attributes: {
-            unit_no: unit_no || '',
-            street_no: street_no || '',
-            address_line1: address_line1 || '',
-            address_line2: address_line2 || '',
-            city: city || '',
-            region: region || '',
-            zipcode: zipcode || '',
-            country_id: country_id || '',
-          },
-        }))
-      : [
-          {
-            id: '',
+      admin_phones_attributes: AdminDetails.data.admin_phones?.length
+        ? AdminDetails.data.admin_phones
+        : [{ phone_no: '', phone_type: 'mobile' }],
+      admin_addresses_attributes: AdminDetails.data.admin_addresses?.length
+        ? AdminDetails.data.admin_addresses
+        : [{
             is_default: true,
             address_attributes: {
               unit_no: '',
@@ -174,21 +147,13 @@ const AdminEdit = () => {
               city: '',
               region: '',
               zipcode: '',
-              country_id: '',
-            },
-          },
-        ]),
-    admin_users_company_sites_attributes:
-      (AdminDetails.data.company_sites?.length
-        ? AdminDetails.data.company_sites.map((site: CompanySite) => ({
-            company_site_id: site.id || '',
-          }))
-        : [
-            {
-              company_site_id: ''
-            },
-        ])
-      });
+              country_id: Countries?.[0]?.id || ''
+            }
+          }],
+      admin_users_company_sites_attributes: AdminDetails.data.company_sites?.length
+        ? AdminDetails.data.company_sites
+        : [{ company_site_id: CompanySites?.data?.[0]?.id || '' }]
+    });
   
     const updateAdminMutation = useMutation({
       mutationFn: async (AdminData: any) => {
@@ -289,7 +254,6 @@ const handleInputChange = (
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Create the payload matching the API format
     const payload = {
       ...formData,
     };
@@ -303,7 +267,6 @@ const handleInputChange = (
     
       console.log(`handleSubmit formData:`, formData)
       navigate(`/admins`)
-      // Create the payload matching the API format
     try {
       const response = await customFetch.delete(`/admin_users/${AdminDetails.data.id}`,
         {
