@@ -1,4 +1,4 @@
-import { Form, Link, redirect, useNavigate, type ActionFunctionArgs } from "react-router-dom";
+import { Form, Link, redirect, useNavigate, useNavigation, type ActionFunctionArgs } from "react-router-dom";
 import { customFetch } from "../../utils";
 import { toast } from "react-toastify";
 import type { AxiosError } from "axios";
@@ -49,6 +49,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 const AdminCreate = () => {
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.userState.user);
+  const navigation = useNavigation();
+  const isSubmitting = navigation.state === 'submitting';
 
   const [formData, setFormData] = useState({
     email: '',
@@ -255,6 +257,7 @@ const AdminCreate = () => {
             </button>
             <button
               type="submit"
+              disabled={isSubmitting}
               className="px-6 py-3 bg-[#11bb11] hover:bg-[#248324] disabled:bg-gray-600 text-white font-semibold rounded-lg transition-colors"
             >Submit
             </button>

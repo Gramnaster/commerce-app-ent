@@ -61,7 +61,8 @@ export interface ProductCategoriesResponse {
 }
 
 export interface ProducersResponse {
-  data: Producer[];
+  data: Producer[];  
+  pagination: Pagination;
 }
 
 export interface ProductDetailsResponse {
@@ -117,7 +118,7 @@ const Products = () => {
     allProducts: ProductsResponse,
     ProductCategories: ProductCategoriesResponse
   };
-  
+  // const user = useSelector((state: RootState) => state.userState.user);
   const [searchWord, setSearchWord] = useState('');
   const [productData, setProductData] = useState(initialProducts);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -139,19 +140,19 @@ const Products = () => {
     }
   }
 
-  // const { data: products = { data: [] } } = useQuery({
-  //   queryKey: ['Products', user?.id],
-  //   queryFn: async () => {
-  //     const response = await customFetch.get('/products', {
-  //       headers: {
-  //         Authorization: user?.token,
-  //       },
-  //     });
-  //     return response.data;
-  //   },
-  //   initialData: initialProducts,
-  //   refetchOnWindowFocus: false,
-  // });
+    // const { data: products = { data: [] } } = useQuery({
+    //   queryKey: ['Products', user?.id],
+    //   queryFn: async () => {
+    //     const response = await customFetch.get('/products', {
+    //       headers: {
+    //         Authorization: user?.token,
+    //       },
+    //     });
+    //     return response.data;
+    //   },
+    //   initialData: initialProducts,
+    //   refetchOnWindowFocus: false,
+    // });
 
   const filteredProds = productData.data.filter((product: Product) => {
     const matchesSearch =

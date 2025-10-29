@@ -6,7 +6,8 @@ import hamburgerIcon from '../assets/images/icon-hamburger.png';
 import NavLinks from './NavLinks';
 import { logoutUser } from '../features/user/userSlice';
 import { useDispatch } from 'react-redux';
-import logoutIcon from '../assets/images/logout-icon2.png'
+import logoutIcon from '../assets/images/logout-icon2.png';
+import IconProfile from '../assets/images/icon-user.png';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -64,10 +65,30 @@ const Navbar = () => {
           </ul>
         </div>
         <div className="navbar-end">
-          <div className="flex gap-x-y justify-center items-center ">
+          {/* <div className="flex gap-x-y justify-center items-center ">
             <button className="" onClick={handleLogout}>
                   <img src={logoutIcon} className='max-w-[25px] hover:underline hover:cursor-pointer' />
             </button>
+          </div> */}
+          <div className="flex gap-x-2 sm:gap-x-8 items-center">
+              <div className="dropdown">
+              <label
+                tabIndex={0}
+                className="btn bg-transparent h-[30px] border-none shadow-none outline-none btn-circle"
+              >
+                <img src={IconProfile} alt="user-icon" />
+              </label>
+                <ul
+                  tabIndex={0}
+                  className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-white rounded-box"
+                >
+                  <li>
+                    <button className=" text-black" onClick={handleLogout}>
+                        Logout
+                    </button>
+                  </li>
+                </ul>
+            </div>
           </div>
         </div>
       </div>
