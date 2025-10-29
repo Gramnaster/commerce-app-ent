@@ -1,9 +1,9 @@
-import { redirect, useLoaderData } from 'react-router-dom';
+import { useLoaderData } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store';
 

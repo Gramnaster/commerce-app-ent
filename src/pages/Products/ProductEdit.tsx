@@ -5,33 +5,15 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store";
-
-interface ProductCategory {
-  id: number;
-  title: string;
-}
-
-interface Producer {
-  id: number;
-  title: string;
-}
-
-interface Product {
-  id: number;
-  title: string;
-  product_category_id: number;
-  producer_id: number;
-  discount_percentage: number;
-  discount_amount_dollars: number;
-  description: string;
-  price: number;
-  promotion_id: boolean;
-  product_image_url: string;
-}
+import type { Product, ProducersResponse, ProductCategoriesResponse } from "./Products";
 
 export interface User {
   id: number;
   email: string;
+}
+
+interface ProductDetailsResponse {
+  data: Product;
 }
 
 export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
@@ -95,39 +77,49 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
   }
 };
 
-const ProductView = () => {
+const ProductEdit = () => {
   const { ProductDetails, ProducersDetails, ProductCategoriesDetails } = useLoaderData() as {
-    ProductDetails: Product;
-    ProducersDetails: Producer;
-    ProductCategoriesDetails: ProductCategory;
+    ProductDetails: ProductDetailsResponse;
+    ProducersDetails: ProducersResponse;
+    ProductCategoriesDetails: ProductCategoriesResponse;
   }
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const {title, description, price, product_image_url, product_category, producer, promotion} = ProductDetails.data
 
   const user = useSelector((state: RootState) => state.userState.user);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(product_image_url);
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     title: title,
     description: description,
     price: price,
-    product_image_url: product_image_url,
+    product_image_url: product_image_url || '',
     product_category_id:  product_category.id,
     producer_id: producer.id,
     promotion_id: promotion?.id || null
   })
 
+  // Handle file selection
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
   const updateProductMutation = useMutation({
-    mutationFn: async (productData: any) => {
+    mutationFn: async (productData: FormData | any) => {
       const response = await customFetch.patch(
         `/products/${ProductDetails.data.id}`,
-        {
-          product: productData,
-        },
+        productData,
         {
           headers: {
             Authorization: user?.token,
-            'Content-Type': 'application/json',
+            // Content-Type will be set automatically for FormData
           },
         }
       );
@@ -141,7 +133,7 @@ const ProductView = () => {
     onError: (error: any) => {
       console.error('Update failed:', error);
       const errorMessage =
-        error.response?.data?.message || 'Failed to update user';
+        error.response?.data?.message || 'Failed to update product';
       toast.error(errorMessage);
     },
   });
@@ -161,18 +153,44 @@ const ProductView = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     console.log(`handleSubmit formData:`, formData)
-    // Create the payload matching the API format
-    const payload = {
-      ...formData,
-    };
-    console.log(`handleSubmit payload:`, payload)
-    updateProductMutation.mutate(payload);
+    
+    try {
+      // Check if there's a new image to upload
+      if (imageFile) {
+        // Use FormData for file upload
+        const formDataToSend = new FormData();
+        formDataToSend.append('product[title]', formData.title);
+        formDataToSend.append('product[description]', formData.description);
+        formDataToSend.append('product[price]', formData.price.toString());
+        formDataToSend.append('product[product_category_id]', formData.product_category_id.toString());
+        formDataToSend.append('product[producer_id]', formData.producer_id.toString());
+        
+        if (formData.promotion_id) {
+          formDataToSend.append('product[promotion_id]', formData.promotion_id.toString());
+        }
+        
+        // Add image file
+        formDataToSend.append('product[product_image]', imageFile);
+        
+        updateProductMutation.mutate(formDataToSend);
+      } else {
+        // Use JSON for regular update
+        const payload = {
+          product: formData,
+        };
+        console.log(`handleSubmit payload:`, payload)
+        updateProductMutation.mutate(payload);
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleDelete = async (e: React.FormEvent) => {
+  const handleDelete = async () => {
   if (!confirm("Are you sure you want to delete this product?")) return;
   
     console.log(`handleSubmit formData:`, formData)
@@ -286,8 +304,27 @@ const ProductView = () => {
                   value={formData.product_image_url}
                   onChange={handleInputChange}
                   className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
-                  required
+                  placeholder="Or enter image URL"
                 />
+              </div>
+              {/* File input for image upload */}
+              <div>
+                <label className="block text-white text-sm font-medium mb-2">
+                  Upload New Product Image
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black"
+                />
+                {imagePreview && (
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="mt-2 w-[200px] h-[200px] object-cover rounded"
+                  />
+                )}
               </div>
               <div>
                 <label className="block text-white text-sm font-medium mb-2">
@@ -329,9 +366,10 @@ const ProductView = () => {
                 <input
                   type="text"
                   name="promotion_id"
-                  value={formData.promotion_id}
+                  value={formData.promotion_id || ''}
                   onChange={handleInputChange}
                   className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  placeholder="Optional"
                 />
               </div>
             </div>
@@ -347,10 +385,10 @@ const ProductView = () => {
             </button>
             <button
               type="submit"
-              disabled={updateProductMutation.isPending}
+              disabled={updateProductMutation.isPending || loading}
               className="px-6 py-3 bg-[#11bb11] hover:bg-[#248324] disabled:bg-gray-600 text-white font-semibold rounded-lg transition-colors"
             >
-              {updateProductMutation.isPending ? 'Updating...' : 'Update Product'}
+              {(updateProductMutation.isPending || loading) ? 'Updating...' : 'Update Product'}
             </button>
             <button type="button" onClick={handleDelete}>Delete</button>
           </div>
@@ -360,4 +398,4 @@ const ProductView = () => {
   )
 }
 
-export default ProductView
+export default ProductEdit
