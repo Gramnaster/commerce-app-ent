@@ -12,7 +12,7 @@ export const customFetch = axios.create({
 console.log('API Base URL:', baseURL);
 
 customFetch.defaults.headers.common['Accept'] = 'application/json';
-customFetch.defaults.headers.common['Content-Type'] = 'application/json';
+// NOTE: Do NOT set default Content-Type to allow FormData to set multipart/form-data with boundary
 
 customFetch.interceptors.request.use(
   (config) => {
@@ -28,6 +28,12 @@ customFetch.interceptors.request.use(
         console.error('Error parsing user from localStorage:', error);
       }
     }
+    
+    // Set Content-Type to application/json only if not already set (allows FormData to override)
+    if (!config.headers['Content-Type'] && !(config.data instanceof FormData)) {
+      config.headers['Content-Type'] = 'application/json';
+    }
+    
     return config;
   },
   (error) => {

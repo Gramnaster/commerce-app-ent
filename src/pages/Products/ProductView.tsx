@@ -1,26 +1,10 @@
 import { NavLink, redirect, useLoaderData, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { customFetch } from "../../utils";
+import type { Product } from "./Products";
 
-interface ProductCategory {
-  id: number;
-  title: string;
-}
-
-interface Producer {
-  id: number;
-  title: string;
-}
-
-interface Product {
-  id: number;
-  title: string;
-  product_category: ProductCategory;
-  producer: Producer;
-  description: string;
-  price: number;
-  promotion_id: boolean;
-  product_image_url: string;
+interface ProductDetailsResponse {
+  data: Product;
 }
 
 export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
@@ -53,7 +37,7 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 
 const ProductView = () => {
   const { ProductDetails } = useLoaderData() as {
-    ProductDetails: Product;
+    ProductDetails: ProductDetailsResponse;
   }
   const navigate = useNavigate();
   const { id, title, product_image_url, product_category, producer, description, price, promotion_id } = ProductDetails.data
@@ -94,7 +78,20 @@ const ProductView = () => {
               <div className="grid grid-cols-[1fr_1fr] grid-rows-1 gap-0">
 
                 <div className="place-items-center place-content-center">
-                  <img src={product_image_url} className="w-[250px] h-[250px]" />
+                  {product_image_url ? (
+                    <img 
+                      src={product_image_url} 
+                      alt={title}
+                      className="w-[250px] h-[250px] object-cover rounded-lg" 
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="250" height="250"%3E%3Crect fill="%23ddd" width="250" height="250"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999" font-size="20"%3ENo Image%3C/text%3E%3C/svg%3E';
+                      }}
+                    />
+                  ) : (
+                    <div className="w-[250px] h-[250px] bg-gray-200 rounded-lg flex items-center justify-center text-gray-500">
+                      No Image Available
+                    </div>
+                  )}
                 </div>
 
                 <div className="place-items-center text-[black]">
@@ -135,7 +132,7 @@ const ProductView = () => {
                       <label className="block text-l font-bold mb-2">
                         Promotion IDs:
                       </label>
-                      {!promotion_id ? "No active promotions": "WHAATTT"}
+                      {promotion_id || "No active promotions"}
                     </div>
                   </div>
                 </div>

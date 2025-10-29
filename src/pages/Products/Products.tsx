@@ -4,12 +4,13 @@ import { customFetch } from '../../utils';
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
-interface ProductCategory {
+// Shared Types - Export for use in other Product files
+export interface ProductCategory {
   id: number;
   title: string;
 }
 
-interface Producer {
+export interface Producer {
   id: number;
   title: string;
 }
@@ -23,17 +24,36 @@ interface Pagination {
   previous_page: number | null;
 }
 
-interface Product {
+export interface Promotion {
+  id: number;
+  discount_amount: number;
+}
+
+export interface Product {
   id: number;
   title: string;
   product_category: ProductCategory;
   producer: Producer;
   description: string;
   price: number;
-  promotion_id: boolean;
-  product_image_url: string;
+  promotion_id: number | null;
+  promotion?: Promotion | null;
+  product_image_url: string | null;
   created_at: string;
   pagination: Pagination;
+  updated_at: string;
+}
+
+export interface ProductsResponse {
+  data: Product[];
+}
+
+export interface ProductCategoriesResponse {
+  data: ProductCategory[];
+}
+
+export interface ProducersResponse {
+  data: Producer[];
 }
 
 export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
@@ -81,9 +101,11 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 };
 
 const Products = () => {
-  const { allProducts, ProductCategories } = useLoaderData() as {
-    allProducts: Product[],
-    ProductCategories: ProductCategory[]
+  const [searchWord, setSearchWord] = useState('');
+
+  const { allProducts: initialProducts, ProductCategories } = useLoaderData() as {
+    allProducts: ProductsResponse,
+    ProductCategories: ProductCategoriesResponse
   };
   const [searchWord, setSearchWord] = useState('');
   const [productData, setProductData] = useState(allProducts)
@@ -102,19 +124,19 @@ const Products = () => {
     }
   }
 
-  // const { data: products = [] } = useQuery({
-  //   queryKey: ['Products', user?.id],
-  //   queryFn: async () => {
-  //     const response = await customFetch.get('/products', {
-  //       headers: {
-  //         Authorization: user?.token,
-  //       },
-  //     });
-  //     return response.data;
-  //   },
-  //   initialData: initialProducts,
-  //   refetchOnWindowFocus: false,
-  // });
+    const { data: products = { data: [] } } = useQuery({
+      queryKey: ['Products', user?.id],
+      queryFn: async () => {
+        const response = await customFetch.get('/products', {
+          headers: {
+            Authorization: user?.token,
+          },
+        });
+        return response.data;
+      },
+      initialData: initialProducts,
+      refetchOnWindowFocus: false,
+    });
 
   const filteredProds = productData.data.filter((product: Product) => {
     const matchesSearch =
@@ -248,7 +270,23 @@ const Products = () => {
                              {product.title}
                           </td>
                           <td className="p-4 text-m text-center">
-                            <NavLink to={`/products/${product.id}`}><img src={product.product_image_url} className="w-[100px]" /></NavLink>
+                            <NavLink to={`/products/${product.id}`}>
+                              {product.product_image_url ? (
+                                <img 
+                                  src={product.product_image_url} 
+                                  alt={product.title}
+                                  className="w-[100px] h-[100px] object-cover rounded"
+                                  onError={(e) => {
+                                    // Fallback to placeholder if image fails to load
+                                    (e.target as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23ddd" width="100" height="100"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999"%3ENo Image%3C/text%3E%3C/svg%3E';
+                                  }}
+                                />
+                              ) : (
+                                <div className="w-[100px] h-[100px] bg-gray-200 rounded flex items-center justify-center text-gray-500 text-xs">
+                                  No Image
+                                </div>
+                              )}
+                            </NavLink>
                           </td>
                           <td className="p-4 text-m text-center">
                             {product.product_category.title}
@@ -263,7 +301,7 @@ const Products = () => {
                             {product.price}
                           </td>
                           <td className={`p-4 text-m`}>
-                            {!product.promotion_id ? "No active promotions": product.promotion_id}
+                            {product.promotion_id || "No active promotions"}
                           </td>
                         </tr>
                       ))
