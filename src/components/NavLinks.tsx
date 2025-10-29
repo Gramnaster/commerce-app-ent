@@ -1,5 +1,5 @@
 // import { useSelector } from 'react-redux';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigation } from 'react-router-dom';
 // import type { RootState } from '../store';
 
 interface LinksType {
@@ -17,6 +17,7 @@ const links: LinksType[] = [
 
 const NavLinks = () => {
   // const user = useSelector((state: RootState) => state.userState.user);
+  const navigation = useNavigation();
   return (
     <>
       {links.map((link) => {
@@ -44,7 +45,7 @@ const NavLinks = () => {
         // if (url === 'about') return null;
         return (
           <li key={id}>
-            <NavLink to={url} className="capitalize text-[white]">
+            <NavLink to={url} className={`capitalize text-[white] ${navigation.state === 'loading' ? 'pointer-events-none text-gray-700' : '' }`}>
               {text}
             </NavLink>
           </li>

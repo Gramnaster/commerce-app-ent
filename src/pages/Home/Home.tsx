@@ -1,4 +1,5 @@
 import { Outlet, useLocation, useNavigation } from 'react-router-dom'
+import { Loading } from '../../components';
 import { Navbar } from '../../components'
 
 
@@ -11,7 +12,7 @@ const Home = () => {
     <div className='h-full'>
       { currentPath.pathname === '/' ? null : <Navbar />}
       <div className='h-full'>
-        <Outlet />
+        { isPageLoading ? <Loading /> : <Outlet /> }
       </div>
     </div>
   )
