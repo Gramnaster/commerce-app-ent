@@ -20,8 +20,9 @@ const Navbar = () => {
     console.log("logout function here")
   };
 
+// [#BE493D]
   return (
-    <nav className="bg-[#BE493D] px-10 max-h-[75px]">
+    <nav className="bg-primary px-10 max-h-[75px]">
       <div className="navbar align-element">
         <div className="navbar-start">
           <NavLink
@@ -32,7 +33,7 @@ const Navbar = () => {
             Enterprise Tools
           </NavLink>
           {/* Dropdown Menu */}
-          <label className="input bg-[white] text-[#353535]">
+          {/* <label className="input bg-[white] text-[#353535]">
             <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <g
                 strokeLinejoin="round"
@@ -46,7 +47,7 @@ const Navbar = () => {
               </g>
             </svg>
             <input type="search" required placeholder="Search" className='bg-[white]'/>
-          </label>
+          </label> */}
           <div className="dropdown">
             <label tabIndex={0} className="btn btn-ghost lg:hidden">
               <img src={hamburgerIcon} alt="Hamburger" />

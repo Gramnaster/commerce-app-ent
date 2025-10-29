@@ -90,13 +90,13 @@ const Categories = () => {
   return (
     <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
       <div className="max-w-7xl mx-auto">
-        <NavLink to={`/categories/create`} className={'btn bg-[#BE493D] border-[#BE493D] rounded-[8px] text-white p-2 pt-1 pb-1 m-1 hover:bg-[hsl(5,100%,98%)] hover:text-[#BE493D] hover:border-[#BE493D]'}>
+        <NavLink to={`/categories/create`} className={'btn bg-primary border-primary rounded-[8px] text-white p-2 pt-1 pb-1 m-1 hover:bg-[hsl(5,100%,98%)] hover:text-primary hover:border-primary'}>
           Create Category
         </NavLink>
         {(
           <>
             {/* Search and Filter */}
-            <div className="bg-[#BE493D] rounded-lg p-6 border border-[#75332d] mb-6">
+            <div className="bg-primary rounded-lg p-6 border border-primary mb-6">
               <div className="flex items-center gap-4">
                 <div className="flex-1 relative">
                   <input
@@ -104,10 +104,10 @@ const Categories = () => {
                     placeholder="Search by Name or Date"
                     value={searchWord}
                     onChange={(e) => setSearchWord(e.target.value)}
-                    className="w-full bg-[hsl(5,100%,98%)] border border-[#75332d] rounded-lg p-3 pl-10 text-black placeholder-[#c27971]"
+                    className="w-full bg-white border border-primary rounded-lg p-3 pl-10 text-black placeholder-[#c27971]"
                   />
                   <svg
-                    className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#75332d]"
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-primary"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -120,7 +120,7 @@ const Categories = () => {
                     />
                   </svg>
                 </div>
-                <button className="p-3 bg-[#924b43] hover:bg-[#743b35] border border-[#75332d] rounded-lg hover:cursor-pointer transition-colors">
+                <button className="p-3 bg-[#924b43] hover:bg-[#743b35] border border-primary rounded-lg hover:cursor-pointer transition-colors">
                   <svg
                     className="w-5 h-5"
                     fill="none"
@@ -139,11 +139,11 @@ const Categories = () => {
             </div>
 
             {/* Traders Table */}
-            <div className="bg-[hsl(5,100%,98%)] rounded-lg border border-[hsl(5,100%,80%)] overflow-hidden">
+            <div className="bg-white rounded-lg border border-[hsl(5,100%,80%)] overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-[#BE493D]">
-                    <tr className="border-b border-[#75332d]">
+                  <thead className="bg-primary">
+                    <tr className="border-b border-primary">
                       <th className="text-left p-4 text-s font-normal text-white">
                         Product Category ID
                       </th>
@@ -184,7 +184,7 @@ const Categories = () => {
                             {formatDate(category.created_at)}
                           </td>
                           <td className={`p-4 text-m`}>
-                            <NavLink to={`/categories/${category.id}`}><span className='hover:text-[#BE493D] hover:underline'>View Category Info</span></NavLink>
+                            <NavLink to={`/categories/${category.id}`}><span className='hover:text-primary hover:underline'>View Category Info</span></NavLink>
                           </td>
                         </tr>
                       ))
@@ -192,7 +192,7 @@ const Categories = () => {
                       <tr className="w-full">
                         <td
                           colSpan={6}
-                          className="p-8 w-full text-center text-black text-m bg-[hsl(5,100%,98%)]"
+                          className="p-8 w-full text-center text-black text-m bg-white"
                         >
                           No category found
                         </td>

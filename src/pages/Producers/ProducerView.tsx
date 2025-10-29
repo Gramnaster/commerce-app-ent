@@ -96,13 +96,13 @@ const ProducerView = () => {
         </button>
         </div>
 
-          <div className="w-[60%] bg-[#BE493D] rounded-lg p-6 border border-gray-700">
+          <div className="w-[60%] bg-primary rounded-lg p-6 border border-gray-700">
             <div className=" mb-4 pb-2 border-b border-white flex items-center justify-between gap-1">
               <h2 className="text-xl font-bold text-white">
                 Producer Information
               </h2>
               <NavLink to={`/producers/edit/${id}`}>
-                <button className="btn bg-[hsl(5,100%,98%)] border-[#BE493D] text-l rounded-[8px] text-[#BE493D] p-2 pt-1 pb-1 m-1 hover:border-[hsl(5,100%,98%)] hover:bg-[#BE493D] hover:text-white">
+                <button className="btn bg-[hsl(5,100%,98%)] border-primary text-l rounded-[8px] text-primary p-2 pt-1 pb-1 m-1 hover:border-[hsl(5,100%,98%)] hover:bg-primary hover:text-white">
                   Edit Producer Info
                 </button>
               </NavLink>
@@ -110,7 +110,7 @@ const ProducerView = () => {
             <div>
 
                 <div className="place-items-center text-[black] w-full">
-                  <div className=" px-6 py-3 rounded-2xl bg-[hsl(5,100%,98%)] w-full">
+                  <div className=" px-6 py-3 rounded-2xl bg-white w-full">
                     <div className="m-1">
                       <label className="block text-l font-bold mb-2">
                         Producer Name:

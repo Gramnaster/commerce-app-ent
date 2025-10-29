@@ -4,7 +4,29 @@ import { customFetch } from '../../utils';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store';
-import type { ProductCategory, Producer, ProducersResponse, ProductCategoriesResponse, User } from './Products';
+
+interface ProductCategory {
+  id: number;
+  title: string;
+}
+
+interface Producer {
+  id: number;
+  title: string;
+}
+
+interface ProducersResponse {
+  data: Producer[];
+}
+
+interface ProductCategoriesResponse {
+  data: ProductCategory[];
+}
+
+export interface User {
+  id: number;
+  email: string;
+}
 
 export const loader =
   (queryClient: any, store: any) =>
@@ -111,8 +133,7 @@ const ProductCreate = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    console.log('ProductCreate handleSubmit - formData:', formData);
-    console.log('ProductCreate handleSubmit - imageFile:', imageFile);
+    console.log(`handleSubmit formData:`, formData);
 
     try {
       // Create FormData object for multipart/form-data
@@ -125,15 +146,12 @@ const ProductCreate = () => {
       
       // Add image file if selected (takes priority over URL)
       if (imageFile) {
-        console.log('ProductCreate - Using image file upload');
         formDataToSend.append('product[product_image]', imageFile);
       } else if (formData.product_image_url) {
-        console.log('ProductCreate - Using image URL:', formData.product_image_url);
         // Fallback to URL if no file is uploaded
         formDataToSend.append('product[product_image_url]', formData.product_image_url);
       }
 
-      console.log('ProductCreate - Sending request to /products');
       const response = await customFetch.post('/products', formDataToSend, {
         headers: {
           Authorization: user?.token,
@@ -142,9 +160,9 @@ const ProductCreate = () => {
       });
 
       if (response.status) {
-        console.log('ProductCreate - Product created:', response.data);
+        console.log('Product created:', response.data);
         console.log(
-          'ProductCreate - Image URL from Cloudinary:',
+          'Image URL from Cloudinary:',
           response.data.data.product_image_url
         );
       }
@@ -152,7 +170,7 @@ const ProductCreate = () => {
       navigate('/products');
       return response.data;
     } catch (error: any) {
-      console.error('ProductCreate - Failed to create product:', error);
+      console.error('Failed to create product:', error);
       toast.error('Failed to create product');
     } finally {
       setLoading(false);
@@ -160,7 +178,7 @@ const ProductCreate = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[hsl(5,100%,98%)] text-white p-6">
+    <div className="min-h-screen bg-transparent text-white p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6 text-black">
@@ -192,7 +210,7 @@ const ProductCreate = () => {
         {/* Edit Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Personal Information */}
-          <div className="bg-[#BE493D] rounded-lg p-6">
+          <div className="bg-primary rounded-lg p-6">
             <h2 className="text-xl font-bold text-white mb-4 pb-2 border-b border-white">
               Product Information
             </h2>
@@ -206,7 +224,7 @@ const ProductCreate = () => {
                   name="title"
                   value={formData.title}
                   onChange={handleInputChange}
-                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                   required
                 />
               </div>
@@ -219,7 +237,7 @@ const ProductCreate = () => {
                   name="description"
                   value={formData.description}
                   onChange={handleInputChange}
-                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                   required
                 />
               </div>
@@ -232,7 +250,7 @@ const ProductCreate = () => {
                   name="price"
                   value={formData.price}
                   onChange={handleInputChange}
-                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                   required
                 />
               </div>
@@ -261,7 +279,7 @@ const ProductCreate = () => {
                   name="product_image_url"
                   value={formData.product_image_url}
                   onChange={handleInputChange}
-                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                   required
                 />
               </div> */}

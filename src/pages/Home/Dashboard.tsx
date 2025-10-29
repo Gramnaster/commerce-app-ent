@@ -184,12 +184,12 @@ const Dashboard = () => {
     <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
       <div className="max-w-7xl mx-auto">
         {/* Tabs */}
-        <div className="flex gap-8 mb-6 border-b border-[#75332d]">
+        <div className="flex gap-8 mb-6 border-b border-[#172349]">
           <button
             onClick={() => setActiveTab('pending')}
             className={`pb-4 px-2 font-semibold text-lg transition-colors ${
               activeTab === 'pending'
-                ? 'text-[#d43828] border-b-2 border-[#d43828]'
+                ? 'text-primary border-b-2 border-primary'
                 : 'text-[#615b5a] hover:text-[#615b5a]'
             }`}
           >
@@ -199,7 +199,7 @@ const Dashboard = () => {
             onClick={() => setActiveTab('approved')}
             className={`pb-4 px-2 font-semibold text-lg transition-colors ${
               activeTab === 'approved'
-                ? 'text-[#d43828] border-b-2 border-[#d43828]'
+                ? 'text-primary border-b-2 border-primary'
                 : 'text-[#745f5c] hover:text-[#745f5c'
             }`}
           >
@@ -209,7 +209,7 @@ const Dashboard = () => {
             onClick={() => setActiveTab('rejected')}
             className={`pb-4 px-2 font-semibold text-lg transition-colors ${
               activeTab === 'rejected'
-                ? 'text-[#d43828] border-b-2 border-[#d43828]'
+                ? 'text-primary border-b-2 border-primary'
                 : 'text-[#745f5c] hover:text-[#745f5c]'
             }`}
           >
@@ -223,7 +223,7 @@ const Dashboard = () => {
         {(
           <>
             {/* Search and Filter */}
-            <div className="bg-[#BE493D] rounded-lg p-6 border border-[#75332d] mb-6">
+            <div className="bg-primary rounded-lg p-6 border border-primary mb-6">
               <div className="flex items-center gap-4">
                 <div className="flex-1 relative">
                   <input
@@ -231,10 +231,10 @@ const Dashboard = () => {
                     placeholder="Search by Name or Date"
                     value={searchWord}
                     onChange={(e) => setSearchWord(e.target.value)}
-                    className="w-full bg-[hsl(5,100%,98%)] border border-[#75332d] rounded-lg p-3 pl-10 text-black placeholder-[#c27971]"
+                    className="w-full bg-white border border-primary rounded-lg p-3 pl-10 text-black placeholder-[#666666]"
                   />
                   <svg
-                    className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#75332d]"
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-primary"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -247,7 +247,7 @@ const Dashboard = () => {
                     />
                   </svg>
                 </div>
-                <button className="p-3 bg-[#924b43] hover:bg-[#743b35] border border-[#75332d] rounded-lg hover:cursor-pointer transition-colors">
+                <button className="p-3 bg-primary hover:bg-[#03529c] border border-[white] rounded-lg hover:cursor-pointer transition-colors">
                   <svg
                     className="w-5 h-5"
                     fill="none"
@@ -266,11 +266,11 @@ const Dashboard = () => {
             </div>
 
             {/* Traders Table */}
-            <div className="bg-[#1e1b2e] rounded-lg border border-[hsl(5,100%,80%)] overflow-hidden">
+            <div className="bg-transparent rounded-lg border border-primary overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-[#BE493D]">
-                    <tr className="border-b border-[#75332d]">
+                  <thead className="bg-primary">
+                    <tr className="border-b border-primary">
                       <th className="text-left p-4 text-s font-normal text-white">
                         Order ID
                       </th>
@@ -298,8 +298,8 @@ const Dashboard = () => {
                       filteredOrders.map((order: UserCartOrder, index: number) => (
                         <tr
                           key={order.id}
-                          className={`border-b text-[#000000] border-[hsl(5,100%,80%)] hover:bg-[hsl(4,81%,90%)] transition-colors ${
-                            index % 2 === 0 ? 'bg-[hsl(5,100%,98%)]' : 'bg-[hsl(5,100%,98%)]'
+                          className={`border-b text-[#000000] border-primary hover:bg-[hsl(0,0%,87%)] transition-colors ${
+                            index % 2 === 0 ? 'bg-transparent' : 'bg-[#f3f3f3]'
                           }`}
                         >
                           <td className="p-4 text-m text-left">
@@ -359,7 +359,7 @@ const Dashboard = () => {
                                   {order.cart_status}
                                 </span>
                                 :
-                                <span className="text-sm font-medium text-[#BE493D]">
+                                <span className="text-sm font-medium text-[#AE2012]">
                                   {order.cart_status}
                                 </span>
                               )}
@@ -371,7 +371,7 @@ const Dashboard = () => {
                       <tr>
                         <td
                           colSpan={6}
-                          className="p-8 text-center text-black text-m bg-[hsl(5,100%,98%)]"
+                          className="p-8 text-center text-black text-m bg-transparent"
                         >
                           No {activeTab} orders found
                         </td>

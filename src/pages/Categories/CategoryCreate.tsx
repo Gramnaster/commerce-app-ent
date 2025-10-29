@@ -129,7 +129,7 @@ const CategoryCreate = () => {
         {/* Edit Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Personal Information */}
-          <div className="bg-[#BE493D] rounded-lg p-6">
+          <div className="bg-primary rounded-lg p-6">
             <h2 className="text-xl font-bold text-white mb-4 pb-2 border-b border-white">
               Category Information
             </h2>
@@ -143,7 +143,7 @@ const CategoryCreate = () => {
                   name="title"
                   value={formData.title}
                   onChange={handleInputChange}
-                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                   required
                 />
               </div>

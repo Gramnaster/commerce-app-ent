@@ -315,13 +315,13 @@ const handleInputChange = (
             Editing information for {formData.admin_detail_attributes.first_name || ''}{' '} 
             {formData.admin_detail_attributes.last_name || ''}{' '}
           </p>
-          <button type="button" onClick={handleDelete} className="text-[#BE493D] hover:underline hover:cursor-pointer">Delete Admin?</button>
+          <button type="button" onClick={handleDelete} className="text-primary hover:underline hover:cursor-pointer">Delete Admin?</button>
         </div>
 
         {/* Edit Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Personal Information */}
-          <div className="bg-[#BE493D] rounded-lg p-6">
+          <div className="bg-primary rounded-lg p-6">
             <h2 className="text-xl font-bold text-white mb-4 pb-2 border-b border-white">
               Personal Information
             </h2>
@@ -335,7 +335,7 @@ const handleInputChange = (
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                   required
                 />
               </div>
@@ -348,7 +348,7 @@ const handleInputChange = (
                   name="first_name"
                   value={formData.admin_detail_attributes.first_name}
                   onChange={handleInputChange}
-                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                   required
                 />
               </div>
@@ -361,7 +361,7 @@ const handleInputChange = (
                   name="middle_name"
                   value={formData.admin_detail_attributes.middle_name}
                   onChange={handleInputChange}
-                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                 />
               </div>
               <div>
@@ -373,7 +373,7 @@ const handleInputChange = (
                   name="last_name"
                   value={formData.admin_detail_attributes.last_name}
                   onChange={handleInputChange}
-                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                   required
                 />
               </div>
@@ -386,14 +386,14 @@ const handleInputChange = (
                   name="dob"
                   value={formData.admin_detail_attributes.dob}
                   onChange={handleInputChange}
-                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                   required
                 />
               </div>
             </div>
 
           {/* Address Information */}
-          {/* <div className="bg-[#1e1b2e] rounded-lg p-6 border border-gray-700"> */}
+          {/* <div className="bg-transparent rounded-lg p-6 border border-gray-700"> */}
             <h2 className="text-xl font-bold text-white mb-4 pb-2 pt-4 border-b border-white">
               Address Information
             </h2>
@@ -410,7 +410,7 @@ const handleInputChange = (
                   name="unit_no"
                   value={adminAddress.address_attributes.unit_no}
                   onChange={(e) => handleInputChange(e, index)}
-                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                 />
               </div>
               <div>
@@ -422,7 +422,7 @@ const handleInputChange = (
                   name="street_no"
                   value={adminAddress.address_attributes.street_no}
                   onChange={(e) => handleInputChange(e, index)}
-                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                 />
               </div>
               <div>
@@ -434,7 +434,7 @@ const handleInputChange = (
                   name="address_line1"
                   value={adminAddress.address_attributes.address_line1}
                   onChange={(e) => handleInputChange(e, index)}
-                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                 />
               </div>
               <div>
@@ -446,7 +446,7 @@ const handleInputChange = (
                   name="address_line2"
                   value={adminAddress.address_attributes.address_line2}
                   onChange={(e) => handleInputChange(e, index)}
-                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                 />
               </div>
               <div>
@@ -458,7 +458,7 @@ const handleInputChange = (
                   name="city"
                   value={adminAddress.address_attributes.city}
                   onChange={(e) => handleInputChange(e, index)}
-                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                 />
               </div>
               <div>
@@ -470,7 +470,7 @@ const handleInputChange = (
                   name="zipcode"
                   value={adminAddress.address_attributes.zipcode}
                   onChange={(e) => handleInputChange(e, index)}
-                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                   required
                 />
               </div>
@@ -482,7 +482,7 @@ const handleInputChange = (
                   name="country_id"
                   value={adminAddress.address_attributes.country_id}
                   onChange={(e) => handleInputChange(e, index)}
-                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                   required
                 >
                   <option value="" className="text=black">Select Country...</option>
@@ -501,7 +501,7 @@ const handleInputChange = (
           {/* </div> */}
 
           {/* Phones */}
-          {/* <div className="bg-[#1e1b2e] rounded-lg p-6 border border-gray-700"> */}
+          {/* <div className="bg-transparent rounded-lg p-6 border border-gray-700"> */}
             <h2 className="text-xl font-bold text-white mb-4 pt-4 pb-2 border-b border-white">
               Phone Numbers
             </h2>
@@ -518,7 +518,7 @@ const handleInputChange = (
                   name="phone_no"
                   value={phoneNumber.phone_no}
                   onChange={(e) => handleInputChange(e, undefined, index)}
-                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                 />
               </div>
               <div>
@@ -531,7 +531,7 @@ const handleInputChange = (
                   value="work"
                   checked={phoneNumber.phone_type === 'work'}
                   onChange={(e) => handleInputChange(e, undefined, index)}
-                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                 />
                 <div>Work</div>
                 <input
@@ -540,7 +540,7 @@ const handleInputChange = (
                   value="home"
                   checked={phoneNumber.phone_type === 'home'}
                   onChange={(e) => handleInputChange(e, undefined, index)}
-                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                 />
                 <div>Home</div>
                 <input
@@ -549,7 +549,7 @@ const handleInputChange = (
                   value="mobile"
                   checked={phoneNumber.phone_type === 'mobile'}
                   onChange={(e) => handleInputChange(e, undefined, index)}
-                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                 />
                 <div>Mobile</div>
               </div>
@@ -567,7 +567,7 @@ const handleInputChange = (
               name="company_site_id"
               value={site?.company_site_id}
               onChange={(e) => handleInputChange(e, undefined, undefined, index)} // ✅ pass index
-              className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+              className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
               required
             >
               <option value="" className="text-black">Select Site...</option>
