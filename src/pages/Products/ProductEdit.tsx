@@ -5,22 +5,15 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store";
-import type { Product, ProducersResponse, ProductCategoriesResponse } from "./Products";
-
-export interface User {
-  id: number;
-  email: string;
-}
-
-interface ProductDetailsResponse {
-  data: Product;
-}
+import type { ProducersResponse, ProductCategoriesResponse, ProductDetailsResponse } from "./Products";
 
 export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
   const storeState = store.getState();
   const admin_user = storeState.userState?.user;
 
   const id = params.id;
+  console.log('ProductEdit loader - params.id:', id);
+  console.log('ProductEdit loader - admin_user:', admin_user);
 
   const ProductDetailsQuery = {
     queryKey: ['ProductDetails', id],
@@ -30,7 +23,7 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
           Authorization: admin_user.token,
         },
       });
-      console.log(`ProductEdit ProductDetails`, response.data)
+      console.log('ProductEdit ProductDetails response.data:', response.data)
       return response.data;
     },
   };
@@ -43,7 +36,7 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
           Authorization: admin_user.token,
         },
       });
-      console.log(`ProductEdit producers`, response.data)
+      console.log('ProductEdit producers response.data:', response.data)
       return response.data;
     },
   };
@@ -56,7 +49,7 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
           Authorization: admin_user.token,
         },
       });
-      console.log(`ProductEdit product_categories`, response.data)
+      console.log('ProductEdit product_categories response.data:', response.data)
       return response.data;
     },
   };
@@ -67,11 +60,11 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
       queryClient.ensureQueryData(ProducersQuery),
       queryClient.ensureQueryData(ProductCategoriesQuery)
     ])
-    console.log(`ProductEdit ProducersDetails`, ProducersDetails)
-    console.log(`ProductEdit ProductCategoriesDetails`, ProductCategoriesDetails)
+    console.log('ProductEdit ProducersDetails:', ProducersDetails)
+    console.log('ProductEdit ProductCategoriesDetails:', ProductCategoriesDetails)
     return { ProductDetails, ProducersDetails, ProductCategoriesDetails };
   } catch (error: any) {
-    console.error('Failed to load product:', error);
+    console.error('ProductEdit - Failed to load product:', error);
     toast.error('Failed to load product details');
     return redirect('/products');
   }
@@ -86,6 +79,9 @@ const ProductEdit = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const {title, description, price, product_image_url, product_category, producer, promotion} = ProductDetails.data
+
+  console.log('ProductEdit component - ProductDetails:', ProductDetails);
+  console.log('ProductEdit component - current product_image_url:', product_image_url);
 
   const user = useSelector((state: RootState) => state.userState.user);
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -106,6 +102,7 @@ const ProductEdit = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      console.log('ProductEdit handleFileChange - Selected file:', file.name, file.size, 'bytes');
       setImageFile(file);
       setImagePreview(URL.createObjectURL(file));
     }
@@ -113,6 +110,7 @@ const ProductEdit = () => {
 
   const updateProductMutation = useMutation({
     mutationFn: async (productData: FormData | any) => {
+      console.log('ProductEdit mutation - Sending update request');
       const response = await customFetch.patch(
         `/products/${ProductDetails.data.id}`,
         productData,
@@ -123,15 +121,17 @@ const ProductEdit = () => {
           },
         }
       );
+      console.log('ProductEdit mutation - Response:', response.data);
       return response.data;
     },
     onSuccess: () => {
+      console.log('ProductEdit mutation - Success, updating product ID:', ProductDetails.data.id);
       toast.success('Product Details updated successfully');
       queryClient.invalidateQueries({ queryKey: ['products', ProductDetails.data.id] });
       navigate(`/products/${ProductDetails.data.id}`);
     },
     onError: (error: any) => {
-      console.error('Update failed:', error);
+      console.error('ProductEdit mutation - Update failed:', error);
       const errorMessage =
         error.response?.data?.message || 'Failed to update product';
       toast.error(errorMessage);
@@ -156,11 +156,13 @@ const ProductEdit = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    console.log(`handleSubmit formData:`, formData)
+    console.log('ProductEdit handleSubmit - formData:', formData)
+    console.log('ProductEdit handleSubmit - imageFile:', imageFile)
     
     try {
       // Check if there's a new image to upload
       if (imageFile) {
+        console.log('ProductEdit - Using FormData for file upload');
         // Use FormData for file upload
         const formDataToSend = new FormData();
         formDataToSend.append('product[title]', formData.title);
@@ -176,13 +178,15 @@ const ProductEdit = () => {
         // Add image file
         formDataToSend.append('product[product_image]', imageFile);
         
+        console.log('ProductEdit - Sending FormData to API');
         updateProductMutation.mutate(formDataToSend);
       } else {
+        console.log('ProductEdit - Using JSON for regular update');
         // Use JSON for regular update
         const payload = {
           product: formData,
         };
-        console.log(`handleSubmit payload:`, payload)
+        console.log('ProductEdit handleSubmit - payload:', payload)
         updateProductMutation.mutate(payload);
       }
     } finally {
@@ -193,10 +197,11 @@ const ProductEdit = () => {
   const handleDelete = async () => {
   if (!confirm("Are you sure you want to delete this product?")) return;
   
-    console.log(`handleSubmit formData:`, formData)
+    console.log('ProductEdit handleDelete - Deleting product ID:', ProductDetails.data.id)
     navigate(`/products`)
-    // Create the payload matching the API format
+    
    try {
+      console.log('ProductEdit handleDelete - Sending DELETE request');
       const response = await customFetch.delete(`/products/${ProductDetails.data.id}`,
         {
           headers: {
@@ -205,11 +210,12 @@ const ProductEdit = () => {
           },
         }
       );
+      console.log('ProductEdit handleDelete - Delete response:', response.data);
       redirect('/products');
       toast.success('Product deleted successfully');
       return response.data;
     } catch (error: any) {
-      console.error('Failed to load product:', error);
+      console.error('ProductEdit handleDelete - Failed to delete product:', error);
       toast.error('Failed to load product details');
       return redirect('/products');
     }

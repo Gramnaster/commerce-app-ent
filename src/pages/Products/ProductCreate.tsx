@@ -4,29 +4,7 @@ import { customFetch } from '../../utils';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store';
-
-interface ProductCategory {
-  id: number;
-  title: string;
-}
-
-interface Producer {
-  id: number;
-  title: string;
-}
-
-interface ProducersResponse {
-  data: Producer[];
-}
-
-interface ProductCategoriesResponse {
-  data: ProductCategory[];
-}
-
-export interface User {
-  id: number;
-  email: string;
-}
+import type { ProductCategory, Producer, ProducersResponse, ProductCategoriesResponse, User } from './Products';
 
 export const loader =
   (queryClient: any, store: any) =>
@@ -133,7 +111,8 @@ const ProductCreate = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    console.log(`handleSubmit formData:`, formData);
+    console.log('ProductCreate handleSubmit - formData:', formData);
+    console.log('ProductCreate handleSubmit - imageFile:', imageFile);
 
     try {
       // Create FormData object for multipart/form-data
@@ -146,12 +125,15 @@ const ProductCreate = () => {
       
       // Add image file if selected (takes priority over URL)
       if (imageFile) {
+        console.log('ProductCreate - Using image file upload');
         formDataToSend.append('product[product_image]', imageFile);
       } else if (formData.product_image_url) {
+        console.log('ProductCreate - Using image URL:', formData.product_image_url);
         // Fallback to URL if no file is uploaded
         formDataToSend.append('product[product_image_url]', formData.product_image_url);
       }
 
+      console.log('ProductCreate - Sending request to /products');
       const response = await customFetch.post('/products', formDataToSend, {
         headers: {
           Authorization: user?.token,
@@ -160,9 +142,9 @@ const ProductCreate = () => {
       });
 
       if (response.status) {
-        console.log('Product created:', response.data);
+        console.log('ProductCreate - Product created:', response.data);
         console.log(
-          'Image URL from Cloudinary:',
+          'ProductCreate - Image URL from Cloudinary:',
           response.data.data.product_image_url
         );
       }
@@ -170,7 +152,7 @@ const ProductCreate = () => {
       navigate('/products');
       return response.data;
     } catch (error: any) {
-      console.error('Failed to create product:', error);
+      console.error('ProductCreate - Failed to create product:', error);
       toast.error('Failed to create product');
     } finally {
       setLoading(false);
