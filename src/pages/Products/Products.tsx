@@ -3,6 +3,9 @@ import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../store';
 
 // Shared Types - Export for use in other Product files
 export interface ProductCategory {
@@ -101,14 +104,13 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 };
 
 const Products = () => {
-  const [searchWord, setSearchWord] = useState('');
-
   const { allProducts: initialProducts, ProductCategories } = useLoaderData() as {
     allProducts: ProductsResponse,
     ProductCategories: ProductCategoriesResponse
   };
+  const user = useSelector((state: RootState) => state.userState.user);
   const [searchWord, setSearchWord] = useState('');
-  const [productData, setProductData] = useState(allProducts)
+  const [productData, setProductData] = useState(initialProducts)
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const handlePagination = async (page: number) => {
