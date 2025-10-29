@@ -20,12 +20,22 @@ interface Address {
   country: string;
 }
 
+interface Pagination {
+  current_page: number | null;
+  per_page: number | null;
+  total_entries: number | null;
+  total_pages: number | null;
+  next_page: number | null;
+  previous_page: number | null;
+}
+
 interface Producer {
   id: number;
   title: string;
   products_count: number;
   address: Address;
   created_at: string;
+  pagination: Pagination;
 }
 
 export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
@@ -60,24 +70,38 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 
 const Producers = () => {
   const [searchWord, setSearchWord] = useState('');
-  const { Producers: initialProducers } = useLoaderData() as {
+  const { Producers } = useLoaderData() as {
     Producers: Producer[]
   };
   const user = useSelector((state: RootState) => state.userState.user);
+  const [producerData, setProducerData] = useState(Producers)
 
-    const { data: producers = [] } = useQuery({
-      queryKey: ['producers', user?.id],
-      queryFn: async () => {
-        const response = await customFetch.get('/producers', {
-          headers: {
-            Authorization: user?.token,
-          },
-        });
-        return response.data;
-      },
-      initialData: initialProducers,
-      refetchOnWindowFocus: false,
-    });
+  const handlePagination = async (page: number) => {
+    try {
+      const response = await customFetch.get(`/products?page=${page}&per_page=${per_page}`);
+      const data = response.data
+      setProducerData(data)
+    }
+    catch (error: any) {
+      console.error('Failed to load pagination data:', error);
+      toast.error('Failed to load pagination data');
+      return { pagination: [] };
+    }
+  }
+
+  // const { data: producers = [] } = useQuery({
+  //     queryKey: ['producers', user?.id],
+  //     queryFn: async () => {
+  //       const response = await customFetch.get('/producers', {
+  //         headers: {
+  //           Authorization: user?.token,
+  //         },
+  //       });
+  //       return response.data;
+  //     },
+  //     initialData: initialProducers,
+  //     refetchOnWindowFocus: false,
+  //   });
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -87,7 +111,7 @@ const Producers = () => {
     });
   };
 
-  const filteredProducers = producers.data.filter((producer: Producer) => {
+  const filteredProducers = producerData.data.filter((producer: Producer) => {
         const matchesSearch =
         producer.id?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
         producer.title?.toLowerCase().includes(searchWord.toLowerCase()) ||
@@ -108,6 +132,8 @@ const Producers = () => {
         (a: Producer, b: Producer) =>
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     ) || [];
+
+  const { current_page, per_page, total_entries, total_pages, next_page, previous_page } = producerData.pagination
 
   return (
     <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
@@ -238,6 +264,33 @@ const Producers = () => {
             </div>
           </>
         )}
+      </div>
+      <div className="join">
+        <input
+          className="join-item btn btn-square" 
+          type="radio" 
+          name="options" 
+          onClick={() => handlePagination(previous_page)}
+          aria-label={`<`} 
+        />
+        {[...Array(total_pages).keys()].map((_, i) => 
+          (
+          <input key={i} 
+          className="join-item btn btn-square" 
+          type="radio" 
+          name="options" 
+          onClick={() => handlePagination(i + 1)}
+          aria-label={`${i + 1}`} 
+          />
+          ))
+        }
+        <input
+          className="join-item btn btn-square" 
+          type="radio" 
+          name="options" 
+          onClick={() => handlePagination(next_page)}
+          aria-label={`>`} 
+        />
       </div>
     </div>
   )

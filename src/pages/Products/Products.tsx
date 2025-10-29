@@ -3,9 +3,6 @@ import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { useSelector } from 'react-redux';
-import type { RootState } from '../../store';
 
 // Shared Types - Export for use in other Product files
 export interface ProductCategory {
@@ -16,6 +13,15 @@ export interface ProductCategory {
 export interface Producer {
   id: number;
   title: string;
+}
+
+interface Pagination {
+  current_page: number | null;
+  per_page: number | null;
+  total_entries: number | null;
+  total_pages: number | null;
+  next_page: number | null;
+  previous_page: number | null;
 }
 
 export interface Promotion {
@@ -34,6 +40,7 @@ export interface Product {
   promotion?: Promotion | null;
   product_image_url: string | null;
   created_at: string;
+  pagination: Pagination;
   updated_at: string;
 }
 
@@ -100,10 +107,22 @@ const Products = () => {
     allProducts: ProductsResponse,
     ProductCategories: ProductCategoriesResponse
   };
-
+  const [searchWord, setSearchWord] = useState('');
+  const [productData, setProductData] = useState(allProducts)
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  const user = useSelector((state: RootState) => state.userState.user);
+  const handlePagination = async (page: number) => {
+    try {
+      const response = await customFetch.get(`/products?page=${page}&per_page=${per_page}`);
+      const data = response.data
+      setProductData(data)
+    }
+    catch (error: any) {
+      console.error('Failed to load pagination data:', error);
+      toast.error('Failed to load pagination data');
+      return { pagination: [] };
+    }
+  }
 
     const { data: products = { data: [] } } = useQuery({
       queryKey: ['Products', user?.id],
@@ -119,15 +138,15 @@ const Products = () => {
       refetchOnWindowFocus: false,
     });
 
-  const filteredProds = products.data.filter((product: Product) => {
-        const matchesSearch =
-        product.id?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
-        product.title?.toLowerCase().includes(searchWord.toLowerCase()) ||
-        product.description?.toLowerCase().includes(searchWord.toLowerCase()) ||
-        product.price?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
-        product.product_category?.title.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
-        product.producer?.title.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
-        product.promotion_id?.toString().toLowerCase().includes(searchWord.toLowerCase())
+  const filteredProds = productData.data.filter((product: Product) => {
+    const matchesSearch =
+      product.id?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
+      product.title?.toLowerCase().includes(searchWord.toLowerCase()) ||
+      product.description?.toLowerCase().includes(searchWord.toLowerCase()) ||
+      product.price?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
+      product.product_category?.title.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
+      product.producer?.title.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
+      product.promotion_id?.toString().toLowerCase().includes(searchWord.toLowerCase());
 
     const matchesCategory = selectedCategory
       ? product.product_category.title === selectedCategory
@@ -139,6 +158,8 @@ const Products = () => {
     (a: Product, b: Product) =>
       new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
   ) || [];
+  
+  const { current_page, per_page, total_entries, total_pages, next_page, previous_page } = productData.pagination
 
   return (
     <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
@@ -300,6 +321,33 @@ const Products = () => {
             </div>
           </>
         )}
+      </div>
+      <div className="join">
+        <input
+          className="join-item btn btn-square" 
+          type="radio" 
+          name="options" 
+          onClick={() => handlePagination(previous_page)}
+          aria-label={`<`} 
+        />
+        {[...Array(total_pages).keys()].map((_, i) => 
+          (
+          <input key={i} 
+          className="join-item btn btn-square" 
+          type="radio" 
+          name="options" 
+          onClick={() => handlePagination(i + 1)}
+          aria-label={`${i + 1}`} 
+          />
+          ))
+        }
+        <input
+          className="join-item btn btn-square" 
+          type="radio" 
+          name="options" 
+          onClick={() => handlePagination(next_page)}
+          aria-label={`>`} 
+        />
       </div>
     </div>
   )
