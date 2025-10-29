@@ -1,16 +1,15 @@
 import { NavLink, redirect, useLoaderData, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { customFetch } from "../../utils";
-import type { Product } from "./Products";
-
-interface ProductDetailsResponse {
-  data: Product;
-}
+import type { ProductDetailsResponse } from "./Products";
 
 export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
   const storeState = store.getState();
   const user = storeState.userState?.user;
   const id = params.id;
+  
+  console.log('ProductView loader - params.id:', id);
+  console.log('ProductView loader - user:', user);
 
   const ProductDetailsQuery = {
     queryKey: ['ProductDetails', id],
@@ -20,16 +19,17 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
           Authorization: user.token,
         },
       });
+      console.log('ProductView response.data:', response.data);
       return response.data;
     },
   };
-  console.log(`ProductEdit userDetailsQuery`, ProductDetailsQuery)
 
   try {
     const ProductDetails = await queryClient.ensureQueryData(ProductDetailsQuery);
+    console.log('ProductView ProductDetails:', ProductDetails);
     return { ProductDetails };
   } catch (error: any) {
-    console.error('Failed to load product:', error);
+    console.error('ProductView - Failed to load product:', error);
     toast.error('Failed to load product details');
     return redirect('/products');
   }
@@ -41,6 +41,10 @@ const ProductView = () => {
   }
   const navigate = useNavigate();
   const { id, title, product_image_url, product_category, producer, description, price, promotion_id } = ProductDetails.data
+  
+  console.log('ProductView component - ProductDetails:', ProductDetails);
+  console.log('ProductView component - product_image_url:', product_image_url);
+  console.log('ProductView component - promotion_id:', promotion_id);
 
   return (
     <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
