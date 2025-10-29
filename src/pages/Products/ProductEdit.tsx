@@ -249,13 +249,13 @@ const ProductEdit = () => {
           <p className=" text-black">
             Editing {ProductDetails.data.title || ''}{' '}
           </p>
-          <button type="button" onClick={handleDelete} className="text-[#BE493D] hover:underline hover:cursor-pointer">Delete Product?</button>
+          <button type="button" onClick={handleDelete} className="text-primary hover:underline hover:cursor-pointer">Delete Product?</button>
         </div>
 
         {/* Edit Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Personal Information */}
-          <div className="bg-[#BE493D] rounded-lg p-6 border border-gray-700">
+          <div className="bg-primary rounded-lg p-6 border border-gray-700">
 
             <h2 className="text-xl font-bold text-white mb-4 pb-2 border-b border-white">
               Product Information
@@ -270,7 +270,7 @@ const ProductEdit = () => {
                   name="title"
                   value={formData.title}
                   onChange={handleInputChange}
-                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                   required
                 />
               </div>
@@ -283,7 +283,7 @@ const ProductEdit = () => {
                   name="description"
                   value={formData.description}
                   onChange={handleInputChange}
-                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                   required
                 />
               </div>
@@ -296,7 +296,7 @@ const ProductEdit = () => {
                   name="price"
                   value={formData.price}
                   onChange={handleInputChange}
-                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                   required
                 />
               </div>
@@ -309,7 +309,7 @@ const ProductEdit = () => {
                   name="product_image_url"
                   value={formData.product_image_url}
                   onChange={handleInputChange}
-                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                   placeholder="Or enter image URL"
                 />
               </div>
@@ -322,7 +322,7 @@ const ProductEdit = () => {
                   type="file"
                   accept="image/*"
                   onChange={handleFileChange}
-                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black"
+                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black"
                 />
                 {imagePreview && (
                   <img
@@ -374,7 +374,7 @@ const ProductEdit = () => {
                   name="promotion_id"
                   value={formData.promotion_id || ''}
                   onChange={handleInputChange}
-                  className="w-full bg-[hsl(5,100%,98%)] border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                   placeholder="Optional"
                 />
               </div>

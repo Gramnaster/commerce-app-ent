@@ -1,8 +1,9 @@
-import { useLoaderData } from 'react-router-dom';
+import { useLoaderData, useNavigation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import { Loading } from '../../components';
 // import { useQuery } from '@tanstack/react-query';
 // import { useSelector } from 'react-redux';
 // import type { RootState } from '../../store';
@@ -122,17 +123,20 @@ const Products = () => {
   const [searchWord, setSearchWord] = useState('');
   const [productData, setProductData] = useState(initialProducts);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   // const user = useSelector((state: RootState) => state.userState.user);
 
   const handlePagination = async (page: number | null) => {
     if (!page) return;
+    setLoading(true)
     
     try {
       const response = await customFetch.get(`/products?page=${page}&per_page=${productData.pagination.per_page || 20}`);
       const data = response.data;
       console.log('Products handlePagination - Response:', data);
       setProductData(data);
+      setLoading(false);
     }
     catch (error: any) {
       console.error('Products handlePagination - Failed to load pagination data:', error);
@@ -188,23 +192,22 @@ const Products = () => {
   return (
     <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
       <div className="max-w-7xl mx-auto">
-        <NavLink to={`/products/create`} className={'btn bg-[#BE493D] border-[#BE493D] rounded-[8px] text-white p-2 pt-1 pb-1 m-1 hover:bg-[hsl(5,100%,98%)] hover:text-[#BE493D] hover:border-[#BE493D]'}>
+        <NavLink to={`/products/create`} className={'btn bg-primary border-primary rounded-[8px] text-white p-2 pt-1 pb-1 m-1 hover:bg-[hsl(5,100%,98%)] hover:text-primary hover:border-primary'}>
            Create Product  
         </NavLink>
-        <div className='text-[#BE493D] font-bold'>
-          <button onClick={() => setSelectedCategory(null)} className='m-1 px-2 py-2 border-2 border-[#BE493D] rounded-2xl hover:cursor-pointer hover:bg-[#BE493D] hover:text-white' >All</button>
+        <div className='text-primary font-bold'>
+          <button onClick={() => setSelectedCategory(null)} className='m-1 px-2 py-2 border-2 border-primary rounded-2xl hover:cursor-pointer hover:bg-primary hover:text-white' >All</button>
           {ProductCategories.data.map((category: ProductCategory) => {
             const { id, title } = category;
             return (
-              <button onClick={() => setSelectedCategory(`${title}`)} className='m-1 px-2 py-2 border-2 border-[#BE493D] rounded-2xl hover:cursor-pointer hover:bg-[#BE493D] hover:text-white' key={id}>{title}</button>
+              <button onClick={() => setSelectedCategory(`${title}`)} className='m-1 px-2 py-2 border-2 border-primary rounded-2xl hover:cursor-pointer hover:bg-primary hover:text-white' key={id}>{title}</button>
             )
           })}
-          <NavLink to={`/products/create`} className={'m-1 px-2 py-2 border-2 border-[#BE493D] rounded-2xl hover:bg-[#BE493D] hover:text-white'}>Create Product</NavLink>
-        </div>
+      </div>
         {(
           <>
             {/* Search and Filter */}
-            <div className="bg-[#BE493D] rounded-lg p-6 border border-[#75332d] mb-6">
+            <div className="bg-primary rounded-lg p-6 border border-primary mb-6">
               <div className="flex items-center gap-4">
                 <div className="flex-1 relative">
                   <input
@@ -212,10 +215,10 @@ const Products = () => {
                     placeholder="Search by Name or Date"
                     value={searchWord}
                     onChange={(e) => setSearchWord(e.target.value)}
-                    className="w-full bg-[hsl(5,100%,98%)] border border-[#75332d] rounded-lg p-3 pl-10 text-black placeholder-[#c27971]"
+                    className="w-full bg-[white] border border-black rounded-lg p-3 pl-10 text-black placeholder-[#666666]"
                   />
                   <svg
-                    className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#75332d]"
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-primary"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -228,7 +231,7 @@ const Products = () => {
                     />
                   </svg>
                 </div>
-                <button className="p-3 bg-[#924b43] hover:bg-[#743b35] border border-[#75332d] rounded-lg hover:cursor-pointer transition-colors">
+                <button className="p-3 bg-primary hover:bg-[#03529c] border border-[white] rounded-lg hover:cursor-pointer transition-colors">
                   <svg
                     className="w-5 h-5"
                     fill="none"
@@ -247,11 +250,11 @@ const Products = () => {
             </div>
 
             {/* Traders Table */}
-            <div className="bg-[hsl(5,100%,98%)] rounded-lg border border-[hsl(5,100%,80%)] overflow-hidden">
+            <div className="bg-transparent rounded-lg border border-primary overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-[#BE493D]">
-                    <tr className="border-b border-[#75332d]">
+                  <thead className="bg-primary">
+                    <tr className="border-b border-primary">
                       <th className="text-left p-4 text-s font-normal text-white">
                         Product ID
                       </th>
@@ -278,13 +281,22 @@ const Products = () => {
                       </th>
                     </tr>
                   </thead>
-                  <tbody>
-                    {filteredProds.length > 0 ? (
+                  <tbody >
+                    { loading ?     
+                    <tr className='border-b text-[#000000] border-primary hover:bg-[hsl(0,0%,87%)] transition-colors'>
+                      <td className="p-8 text-center" colSpan={10}>
+                        <div className="h-screen flex items-center justify-center">
+                          <span className="loading loading-ring loading-lg text-black">LOADING</span>
+                        </div>
+                      </td> 
+                    </tr>
+                    : filteredProds.length > 0 ? 
+                      (
                       filteredProds.map((product: Product, index: number) => (
                         <tr
                           key={product.id}
-                          className={`border-b text-[#000000] border-[hsl(5,100%,80%)] hover:bg-[hsl(4,81%,90%)] transition-colors ${
-                            index % 2 === 0 ? 'bg-[hsl(5,100%,98%)]' : 'bg-[hsl(5,100%,98%)]'
+                          className={`border-b text-[#000000] border-primary hover:bg-[hsl(0,0%,87%)] transition-colors ${
+                            index % 2 === 0 ? 'bg-transparent' : 'bg-[#f3f3f3]'
                           }`}
                         >
                           <td className="p-4 text-m text-left">
@@ -305,7 +317,9 @@ const Products = () => {
                                     (e.target as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23ddd" width="100" height="100"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999"%3ENo Image%3C/text%3E%3C/svg%3E';
                                   }}
                                 />
-                              ) : (
+                              ) 
+                              : 
+                              (
                                 <div className="w-[100px] h-[100px] bg-gray-200 rounded flex items-center justify-center text-gray-500 text-xs">
                                   No Image
                                 </div>
@@ -333,7 +347,7 @@ const Products = () => {
                       <tr className="w-full">
                         <td
                           colSpan={6}
-                          className="p-8 w-full text-center text-black text-m bg-[hsl(5,100%,98%)]"
+                          className="p-8 w-full text-center text-black text-m bg-transparent"
                         >
                           No products found
                         </td>
@@ -350,19 +364,19 @@ const Products = () => {
       {total_pages && total_pages > 1 && (
         <div className="join mt-6 flex justify-center">
           <input
-            className="join-item btn btn-square" 
+            className="join-item btn btn-square border-black" 
             type="radio" 
             name="options" 
             onClick={() => handlePagination(previous_page)}
             disabled={!previous_page}
-            aria-label="Previous" 
+            aria-label="❮" 
           />
           {[...Array(total_pages).keys()].map((_, i) => {
             const pageNum = i + 1;
             return (
               <input 
                 key={i} 
-                className="join-item btn btn-square" 
+                className="join-item btn btn-square border-black" 
                 type="radio" 
                 name="options" 
                 checked={current_page === pageNum}
@@ -373,12 +387,12 @@ const Products = () => {
             );
           })}
           <input
-            className="join-item btn btn-square" 
+            className="join-item btn btn-square border-black" 
             type="radio" 
             name="options" 
             onClick={() => handlePagination(next_page)}
             disabled={!next_page}
-            aria-label="Next" 
+            aria-label="❯" 
           />
         </div>
       )}

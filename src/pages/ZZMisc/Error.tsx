@@ -14,7 +14,7 @@ const Error = () => {
         </div>
         <div>
           <Link to="/">
-            <button type='button' className='btn bg-primary'>Return Home</button>
+            <button type='button' className='btn bg-[#BE493D] text-white'>Return Home</button>
           </Link>
         </div>
       </main>
@@ -25,7 +25,7 @@ const Error = () => {
     <main className="grid min-ih-[100vh] place-items-center px-8">
       <h4>There was an error...</h4>
       <Link to="/">
-        <button type='button' className='btn bg-primary'>Return Home</button>
+        <button type='button' className='btn bg-[#BE493D] text-white'>Return Home</button>
       </Link>
     </main>
   );
