@@ -117,7 +117,7 @@ const Products = () => {
     allProducts: ProductsResponse,
     ProductCategories: ProductCategoriesResponse
   };
-  const user = useSelector((state: RootState) => state.userState.user);
+  
   const [searchWord, setSearchWord] = useState('');
   const [productData, setProductData] = useState(initialProducts);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
