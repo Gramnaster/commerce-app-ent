@@ -38,7 +38,6 @@ const ProducerCreate = () => {
   }
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.userState.user);
-  console.log(`ProducerCreate`, countries)
 
   const [formData, setFormData] = useState({
     title: "",
@@ -54,7 +53,6 @@ const ProducerCreate = () => {
       country: ""
     }
   })
-  console.log(`ProducerCreate formData`, formData)
 
   const NESTED_FIELDS: Record<string, string> = {
       unit_no: "address_attributes",

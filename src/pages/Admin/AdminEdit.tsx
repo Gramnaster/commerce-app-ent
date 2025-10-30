@@ -6,12 +6,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store";
 
-interface AdminUser {
-  id: number;
-  email: string;
-  admin_role: string;
-}
-
 interface Address {
   id: number,
   unit_no: string;
@@ -25,25 +19,12 @@ interface Address {
   country: string;
 }
 
-interface AdminPhone {
-  id: number;
-  phone_no: number;
-  phone_type: "mobile" | "work" | "home";
-}
-
-interface AdminAddress {
-  id: number;
-  is_default: boolean;
-  address: Address
-}
-
 interface CompanySite {
   id: number;
   title: string;
   site_type: "management" | "warehouse";
   address: Address
 }
-
 
 interface Country {
   id: number;
@@ -108,20 +89,6 @@ const AdminEdit = () => {
     const user = useSelector((state: RootState) => state.userState.user);
     const navigate = useNavigate();
     const queryClient = useQueryClient();
-    //   const { 
-    //   email, 
-    //   admin_role,
-    //   admin_detail: {
-    //     first_name, 
-    //     middle_name, 
-    //     last_name, 
-    //     dob 
-    //   }
-    // } = AdminDetails.data
-
-    // console.log(`AdminEdit AdminDetails`, AdminDetails)
-    // console.log(`AdminEdit Countries`, Countries)
-    // console.log(`AdminEdit CompanySites`, CompanySites)
 
     const [formData, setFormData] = useState({
       email: AdminDetails.data.email || '',
@@ -398,8 +365,6 @@ const handleInputChange = (
               Address Information
             </h2>
             {formData.admin_addresses_attributes.map((adminAddress: any, index: number) => { 
-              console.log(`userAddress :`, adminAddress)
-              console.log(`userAddress :`, adminAddress.address_attributes)
               return (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6" key={adminAddress.id}>
               <div>
@@ -502,12 +467,10 @@ const handleInputChange = (
           {/* </div> */}
 
           {/* Phones */}
-          {/* <div className="bg-transparent rounded-lg p-6 border border-gray-700"> */}
             <h2 className="text-xl font-bold text-white mb-4 pt-4 pb-2 border-b border-white">
               Phone Numbers
             </h2>
             {formData.admin_phones_attributes.map((phoneNumber: any, index: number) => { 
-              console.log(`phoneNumber :`, phoneNumber)
               return (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6" key={phoneNumber.id}>
               <div>

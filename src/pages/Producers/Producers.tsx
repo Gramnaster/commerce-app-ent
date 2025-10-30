@@ -1,11 +1,11 @@
-import { useLoaderData } from 'react-router-dom';
+import { redirect, useLoaderData } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
 import { NavLink } from 'react-router-dom';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store';
-import { useQuery } from '@tanstack/react-query';
+import type { ProducersResponse } from '../Products/Products';
 
 interface Address {
   id: number,
@@ -20,28 +20,23 @@ interface Address {
   country: string;
 }
 
-interface Pagination {
-  current_page: number | null;
-  per_page: number | null;
-  total_entries: number | null;
-  total_pages: number | null;
-  next_page: number | null;
-  previous_page: number | null;
-}
-
 interface Producer {
   id: number;
   title: string;
   products_count: number;
   address: Address;
   created_at: string;
-  pagination: Pagination;
 }
 
 export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
   const storeState = store.getState();
   const admin_user = storeState.userState?.user;
   const id = params.id;
+
+    if (!admin_user || admin_user.admin_role !== 'management') {
+      toast.warn('There must be something wrong. Please refresh the page.');
+      return redirect('/');
+    }
 
   const ProducersQuery = {
     queryKey: ['ProducersDetails', id],
@@ -71,37 +66,28 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 const Producers = () => {
   const [searchWord, setSearchWord] = useState('');
   const { Producers } = useLoaderData() as {
-    Producers: Producer[]
+    Producers: ProducersResponse
   };
   const user = useSelector((state: RootState) => state.userState.user);
+  const [loading, setLoading] = useState(false);
   const [producerData, setProducerData] = useState(Producers)
 
-  const handlePagination = async (page: number) => {
+  const handlePagination = async (page: number | null) => {
+    if (!page) return;
+    setLoading(true)
+    
     try {
-      const response = await customFetch.get(`/products?page=${page}&per_page=${per_page}`);
-      const data = response.data
-      setProducerData(data)
+      const response = await customFetch.get(`/products?page=${page}&per_page=${producerData.pagination.per_page || 20}`);
+      const data = response.data;
+      console.log('Products handlePagination - Response:', data);
+      setProducerData(data);
+      setLoading(false);
     }
     catch (error: any) {
-      console.error('Failed to load pagination data:', error);
+      console.error('Products handlePagination - Failed to load pagination data:', error);
       toast.error('Failed to load pagination data');
-      return { pagination: [] };
     }
   }
-
-  // const { data: producers = [] } = useQuery({
-  //     queryKey: ['producers', user?.id],
-  //     queryFn: async () => {
-  //       const response = await customFetch.get('/producers', {
-  //         headers: {
-  //           Authorization: user?.token,
-  //         },
-  //       });
-  //       return response.data;
-  //     },
-  //     initialData: initialProducers,
-  //     refetchOnWindowFocus: false,
-  //   });
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -213,7 +199,15 @@ const Producers = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredProducers.length > 0 ? (
+                    { loading ?     
+                    <tr className='border-b text-[#000000] border-primary hover:bg-[hsl(0,0%,87%)] transition-colors'>
+                      <td className="p-8 text-center" colSpan={10}>
+                        <div className="h-screen flex items-center justify-center">
+                          <span className="loading loading-ring loading-lg text-black">LOADING</span>
+                        </div>
+                      </td> 
+                    </tr>
+                    : filteredProducers.length > 0 ? (
                       filteredProducers.map((producer: Producer, index: number) => (
                         <tr
                           key={producer.id}

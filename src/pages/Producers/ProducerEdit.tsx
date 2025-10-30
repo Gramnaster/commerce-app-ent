@@ -87,7 +87,6 @@ const ProducerEdit = () => {
     ProducerDetails: Producer;
     countries: Country[];
   }
-  console.log(`ProducerEdit ProducerDetails`, ProducerDetails)
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { id, title, address: { id: address_id, unit_no, street_no, address_line1, address_line2, city, region, zipcode, country_id, country} } = ProducerDetails.data
@@ -184,7 +183,7 @@ const ProducerEdit = () => {
   };
 
   const handleDelete = async (e: React.FormEvent) => {
-  if (!confirm("Are you sure you want to delete this producer?")) return;
+    if (!confirm("Are you sure you want to delete this producer?")) return;
   
     console.log(`handleSubmit formData:`, formData)
     navigate(`/producers`)

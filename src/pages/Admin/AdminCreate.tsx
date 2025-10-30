@@ -19,7 +19,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   // Convert to FormData to avoid preflight (same fix as login)
   const submitData = new FormData();
-  console.log(`submitData`, submitData);
   
   Object.entries(data).forEach(([key, value]) => {
     if (key === 'first_name' || key === "last_name" || key === "dob") {

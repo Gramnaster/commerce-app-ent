@@ -22,7 +22,6 @@ export interface AdminUserResponse {
 export const loader = (queryClient: any, store: any) => async () => {
   const storeState = store.getState();
   const admin_user = storeState.userState?.user;
-  console.log(`Admins admin_user`, admin_user)
 
   if (!admin_user || admin_user.admin_role !== 'management') {
     toast.warn('There must be something wrong. Please refresh the page.');
@@ -56,15 +55,11 @@ const Admins = () => {
   const { AdminUsers: initialAdmins } = useLoaderData() as {
     AdminUsers: AdminUserResponse
   }
-  // console.log(`Admins AdminUsers`, AdminUsers)
-  // const adminList = Object.values(AdminUsers.admin_users)
 
   const [searchWord, setSearchWord] = useState('');
   const user = useSelector((state: RootState) => state.userState.user);
   const [adminData, setAdminData] = useState(initialAdmins);
   const [loading, setLoading] = useState(false);
-  console.log(`adminData`, adminData)
-
     const handlePagination = async (page: number | null) => {
     if (!page) return;
     setLoading(true)
@@ -72,7 +67,6 @@ const Admins = () => {
     try {
       const response = await customFetch.get(`/admin_users?page=${page}&per_page=${adminData.pagination.per_page || 20}`);
       const data = response.data;
-      console.log('Admins handlePagination - Response:', data);
       setAdminData(data);
       setLoading(false);
     }
@@ -103,9 +97,7 @@ const Admins = () => {
       day: '2-digit',
     });
   }
-  console.log(`admins`, admins)
-
-    const filteredAdmins = Object.values(adminData.admin_users as AdminUser[]).filter((admin: AdminUser) => {
+  const filteredAdmins = Object.values(adminData.admin_users as AdminUser[]).filter((admin: AdminUser) => {
       const matchesSearch =
         admin.id?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
         admin.email?.toLowerCase().includes(searchWord.toLowerCase()) ||
@@ -128,23 +120,6 @@ const Admins = () => {
   };
 
   return (
-    // <div>
-    //   <NavLink to={`/admins/create`}>Create Admin</NavLink>
-    //   <div>
-    //     {adminList.map((admin: any) => {
-    //       const { id, email, admin_role } = admin
-    //       return (
-    //         <div key={id} className='m-1 border-b-[1px] flex flex-col'>
-    //           Email: {email}
-    //           Role: {admin_role}
-    //           <NavLink to={`/admins/${id}`}>View Admin details</NavLink>
-    //         </div>
-    //       )
-    //     })}
-    //   </div>
-    // </div>
-
-
     <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
       <div className="max-w-7xl mx-auto">
         <NavLink to={`/admins/create`} className={'btn bg-primary border-primary rounded-[8px] text-white p-2 pt-1 pb-1 m-1 hover:bg-white hover:text-primary hover:border-primary'}>
@@ -219,7 +194,15 @@ const Admins = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredAdmins && filteredAdmins.length > 0 ? (
+                    { loading ?     
+                    <tr className='border-b text-[#000000] border-primary hover:bg-[hsl(0,0%,87%)] transition-colors'>
+                      <td className="p-8 text-center" colSpan={10}>
+                        <div className="h-screen flex items-center justify-center">
+                          <span className="loading loading-ring loading-lg text-black">LOADING</span>
+                        </div>
+                      </td> 
+                    </tr>
+                    : filteredAdmins && filteredAdmins.length > 0 ? (
                       filteredAdmins.map((admin: AdminUser, index: number) => (
                         <tr
                           key={admin.id}

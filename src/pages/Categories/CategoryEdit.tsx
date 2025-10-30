@@ -45,7 +45,6 @@ const CategoryEdit = () => {
   const { CategoryDetails } = useLoaderData() as {
     CategoryDetails: ProductCategory;
   }
-  console.log(`CategoryEdit CategoryDetails`, CategoryDetails)
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const navigation = useNavigation();
@@ -111,8 +110,6 @@ const CategoryEdit = () => {
 
   const handleDelete = async (e: React.FormEvent) => {
   if (!confirm("Are you sure you want to delete this category?")) return;
-  
-    console.log(`handleSubmit formData:`, formData)
     navigate(`/categories`)
     // Create the payload matching the API format
    try {
