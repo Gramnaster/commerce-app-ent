@@ -69,7 +69,7 @@ const Landing = () => {
      <div className='flex flex-col items-center justify-center font-[Aleo] p-2 gap-2 bg-gradient-to-t from-[#AE2012] to-primary h-full'><img src={LogoNoSun} className='max-w-[120px]'/> <div className='text-4xl font-[380] text-[white]'>Enterprise Tool</div> </div>
       <div className="mt-4 flex flex-col gap-y-5 items-center w-full h-full">
           { 
-          isAdminSignedIn() ? <NavLink to='dashboard'><button className='btn btn-xl bg-primary'>To Dashboard</button></NavLink> 
+          isAdminSignedIn() ? <NavLink to='dashboard'><button className='btn btn-xl bg-[#AE2012] text-white'>To Dashboard</button></NavLink> 
           : 
           <section className="h-screen grid place-items-center">
             <Form

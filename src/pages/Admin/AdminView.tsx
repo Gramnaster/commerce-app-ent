@@ -87,9 +87,10 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 
 const AdminView = () => {
   const { AdminDetails, Countries } = useLoaderData() as{
-    AdminDetails: AdminUser,
-    Countries: Country[]
+    AdminDetails: { data: any },
+    Countries: { data: Country[] }
   }
+  console.log(`AdminView Countries`, Countries)
   const navigate = useNavigate();
   const { id, email, admin_role, admin_detail: {first_name, last_name, dob }, admin_phones, admin_addresses, company_sites } = AdminDetails.data
   return (
@@ -307,6 +308,7 @@ const AdminView = () => {
                         <div className="pl-2 m-1">
                           {admin_addresses.length !== 0 ? admin_addresses.map((adminAddress: AdminAddress) => {
                             const { id, is_default, address: { unit_no, street_no, address_line1, address_line2, city, region, zipcode, country_id} } = adminAddress
+                            console.log(`adminAddress `, adminAddress)
                             return (
                               <div key={id}>
                                 <div><div className="font-medium">Unit #:</div> {unit_no}</div>
@@ -316,7 +318,7 @@ const AdminView = () => {
                                 <div><div>City:</div> {city}</div>
                                 <div><div className="font-medium">Region:</div> {region}</div>
                                 <div><div className="font-medium">Zipcode:</div> {zipcode}</div>
-                                <div><div className="font-medium">Country:</div> {Countries.find((country: Country) => country.id === country_id).name ?? "Country invalid" }</div>
+                                <div><div className="font-medium">Country:</div> {Countries.data.find((country: Country) => Number(country.id) === Number(country_id))?.name ?? "Country invalid"}</div>
                                 <div><div className="font-medium">Default address?:</div> { is_default ? "Yes" : "No" }</div>
                               </div>
                             )
@@ -340,7 +342,7 @@ const AdminView = () => {
                                 <div><div className="font-medium">City:</div> {city}</div>
                                 <div><div className="font-medium">Region:</div> {region}</div>
                                 <div><div className="font-medium">Zipcode:</div> {zipcode}</div>
-                                <div><div className="font-medium">Country:</div> {Countries.find((country: Country) => country.id === country_id).name ?? "Country invalid" } </div>
+                                <div><div className="font-medium">Country:</div> {Countries.data.find((country: Country) => Number(country.id) === Number(country_id))?.name ?? "Country invalid"} </div>
                               </div>
                             )
                           }) : "Does not belong to any site"}

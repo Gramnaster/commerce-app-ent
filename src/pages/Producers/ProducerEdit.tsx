@@ -209,7 +209,7 @@ const ProducerEdit = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white text-white p-6">
+    <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6 text-black">
@@ -366,10 +366,10 @@ const ProducerEdit = () => {
                   required
                 >
                   <option value="">Select Country...</option>
-                  {countries
+                  {countries.data
                     .slice()
-                    .sort((a, b) => a.name.localeCompare(b.name))
-                    .map((country) => (
+                    .sort((a: Country, b: Country) => a.name.localeCompare(b.name))
+                    .map((country: Country) => (
                       <option key={country.id} value={country.id} className="text-black">
                         {country.name} ({country.code})
                       </option>

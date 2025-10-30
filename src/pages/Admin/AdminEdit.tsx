@@ -101,8 +101,8 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 
 const AdminEdit = () => {
   const { AdminDetails, Countries, CompanySites } = useLoaderData() as{
-    AdminDetails: AdminUser;
-    Countries: Country[];
+    AdminDetails: { data: any },
+    Countries: { data: Country[] },
     CompanySites: CompanySite[]
   }
     const user = useSelector((state: RootState) => state.userState.user);
@@ -287,7 +287,7 @@ const handleInputChange = (
   };
   
   return (
-    <div className="min-h-screen bg-[hsl(5,100%,98%)] text-white p-6">
+    <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6 text-black">
@@ -399,6 +399,7 @@ const handleInputChange = (
             </h2>
             {formData.admin_addresses_attributes.map((adminAddress: any, index: number) => { 
               console.log(`userAddress :`, adminAddress)
+              console.log(`userAddress :`, adminAddress.address_attributes)
               return (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6" key={adminAddress.id}>
               <div>
@@ -408,7 +409,7 @@ const handleInputChange = (
                 <input
                   type="text"
                   name="unit_no"
-                  value={adminAddress.address_attributes.unit_no}
+                  value={adminAddress.unit_no}
                   onChange={(e) => handleInputChange(e, index)}
                   className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                 />
@@ -420,7 +421,7 @@ const handleInputChange = (
                 <input
                   type="text"
                   name="street_no"
-                  value={adminAddress.address_attributes.street_no}
+                  value={adminAddress.street_no}
                   onChange={(e) => handleInputChange(e, index)}
                   className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                 />
@@ -432,7 +433,7 @@ const handleInputChange = (
                 <input
                   type="text"
                   name="address_line1"
-                  value={adminAddress.address_attributes.address_line1}
+                  value={adminAddress.address_line1}
                   onChange={(e) => handleInputChange(e, index)}
                   className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                 />
@@ -444,7 +445,7 @@ const handleInputChange = (
                 <input
                   type="text"
                   name="address_line2"
-                  value={adminAddress.address_attributes.address_line2}
+                  value={adminAddress.address_line2}
                   onChange={(e) => handleInputChange(e, index)}
                   className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                 />
@@ -456,7 +457,7 @@ const handleInputChange = (
                 <input
                   type="text"
                   name="city"
-                  value={adminAddress.address_attributes.city}
+                  value={adminAddress.city}
                   onChange={(e) => handleInputChange(e, index)}
                   className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                 />
@@ -468,7 +469,7 @@ const handleInputChange = (
                 <input
                   type="text"
                   name="zipcode"
-                  value={adminAddress.address_attributes.zipcode}
+                  value={adminAddress.zipcode}
                   onChange={(e) => handleInputChange(e, index)}
                   className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                   required
@@ -480,13 +481,13 @@ const handleInputChange = (
                 </label>
                 <select
                   name="country_id"
-                  value={adminAddress.address_attributes.country_id}
+                  value={adminAddress.country_id}
                   onChange={(e) => handleInputChange(e, index)}
                   className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                   required
                 >
                   <option value="" className="text=black">Select Country...</option>
-                  {Countries
+                  {Countries.data
                     .slice()
                     .sort((a, b) => a.name.localeCompare(b.name))
                     .map((country) => (

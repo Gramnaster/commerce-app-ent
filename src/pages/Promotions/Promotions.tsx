@@ -24,10 +24,10 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
   const admin_user = storeState.userState?.user;
   const id = params.id;
 
-  if (!admin_user || admin_user.admin_role !== 'management') {
-    toast.warn('There must be something wrong. Please refresh the page.');
-    return redirect('/');
-  }
+  // if (!admin_user || admin_user.admin_role !== 'management') {
+  //   toast.warn('There must be something wrong. Please refresh the page.');
+  //   return redirect('/');
+  // }
 
   const PromotionsQuery = {
     queryKey: ['Promotions', id],
@@ -119,7 +119,7 @@ const Promotions = () => {
                     placeholder="Search by Name or Date"
                     value={searchWord}
                     onChange={(e) => setSearchWord(e.target.value)}
-                    className="w-full bg-white border border-primary rounded-lg p-3 pl-10 text-black placeholder-[#c27971]"
+                    className="w-full bg-white border border-primary rounded-lg p-3 pl-10 text-black placeholder-[#666666]"
                   />
                   <svg
                     className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-primary"
@@ -135,7 +135,7 @@ const Promotions = () => {
                     />
                   </svg>
                 </div>
-                <button className="p-3 bg-[#924b43] hover:bg-[#743b35] border border-primary rounded-lg hover:cursor-pointer transition-colors">
+                <button className="p-3 bg-primary hover:bg-[#03529c] border border-[white] rounded-lg hover:cursor-pointer transition-colors">
                   <svg
                     className="w-5 h-5"
                     fill="none"
@@ -154,7 +154,7 @@ const Promotions = () => {
             </div>
 
             {/* Traders Table */}
-            <div className="bg-white rounded-lg border border-[hsl(5,100%,80%)] overflow-hidden">
+            <div className="bg-transparent rounded-lg border border-primary overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead className="bg-primary">
@@ -184,8 +184,8 @@ const Promotions = () => {
                       filteredPromotions.map((promotion: Promotion, index: number) => (
                         <tr
                           key={promotion.id}
-                          className={`border-b text-[#000000] border-[hsl(5,100%,80%)] hover:bg-[hsl(4,81%,90%)] transition-colors ${
-                            index % 2 === 0 ? 'bg-[hsl(5,100%,98%)]' : 'bg-[hsl(5,100%,98%)]'
+                          className={`border-b text-[#000000] border-primary hover:bg-white transition-colors ${
+                            index % 2 === 0 ? 'bg-transparent' : 'bg-[#f3f3f3]'
                           }`}
                         >
                           <td className="p-4 text-m text-left">
@@ -216,7 +216,7 @@ const Promotions = () => {
                       <tr className="w-full">
                         <td
                           colSpan={6}
-                          className="p-8 w-full text-center text-black text-m bg-[hsl(5,100%,98%)]"
+                          className="p-8 w-full text-center text-black text-m bg-transparent"
                         >
                           No promotions found
                         </td>

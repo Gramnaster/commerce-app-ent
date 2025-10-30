@@ -279,10 +279,10 @@ const ProducerCreate = () => {
                   required
                 >
                   <option value="">Select Country...</option>
-                  {countries
+                  {countries.data
                     .slice()
-                    .sort((a, b) => a.name.localeCompare(b.name))
-                    .map((country) => (
+                    .sort((a: Country, b: Country) => a.name.localeCompare(b.name))
+                    .map((country: Country) => (
                       <option key={country.id} value={country.id}
                       className="text-black">
                         {country.name} ({country.code})

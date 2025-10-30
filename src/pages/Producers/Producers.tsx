@@ -138,7 +138,7 @@ const Producers = () => {
   return (
     <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
       <div className="max-w-7xl mx-auto">
-        <NavLink to={`/producers/create`} className={'btn bg-primary border-primary rounded-[8px] text-white p-2 pt-1 pb-1 m-1 hover:bg-[hsl(5,100%,98%)] hover:text-primary hover:border-primary'}>
+        <NavLink to={`/producers/create`} className={'btn bg-primary border-primary rounded-[8px] text-white p-2 pt-1 pb-1 m-1 hover:bg-white hover:text-primary hover:border-primary'}>
           Create Producer
         </NavLink>
         {(
@@ -152,7 +152,7 @@ const Producers = () => {
                     placeholder="Search by Name or Date"
                     value={searchWord}
                     onChange={(e) => setSearchWord(e.target.value)}
-                    className="w-full bg-white border border-primary rounded-lg p-3 pl-10 text-black placeholder-[#c27971]"
+                    className="w-full bg-white border border-primary rounded-lg p-3 pl-10 text-black placeholder-[#666666]"
                   />
                   <svg
                     className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-primary"
@@ -168,7 +168,7 @@ const Producers = () => {
                     />
                   </svg>
                 </div>
-                <button className="p-3 bg-[#924b43] hover:bg-[#743b35] border border-primary rounded-lg hover:cursor-pointer transition-colors">
+                <button className="p-3 bg-primary hover:bg-[#03529c] border border-white rounded-lg hover:cursor-pointer transition-colors">
                   <svg
                     className="w-5 h-5"
                     fill="none"
@@ -187,7 +187,7 @@ const Producers = () => {
             </div>
 
             {/* Traders Table */}
-            <div className="bg-white rounded-lg border border-[hsl(5,100%,80%)] overflow-hidden">
+            <div className="bg-transparent rounded-lg border border-primary overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead className="bg-primary">
@@ -217,8 +217,8 @@ const Producers = () => {
                       filteredProducers.map((producer: Producer, index: number) => (
                         <tr
                           key={producer.id}
-                          className={`border-b text-[#000000] border-[hsl(5,100%,80%)] hover:bg-[hsl(4,81%,90%)] transition-colors ${
-                            index % 2 === 0 ? 'bg-[hsl(5,100%,98%)]' : 'bg-[hsl(5,100%,98%)]'
+                          className={`border-b text-[#000000] border-primary hover:bg-white transition-colors ${
+                            index % 2 === 0 ? 'bg-transparent' : 'bg-[#f3f3f3]'
                           }`}
                         >
                           <td className="p-4 text-m text-left">
@@ -252,7 +252,7 @@ const Producers = () => {
                       <tr className="w-full">
                         <td
                           colSpan={6}
-                          className="p-8 w-full text-center text-black text-m bg-[hsl(5,100%,98%)]"
+                          className="p-8 w-full text-center text-black text-m bg-transparent"
                         >
                           No producer found
                         </td>
@@ -265,33 +265,41 @@ const Producers = () => {
           </>
         )}
       </div>
-      <div className="join">
-        <input
-          className="join-item btn btn-square" 
-          type="radio" 
-          name="options" 
-          onClick={() => handlePagination(previous_page)}
-          aria-label={`<`} 
-        />
-        {[...Array(total_pages).keys()].map((_, i) => 
-          (
-          <input key={i} 
-          className="join-item btn btn-square" 
-          type="radio" 
-          name="options" 
-          onClick={() => handlePagination(i + 1)}
-          aria-label={`${i + 1}`} 
+      {total_pages && total_pages > 1 && (
+        <div className="join mt-6 flex justify-center">
+          <input
+            className="join-item btn btn-square border-black" 
+            type="radio" 
+            name="options" 
+            onClick={() => handlePagination(previous_page)}
+            disabled={!previous_page}
+            aria-label="❮" 
           />
-          ))
-        }
-        <input
-          className="join-item btn btn-square" 
-          type="radio" 
-          name="options" 
-          onClick={() => handlePagination(next_page)}
-          aria-label={`>`} 
-        />
-      </div>
+          {[...Array(total_pages).keys()].map((_, i) => {
+            const pageNum = i + 1;
+            return (
+              <input 
+                key={i} 
+                className="join-item btn btn-square border-black" 
+                type="radio" 
+                name="options" 
+                checked={current_page === pageNum}
+                onClick={() => handlePagination(pageNum)}
+                aria-label={`${pageNum}`} 
+                readOnly
+              />
+            );
+          })}
+          <input
+            className="join-item btn btn-square border-black" 
+            type="radio" 
+            name="options" 
+            onClick={() => handlePagination(next_page)}
+            disabled={!next_page}
+            aria-label="❯" 
+          />
+        </div>
+      )}
     </div>
   )
 }

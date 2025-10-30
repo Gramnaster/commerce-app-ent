@@ -24,7 +24,7 @@ export interface User {
   email: string;
 }
 
-interface Pagination {
+export interface Pagination {
   current_page: number | null;
   per_page: number | null;
   total_entries: number | null;
@@ -59,6 +59,7 @@ export interface ProductsResponse {
 
 export interface ProductCategoriesResponse {
   data: ProductCategory[];
+  pagination: Pagination;
 }
 
 export interface ProducersResponse {
@@ -203,7 +204,7 @@ const Products = () => {
   return (
     <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
       <div className="max-w-7xl mx-auto">
-        <NavLink to={`/products/create`} className={'btn bg-primary border-primary rounded-[8px] text-white p-2 pt-1 pb-1 m-1 hover:bg-[hsl(5,100%,98%)] hover:text-primary hover:border-primary'}>
+        <NavLink to={`/products/create`} className={'btn bg-primary border-primary rounded-[8px] text-white p-2 pt-1 pb-1 m-1 hover:bg-white hover:text-primary hover:border-primary'}>
            Create Product  
         </NavLink>
         <div className='text-primary font-bold'>
@@ -306,7 +307,7 @@ const Products = () => {
                       filteredProds.map((product: Product, index: number) => (
                         <tr
                           key={product.id}
-                          className={`border-b text-[#000000] border-primary hover:bg-[hsl(0,0%,87%)] transition-colors ${
+                          className={`border-b text-[#000000] border-primary hover:bg-white transition-colors ${
                             index % 2 === 0 ? 'bg-transparent' : 'bg-[#f3f3f3]'
                           }`}
                         >
