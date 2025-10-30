@@ -222,7 +222,7 @@ const ProductEdit = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[hsl(5,100%,98%)] text-white p-6">
+    <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6 text-black">
@@ -396,7 +396,7 @@ const ProductEdit = () => {
             >
               {(updateProductMutation.isPending || loading) ? 'Updating...' : 'Update Product'}
             </button>
-            <button type="button" onClick={handleDelete}>Delete</button>
+            <button type="button" onClick={handleDelete} className="btn bg-[#8f1e14] text-white">Delete?</button>
           </div>
         </form>
       </div>

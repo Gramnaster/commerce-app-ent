@@ -38,7 +38,6 @@ const ProducerCreate = () => {
   }
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.userState.user);
-  console.log(`ProducerCreate`, countries)
 
   const [formData, setFormData] = useState({
     title: "",
@@ -54,7 +53,6 @@ const ProducerCreate = () => {
       country: ""
     }
   })
-  console.log(`ProducerCreate formData`, formData)
 
   const NESTED_FIELDS: Record<string, string> = {
       unit_no: "address_attributes",
@@ -279,10 +277,10 @@ const ProducerCreate = () => {
                   required
                 >
                   <option value="">Select Country...</option>
-                  {countries
+                  {countries.data
                     .slice()
-                    .sort((a, b) => a.name.localeCompare(b.name))
-                    .map((country) => (
+                    .sort((a: Country, b: Country) => a.name.localeCompare(b.name))
+                    .map((country: Country) => (
                       <option key={country.id} value={country.id}
                       className="text-black">
                         {country.name} ({country.code})

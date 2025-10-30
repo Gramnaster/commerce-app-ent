@@ -102,7 +102,7 @@ const ProducerView = () => {
                 Producer Information
               </h2>
               <NavLink to={`/producers/edit/${id}`}>
-                <button className="btn bg-[hsl(5,100%,98%)] border-primary text-l rounded-[8px] text-primary p-2 pt-1 pb-1 m-1 hover:border-[hsl(5,100%,98%)] hover:bg-primary hover:text-white">
+                <button className="btn bg-white border-primary text-l rounded-[8px] text-primary p-2 pt-1 pb-1 m-1 hover:border-[hsl(5,100%,98%)] hover:bg-primary hover:text-white">
                   Edit Producer Info
                 </button>
               </NavLink>

@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store';
+import type { Pagination } from '../Products/Products';
 
 interface ProductCategory {
   id: number;
@@ -17,6 +18,11 @@ interface Promotion {
   products_count: number;
   created_at: string;
   product_categories: ProductCategory[];
+}
+
+interface PromotionDetailsResponse {
+  data: Promotion[];
+  pagination: Pagination;
 }
 
 export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
@@ -57,11 +63,29 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 
 const Promotions = () => {
   const { promotions: initialPromotions } = useLoaderData() as {
-   promotions: Promotion[];
+   promotions: PromotionDetailsResponse;
   }
   const [searchWord, setSearchWord] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [promotionData, SetPromotionData] = useState(initialPromotions);
   const admin_user = useSelector((state: RootState) => state.userState?.user);
-  console.log(`Promotions`, admin_user)
+
+  const handlePagination = async (page: number | null) => {
+    if (!page) return;
+    setLoading(true)
+    
+    try {
+      const response = await customFetch.get(`/promotions?page=${page}&per_page=${promotionData.pagination.per_page || 20}`);
+      const data = response.data;
+      console.log('Products handlePagination - Response:', data);
+      SetPromotionData(data);
+      setLoading(false);
+    }
+    catch (error: any) {
+      console.error('Products handlePagination - Failed to load pagination data:', error);
+      toast.error('Failed to load pagination data');
+    }
+  }
 
   const { data: promotions = [] } = useQuery({
     queryKey: ['promotion', admin_user?.id],
@@ -86,9 +110,7 @@ const Promotions = () => {
     });
   };
 
-  console.log(`promotions.data`, promotions.data)
-
-  const filteredPromotions = promotions.data !== 0 && promotions.data !== undefined ? promotions.data.filter((promotion: Promotion) => {
+  const filteredPromotions = promotionData.data.length !== 0 && promotionData.data !== undefined ? promotionData.data.filter((promotion: Promotion) => {
         const matchesSearch =
         promotion.id?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
         promotion.discount_amount?.toLowerCase().includes(searchWord.toLowerCase()) ||
@@ -101,6 +123,14 @@ const Promotions = () => {
         (a: Promotion, b: Promotion) =>
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
   ) : [] ;
+
+  const { current_page, total_pages, next_page, previous_page } = promotionData.pagination || {
+    current_page: 1,
+    per_page: 20,
+    total_pages: 1,
+    next_page: null,
+    previous_page: null
+  };
 
   return (
     <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
@@ -119,7 +149,7 @@ const Promotions = () => {
                     placeholder="Search by Name or Date"
                     value={searchWord}
                     onChange={(e) => setSearchWord(e.target.value)}
-                    className="w-full bg-white border border-primary rounded-lg p-3 pl-10 text-black placeholder-[#c27971]"
+                    className="w-full bg-white border border-primary rounded-lg p-3 pl-10 text-black placeholder-[#666666]"
                   />
                   <svg
                     className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-primary"
@@ -135,7 +165,7 @@ const Promotions = () => {
                     />
                   </svg>
                 </div>
-                <button className="p-3 bg-[#924b43] hover:bg-[#743b35] border border-primary rounded-lg hover:cursor-pointer transition-colors">
+                <button className="p-3 bg-primary hover:bg-[#03529c] border border-[white] rounded-lg hover:cursor-pointer transition-colors">
                   <svg
                     className="w-5 h-5"
                     fill="none"
@@ -154,7 +184,7 @@ const Promotions = () => {
             </div>
 
             {/* Traders Table */}
-            <div className="bg-white rounded-lg border border-[hsl(5,100%,80%)] overflow-hidden">
+            <div className="bg-transparent rounded-lg border border-primary overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead className="bg-primary">
@@ -180,12 +210,20 @@ const Promotions = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredPromotions.length > 0 ? (
+                    { loading ?     
+                    <tr className='border-b text-[#000000] border-primary hover:bg-[hsl(0,0%,87%)] transition-colors'>
+                      <td className="p-8 text-center" colSpan={10}>
+                        <div className="h-screen flex items-center justify-center">
+                          <span className="loading loading-ring loading-lg text-black">LOADING</span>
+                        </div>
+                      </td> 
+                    </tr>
+                    : filteredPromotions.length > 0 ? (
                       filteredPromotions.map((promotion: Promotion, index: number) => (
                         <tr
                           key={promotion.id}
-                          className={`border-b text-[#000000] border-[hsl(5,100%,80%)] hover:bg-[hsl(4,81%,90%)] transition-colors ${
-                            index % 2 === 0 ? 'bg-[hsl(5,100%,98%)]' : 'bg-[hsl(5,100%,98%)]'
+                          className={`border-b text-[#000000] border-primary hover:bg-white transition-colors ${
+                            index % 2 === 0 ? 'bg-transparent' : 'bg-[#f3f3f3]'
                           }`}
                         >
                           <td className="p-4 text-m text-left">
@@ -216,7 +254,7 @@ const Promotions = () => {
                       <tr className="w-full">
                         <td
                           colSpan={6}
-                          className="p-8 w-full text-center text-black text-m bg-[hsl(5,100%,98%)]"
+                          className="p-8 w-full text-center text-black text-m bg-transparent"
                         >
                           No promotions found
                         </td>
@@ -229,6 +267,41 @@ const Promotions = () => {
           </>
         )}
       </div>
+      {total_pages && total_pages > 1 && (
+        <div className="join mt-6 flex justify-center">
+          <input
+            className="join-item btn btn-square border-black" 
+            type="radio" 
+            name="options" 
+            onClick={() => handlePagination(previous_page)}
+            disabled={!previous_page}
+            aria-label="❮" 
+          />
+          {[...Array(total_pages).keys()].map((_, i) => {
+            const pageNum = i + 1;
+            return (
+              <input 
+                key={i} 
+                className="join-item btn btn-square border-black" 
+                type="radio" 
+                name="options" 
+                checked={current_page === pageNum}
+                onClick={() => handlePagination(pageNum)}
+                aria-label={`${pageNum}`} 
+                readOnly
+              />
+            );
+          })}
+          <input
+            className="join-item btn btn-square border-black" 
+            type="radio" 
+            name="options" 
+            onClick={() => handlePagination(next_page)}
+            disabled={!next_page}
+            aria-label="❯" 
+          />
+        </div>
+      )}
     </div>
   )
 }

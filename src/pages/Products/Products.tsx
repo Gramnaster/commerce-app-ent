@@ -3,10 +3,6 @@ import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Loading } from '../../components';
-// import { useQuery } from '@tanstack/react-query';
-// import { useSelector } from 'react-redux';
-// import type { RootState } from '../../store';
 
 // Shared Types - Export for use in other Product files
 export interface ProductCategory {
@@ -14,9 +10,25 @@ export interface ProductCategory {
   title: string;
 }
 
-export interface Producer {
+interface Address {
+  id: number,
+  unit_no: string;
+  street_no: string;
+  address_line1: string;
+  address_line2: string;
+  city: string;
+  region: string;
+  zipcode: string;
+  country_id: number;
+  country: string;
+}
+
+interface Producer {
   id: number;
   title: string;
+  products_count: number;
+  address: Address;
+  created_at: string;
 }
 
 export interface User {
@@ -24,7 +36,7 @@ export interface User {
   email: string;
 }
 
-interface Pagination {
+export interface Pagination {
   current_page: number | null;
   per_page: number | null;
   total_entries: number | null;
@@ -59,6 +71,7 @@ export interface ProductsResponse {
 
 export interface ProductCategoriesResponse {
   data: ProductCategory[];
+  pagination: Pagination;
 }
 
 export interface ProducersResponse {
@@ -119,13 +132,10 @@ const Products = () => {
     allProducts: ProductsResponse,
     ProductCategories: ProductCategoriesResponse
   };
-  // const user = useSelector((state: RootState) => state.userState.user);
   const [searchWord, setSearchWord] = useState('');
-  const [productData, setProductData] = useState(initialProducts);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-
-  // const user = useSelector((state: RootState) => state.userState.user);
+  const [productData, setProductData] = useState(initialProducts);
 
   const handlePagination = async (page: number | null) => {
     if (!page) return;
@@ -143,20 +153,6 @@ const Products = () => {
       toast.error('Failed to load pagination data');
     }
   }
-
-    // const { data: products = { data: [] } } = useQuery({
-    //   queryKey: ['Products', user?.id],
-    //   queryFn: async () => {
-    //     const response = await customFetch.get('/products', {
-    //       headers: {
-    //         Authorization: user?.token,
-    //       },
-    //     });
-    //     return response.data;
-    //   },
-    //   initialData: initialProducts,
-    //   refetchOnWindowFocus: false,
-    // });
 
   const filteredProds = productData.data.filter((product: Product) => {
     const matchesSearch =
@@ -203,7 +199,7 @@ const Products = () => {
   return (
     <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
       <div className="max-w-7xl mx-auto">
-        <NavLink to={`/products/create`} className={'btn bg-primary border-primary rounded-[8px] text-white p-2 pt-1 pb-1 m-1 hover:bg-[hsl(5,100%,98%)] hover:text-primary hover:border-primary'}>
+        <NavLink to={`/products/create`} className={'btn bg-primary border-primary rounded-[8px] text-white p-2 pt-1 pb-1 m-1 hover:bg-white hover:text-primary hover:border-primary'}>
            Create Product  
         </NavLink>
         <div className='text-primary font-bold'>
@@ -306,7 +302,7 @@ const Products = () => {
                       filteredProds.map((product: Product, index: number) => (
                         <tr
                           key={product.id}
-                          className={`border-b text-[#000000] border-primary hover:bg-[hsl(0,0%,87%)] transition-colors ${
+                          className={`border-b text-[#000000] border-primary hover:bg-white transition-colors ${
                             index % 2 === 0 ? 'bg-transparent' : 'bg-[#f3f3f3]'
                           }`}
                         >

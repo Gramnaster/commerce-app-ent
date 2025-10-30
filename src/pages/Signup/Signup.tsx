@@ -10,12 +10,6 @@ import { customFetch } from '../../utils';
 import { toast } from 'react-toastify';
 import type { AxiosError } from 'axios';
 
-// interface Country {
-//   id: number;
-//   name: string;
-//   code: string;
-// }
-
 export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
@@ -55,16 +49,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 const Signup = () => {
-  // const [countries, setCountries] = useState<Country[]>([]);
-
-  // useEffect(() => {
-  //   const fetchCountries = async () => {
-  //     const res = await customFetch.get('/countries');
-  //     setCountries(res.data);
-  //   };
-  //   fetchCountries();
-  // }, []);
-
   return (
     <section className="h-screen grid place-items-center">
       <Form

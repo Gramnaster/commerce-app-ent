@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { RootState } from "../../store";
+import type { Pagination } from "../Products/Products";
 
 interface Address {
   id: number,
@@ -27,6 +28,11 @@ interface UserCartOrder {
   user_address: Address;
   items_count: number;
   created_at: string;
+}
+
+interface UserCartOrderResponse {
+  data: UserCartOrder[];
+  pagination: Pagination;
 }
 
 export const loader = (queryClient: any, store: any) => async () => {
@@ -67,10 +73,29 @@ const Dashboard = () => {
   const [searchWord, setSearchWord] = useState('');
 
   const { userCartOrders: initialCartOrders } = useLoaderData() as {
-    userCartOrders: UserCartOrder[]
+    userCartOrders: UserCartOrderResponse;
   };
   const user = useSelector((state: RootState) => state.userState.user);
   const queryClient = useQueryClient();
+  const [loading, setLoading] = useState(false);
+  const [cartOrderData, setCartOrderData] = useState(initialCartOrders);
+
+  const handlePagination = async (page: number | null) => {
+    if (!page) return;
+    setLoading(true)
+    
+    try {
+      const response = await customFetch.get(`/user_cart_orders?page=${page}&per_page=${cartOrderData.pagination.per_page || 20}`);
+      const data = response.data;
+      console.log('Products handlePagination - Response:', data);
+      setCartOrderData(data);
+      setLoading(false);
+    }
+    catch (error: any) {
+      console.error('Products handlePagination - Failed to load pagination data:', error);
+      toast.error('Failed to load pagination data');
+    }
+  }
 
   const { data: cartOrders = [] } = useQuery({
     queryKey: ['cartOrders', user?.id],
@@ -159,7 +184,7 @@ const Dashboard = () => {
   };
   // console.log(`cartOrders`, cartOrders)
     
-    const filteredOrders = activeTab !== 'create' && cartOrders.data !== undefined ? cartOrders.data
+    const filteredOrders = activeTab !== 'create' && cartOrderData.data !== undefined ? cartOrderData.data
     .filter((order: UserCartOrder) => {
       const matchesSearch =
         order.cart_status.toLowerCase().includes(searchWord.toLowerCase()) ||
@@ -179,6 +204,14 @@ const Dashboard = () => {
       (a: UserCartOrder, b: UserCartOrder) =>
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     ) : [];
+
+  const { current_page, total_pages, next_page, previous_page } = cartOrderData.pagination || {
+    current_page: 1,
+    per_page: 20,
+    total_pages: 1,
+    next_page: null,
+    previous_page: null
+  };
 
   return (
     <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
@@ -264,7 +297,6 @@ const Dashboard = () => {
                 </button>
               </div>
             </div>
-
             {/* Traders Table */}
             <div className="bg-transparent rounded-lg border border-primary overflow-hidden">
               <div className="overflow-x-auto">
@@ -294,11 +326,19 @@ const Dashboard = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredOrders.length > 0 ? (
+                    { loading ?     
+                    <tr className='border-b text-[#000000] border-primary hover:bg-[hsl(0,0%,87%)] transition-colors'>
+                      <td className="p-8 text-center" colSpan={10}>
+                        <div className="h-screen flex items-center justify-center">
+                          <span className="loading loading-ring loading-lg text-black">LOADING</span>
+                        </div>
+                      </td> 
+                    </tr>
+                    : filteredOrders.length > 0 ? (
                       filteredOrders.map((order: UserCartOrder, index: number) => (
                         <tr
                           key={order.id}
-                          className={`border-b text-[#000000] border-primary hover:bg-[hsl(0,0%,87%)] transition-colors ${
+                          className={`border-b text-[#000000] border-primary hover:bg-white transition-colors ${
                             index % 2 === 0 ? 'bg-transparent' : 'bg-[#f3f3f3]'
                           }`}
                         >
@@ -384,6 +424,41 @@ const Dashboard = () => {
           </>
         )}
       </div>
+            {total_pages && total_pages > 1 && (
+        <div className="join mt-6 flex justify-center">
+          <input
+            className="join-item btn btn-square border-black" 
+            type="radio" 
+            name="options" 
+            onClick={() => handlePagination(previous_page)}
+            disabled={!previous_page}
+            aria-label="❮" 
+          />
+          {[...Array(total_pages).keys()].map((_, i) => {
+            const pageNum = i + 1;
+            return (
+              <input 
+                key={i} 
+                className="join-item btn btn-square border-black" 
+                type="radio" 
+                name="options" 
+                checked={current_page === pageNum}
+                onClick={() => handlePagination(pageNum)}
+                aria-label={`${pageNum}`} 
+                readOnly
+              />
+            );
+          })}
+          <input
+            className="join-item btn btn-square border-black" 
+            type="radio" 
+            name="options" 
+            onClick={() => handlePagination(next_page)}
+            disabled={!next_page}
+            aria-label="❯" 
+          />
+        </div>
+      )}
     </div>
   )
 }

@@ -2,12 +2,6 @@ import { NavLink, redirect, useLoaderData, useNavigate } from "react-router-dom"
 import { toast } from "react-toastify";
 import { customFetch } from "../../utils";
 
-interface AdminUser {
-  id: number;
-  email: string;
-  admin_role: string;
-}
-
 interface Address {
   id: number,
   unit_no: string;
@@ -87,270 +81,160 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 
 const AdminView = () => {
   const { AdminDetails, Countries } = useLoaderData() as{
-    AdminDetails: AdminUser,
-    Countries: Country[]
+    AdminDetails: { data: any },
+    Countries: { data: Country[] }
   }
   const navigate = useNavigate();
   const { id, email, admin_role, admin_detail: {first_name, last_name, dob }, admin_phones, admin_addresses, company_sites } = AdminDetails.data
   return (
-    // <div>
-    //   <NavLink to={`/admins/edit/${id}`}>Edit Admin details</NavLink>
-    //   <div>Admin Details: </div>
-    //   <div>
-    //     ID: {id}
-    //     Email: {email}
-    //     Role: {admin_role}
-    //     <div>
-    //       <div>Admin Details</div>
-    //       <div>First Name: {first_name}</div>
-    //       <div>Middle Name: {middle_name}</div>
-    //       <div>Last Name: {last_name}</div>
-    //       <div>Date of Birth: {dob}</div>
-    //     </div>
-    //     <div>
-    //       <div>Phone Numbers</div>
-    //       <div>
-    //         {admin_phones.map((phone_number: AdminPhone) => {
-    //           const { id, phone_no, phone_type } = phone_number
-    //           return (
-    //             <div key={id}>
-    //               <div>Phone Number: {phone_no}</div>
-    //               <div>Phone Type: {phone_type}</div>
-    //             </div>
-    //           )
-    //         })}
-    //       </div>
-    //     </div>
-    //     <div>
-    //       <div>Admin Addresses</div>
-    //       <div>
-    //         {admin_addresses.map((adminAddress: AdminAddress) => {
-    //           const { id, is_default, address: { unit_no, street_no, address_line1, address_line2, city, region, zipcode, country_id} } = adminAddress
-    //           return (
-    //             <div key={id}>
-    //               <div>Unit #: {unit_no}</div>
-    //               <div>Street #: {street_no}</div>
-    //               <div>Address Line 1: {address_line1}</div>
-    //               <div>Address Line 2: {address_line2}</div>
-    //               <div>City: {city}</div>
-    //               <div>Region: {region}</div>
-    //               <div>Zipcode: {zipcode}</div>
-    //               <div>Country: {Countries.find((country: Country) => country.id === country_id).name ?? "Country invalid" }</div>
-    //               <div>Default address?: { is_default ? "Yes" : "No" }</div>
-    //             </div>
-    //           )
-    //         })}
-    //       </div>
-    //     </div>
-    //     <div>
-    //       <div>Company Sites</div>
-    //       <div>
-    //         {company_sites.map((site: CompanySite) => {
-    //           const { id, title, address: { unit_no, street_no, address_line1, address_line2, city, region, zipcode, country_id} } = site
-    //           return (
-    //             <div key={id}>
-    //               <div>Site title: {title}</div>
-    //               <div>Unit #: {unit_no}</div>
-    //               <div>Street #: {street_no}</div>
-    //               <div>Address Line 1: {address_line1}</div>
-    //               <div>Address Line 2: {address_line2}</div>
-    //               <div>City: {city}</div>
-    //               <div>Region: {region}</div>
-    //               <div>Zipcode: {zipcode}</div>
-    //               <div>Country: {Countries.find((country: Country) => country.id === country_id).name ?? "Country invalid" } </div>
-    //             </div>
-    //           )
-    //         })}
-    //       </div>
-    //     </div>
-    //   </div>
-    // </div>
+    <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
+      <div className="max-w-7xl mx-auto place-items-center ">
+        <div className="mb-6 text-black">
+          <button
+          onClick={() => navigate(`/admins`)}
+          className="mb-4 flex items-center gap-2 hover:underline transition-colors text-black">
+          <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M10 19l-7-7m0 0l7-7m-7 7h18"
+            />
+          </svg>
+          Back to Admins list
+        </button>
+      </div>
 
-    //     <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
-    //   <div className="max-w-7xl mx-auto place-items-center ">
-    //     <div className="mb-6 text-black">
-    //       <button
-    //       onClick={() => navigate(`/admins`)}
-    //       className="mb-4 flex items-center gap-2 hover:underline transition-colors text-black">
-    //       <svg
-    //           className="w-5 h-5"
-    //           fill="none"
-    //           stroke="currentColor"
-    //           viewBox="0 0 24 24"
-    //         >
-    //         <path
-    //           strokeLinecap="round"
-    //           strokeLinejoin="round"
-    //           strokeWidth={2}
-    //           d="M10 19l-7-7m0 0l7-7m-7 7h18"
-    //         />
-    //       </svg>
-    //       Back to admins list
-    //     </button>
-    //     </div>
-
-    //       <div className="w-[60%] bg-primary rounded-lg p-6 border border-gray-700">
-    //         <div className=" mb-4 pb-2 border-b border-white flex items-center justify-between gap-1">
-    //           <h2 className="text-xl font-bold text-white">
-    //             Admin Information
-    //           </h2>
-    //           <NavLink to={`/admins/edit/${id}`}>
-    //             <button className="btn bg-[hsl(5,100%,98%)] border-primary text-l rounded-[8px] text-primary p-2 pt-1 pb-1 m-1 hover:border-[hsl(5,100%,98%)] hover:bg-primary hover:text-white">
-    //               Edit Admin Info
-    //             </button>
-    //           </NavLink>
-    //         </div>
-    //         <div>
-
-          <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
-            <div className="max-w-7xl mx-auto place-items-center ">
-              <div className="mb-6 text-black">
-                <button
-                onClick={() => navigate(`/admins`)}
-                className="mb-4 flex items-center gap-2 hover:underline transition-colors text-black">
-                <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                  />
-                </svg>
-                Back to Admins list
-              </button>
-            </div>
-
-            <div className="w-[60%] bg-primary rounded-lg p-6 border border-gray-700">
-              <div className=" mb-4 pb-2 border-b border-white flex items-center justify-between gap-1">
-                <h2 className="text-xl font-bold text-white">
-                  Admin Information
-                </h2>
-                <NavLink to={`/admins/edit/${id}`}>
-                  <button className="btn bg-white border-primary text-l rounded-[8px] text-primary p-2 pt-1 pb-1 m-1 hover:border-[hsl(5,100%,98%)] hover:bg-primary hover:text-white">
-                    Edit Admin Info
-                  </button>
-                </NavLink>
+      <div className="w-[60%] bg-primary rounded-lg p-6 border border-gray-700">
+        <div className=" mb-4 pb-2 border-b border-white flex items-center justify-between gap-1">
+          <h2 className="text-xl font-bold text-white">
+            Admin Information
+          </h2>
+          <NavLink to={`/admins/edit/${id}`}>
+            <button className="btn bg-white border-primary text-l rounded-[8px] text-primary p-2 pt-1 pb-1 m-1 hover:border-[hsl(5,100%,98%)] hover:bg-primary hover:text-white">
+              Edit Admin Info
+            </button>
+          </NavLink>
+        </div>
+      <div>
+      </div>
+          <div className="place-items-center text-[black] w-full">
+            <div className=" px-6 py-3 rounded-2xl bg-white w-full">
+              <div className="m-1">
+                <label className="block text-l font-bold mb-2">
+                  Admin ID:
+                </label>
+                <div>
+                  {id}
+                </div>
               </div>
-            <div>
-
-            </div>
-                <div className="place-items-center text-[black] w-full">
-                  <div className=" px-6 py-3 rounded-2xl bg-white w-full">
-                    <div className="m-1">
-                      <label className="block text-l font-bold mb-2">
-                        Admin ID:
-                      </label>
-                      <div>
-                        {id}
+              <div className="m-1">
+                <label className="block text-l font-bold mb-2">
+                  Email
+                </label>
+                {email}
+              </div>
+              <div className="m-1">
+                <label className="block text-l font-bold mb-2">
+                  Role
+                </label>
+                {admin_role}
+              </div>
+              <div className="pl-2">
+                <div className="border-b border-black p-1 font-bold">
+                  Admin Details:
+                </div>
+                <div className="m-1">
+                  <label className="block text-l font-bold mb-2">
+                    First Name
+                  </label>
+                  {first_name}
+                </div>
+                <div className="m-1">
+                  <label className="block text-l font-bold mb-2">
+                    Last Name
+                  </label>
+                  {last_name}
+                </div>
+                <div className="m-1">
+                  <label className="block text-l font-bold mb-2">
+                    Date of Birth
+                  </label>
+                  {dob}
+                </div>
+              </div>
+              <div className="pl-2">
+                <div className="border-b border-black p-1 font-bold pl-2">
+                  Phone Numbers:
+                </div>
+                  <div className="pl-2 m-1">
+                  {admin_phones.length !== 0 ? admin_phones.map((phone_number: AdminPhone) => {
+                    const { id, phone_no, phone_type } = phone_number
+                    return (
+                      <div key={id}>
+                        <div><div className="font-medium">Number:</div> {phone_no}</div>
+                        <div><div className="font-medium">Phone Type:</div> {phone_type}</div>
                       </div>
-                    </div>
-                    <div className="m-1">
-                      <label className="block text-l font-bold mb-2">
-                        Email
-                      </label>
-                      {email}
-                    </div>
-                    <div className="m-1">
-                      <label className="block text-l font-bold mb-2">
-                        Role
-                      </label>
-                      {admin_role}
-                    </div>
-                    <div className="pl-2">
-                      <div className="border-b border-black p-1 font-bold">
-                        Admin Details:
-                      </div>
-                      <div className="m-1">
-                        <label className="block text-l font-bold mb-2">
-                          First Name
-                        </label>
-                        {first_name}
-                      </div>
-                      <div className="m-1">
-                        <label className="block text-l font-bold mb-2">
-                          Last Name
-                        </label>
-                        {last_name}
-                      </div>
-                      <div className="m-1">
-                        <label className="block text-l font-bold mb-2">
-                          Date of Birth
-                        </label>
-                        {dob}
-                      </div>
-                    </div>
-                    <div className="pl-2">
-                      <div className="border-b border-black p-1 font-bold pl-2">
-                        Phone Numbers:
-                      </div>
-                        <div className="pl-2 m-1">
-                        {admin_phones.length !== 0 ? admin_phones.map((phone_number: AdminPhone) => {
-                          const { id, phone_no, phone_type } = phone_number
-                          return (
-                            <div key={id}>
-                              <div><div className="font-medium">Number:</div> {phone_no}</div>
-                              <div><div className="font-medium">Phone Type:</div> {phone_type}</div>
-                            </div>
-                          )
-                          }) : "User has no phone number"}
-                      </div>
-                    </div>
-                    <div className="pl-2">
-                      <div className="border-b border-black p-1 font-bold pl-2">
-                        Admin Addresses:
-                      </div>
-                        <div className="pl-2 m-1">
-                          {admin_addresses.length !== 0 ? admin_addresses.map((adminAddress: AdminAddress) => {
-                            const { id, is_default, address: { unit_no, street_no, address_line1, address_line2, city, region, zipcode, country_id} } = adminAddress
-                            return (
-                              <div key={id}>
-                                <div><div className="font-medium">Unit #:</div> {unit_no}</div>
-                                <div><div className="font-medium">Street #:</div> {street_no}</div>
-                                <div><div className="font-medium">Address Line 1:</div> {address_line1 ? address_line1 : "N/A"}</div>
-                                <div><div className="font-medium">Address Line 2:</div> {address_line2 ? address_line2 : "N/A"}</div>
-                                <div><div>City:</div> {city}</div>
-                                <div><div className="font-medium">Region:</div> {region}</div>
-                                <div><div className="font-medium">Zipcode:</div> {zipcode}</div>
-                                <div><div className="font-medium">Country:</div> {Countries.find((country: Country) => country.id === country_id).name ?? "Country invalid" }</div>
-                                <div><div className="font-medium">Default address?:</div> { is_default ? "Yes" : "No" }</div>
-                              </div>
-                            )
-                          }) : "No address" }
-                      </div>
-                    </div>
-                    <div className="pl-2">
-                      <div className="border-b border-black p-1 font-bold pl-2">
-                        Company Sites:
-                      </div>
-                        <div className="pl-2 m-1">
-                          {company_sites.length !== 0 ? company_sites.map((site: CompanySite) => {
-                            const { id, title, address: { unit_no, street_no, address_line1, address_line2, city, region, zipcode, country_id} } = site
-                            return (
-                              <div key={id}>
-                                <div><div className="font-medium">Site title:</div> {title}</div>
-                                <div><div className="font-medium">Unit #:</div> {unit_no}</div>
-                                <div><div className="font-medium">Street #:</div> {street_no}</div>
-                                <div><div className="font-medium">Address Line 1:</div> {address_line1 ? address_line1 : "N/A"}</div>
-                                <div><div className="font-medium">Address Line 2:</div> {address_line2 ? address_line2 : "N/A"}</div>
-                                <div><div className="font-medium">City:</div> {city}</div>
-                                <div><div className="font-medium">Region:</div> {region}</div>
-                                <div><div className="font-medium">Zipcode:</div> {zipcode}</div>
-                                <div><div className="font-medium">Country:</div> {Countries.find((country: Country) => country.id === country_id).name ?? "Country invalid" } </div>
-                              </div>
-                            )
-                          }) : "Does not belong to any site"}
-                      </div>
-                    </div>
-                  </div>
+                    )
+                    }) : "User has no phone number"}
+                </div>
+              </div>
+              <div className="pl-2">
+                <div className="border-b border-black p-1 font-bold pl-2">
+                  Admin Addresses:
+                </div>
+                  <div className="pl-2 m-1">
+                    {admin_addresses.length !== 0 ? admin_addresses.map((adminAddress: AdminAddress) => {
+                      const { id, is_default, address: { unit_no, street_no, address_line1, address_line2, city, region, zipcode, country_id} } = adminAddress
+                      return (
+                        <div key={id}>
+                          <div><div className="font-medium">Unit #:</div> {unit_no}</div>
+                          <div><div className="font-medium">Street #:</div> {street_no}</div>
+                          <div><div className="font-medium">Address Line 1:</div> {address_line1 ? address_line1 : "N/A"}</div>
+                          <div><div className="font-medium">Address Line 2:</div> {address_line2 ? address_line2 : "N/A"}</div>
+                          <div><div>City:</div> {city}</div>
+                          <div><div className="font-medium">Region:</div> {region}</div>
+                          <div><div className="font-medium">Zipcode:</div> {zipcode}</div>
+                          <div><div className="font-medium">Country:</div> {Countries.data.find((country: Country) => Number(country.id) === Number(country_id))?.name ?? "Country invalid"}</div>
+                          <div><div className="font-medium">Default address?:</div> { is_default ? "Yes" : "No" }</div>
+                        </div>
+                      )
+                    }) : "No address" }
+                </div>
+              </div>
+              <div className="pl-2">
+                <div className="border-b border-black p-1 font-bold pl-2">
+                  Company Sites:
+                </div>
+                  <div className="pl-2 m-1">
+                    {company_sites.length !== 0 ? company_sites.map((site: CompanySite) => {
+                      const { id, title, address: { unit_no, street_no, address_line1, address_line2, city, region, zipcode, country_id} } = site
+                      return (
+                        <div key={id}>
+                          <div><div className="font-medium">Site title:</div> {title}</div>
+                          <div><div className="font-medium">Unit #:</div> {unit_no}</div>
+                          <div><div className="font-medium">Street #:</div> {street_no}</div>
+                          <div><div className="font-medium">Address Line 1:</div> {address_line1 ? address_line1 : "N/A"}</div>
+                          <div><div className="font-medium">Address Line 2:</div> {address_line2 ? address_line2 : "N/A"}</div>
+                          <div><div className="font-medium">City:</div> {city}</div>
+                          <div><div className="font-medium">Region:</div> {region}</div>
+                          <div><div className="font-medium">Zipcode:</div> {zipcode}</div>
+                          <div><div className="font-medium">Country:</div> {Countries.data.find((country: Country) => Number(country.id) === Number(country_id))?.name ?? "Country invalid"} </div>
+                        </div>
+                      )
+                    }) : "Does not belong to any site"}
                 </div>
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
   )
 }
 

@@ -5,7 +5,6 @@ import { toast } from "react-toastify";
 export const loader = (_queryClient: any, store: any) => async () => {
   const storeState = store.getState();
   const admin_user = storeState.userState?.user;
-  console.log(`Admins admin_user`, admin_user)
 
   if (!admin_user || admin_user.admin_role !== 'management') {
     toast.warn('There must be something wrong. Please refresh the page.');

@@ -45,7 +45,7 @@ const NavLinks = () => {
         // if (url === 'about') return null;
         return (
           <li key={id}>
-            <NavLink to={url} className={`capitalize text-[white] ${navigation.state === 'loading' ? 'pointer-events-none text-gray-700' : '' }`}>
+            <NavLink to={url} className={`capitalize text-[white] ${navigation.state === 'loading' ? 'pointer-events-none text-[#bebebe]' : '' }`}>
               {text}
             </NavLink>
           </li>

@@ -19,7 +19,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   // Convert to FormData to avoid preflight (same fix as login)
   const submitData = new FormData();
-  console.log(`submitData`, submitData);
   
   Object.entries(data).forEach(([key, value]) => {
     if (key === 'first_name' || key === "last_name" || key === "dob") {
@@ -117,7 +116,7 @@ const AdminCreate = () => {
     }
   };
   return (
-    <div data-theme="light" className="min-h-screen bg-[hsl(5,100%,98%)] text-white p-6">
+    <div data-theme="light" className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6 text-black">
@@ -140,7 +139,7 @@ const AdminCreate = () => {
             </svg>
             Back to Admin List
           </button>
-          <h1 className="text-3xl font-bold text-black mb-2">Create Category Interface</h1>
+          <h1 className="text-3xl font-bold text-black mb-2">Create Admin Interface</h1>
           <p className="text-black">
             Create Admin
           </p>

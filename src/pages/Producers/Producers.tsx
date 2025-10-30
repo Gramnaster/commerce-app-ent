@@ -1,11 +1,11 @@
-import { useLoaderData } from 'react-router-dom';
+import { redirect, useLoaderData } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
 import { NavLink } from 'react-router-dom';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store';
-import { useQuery } from '@tanstack/react-query';
+import type { ProducersResponse } from '../Products/Products';
 
 interface Address {
   id: number,
@@ -20,28 +20,23 @@ interface Address {
   country: string;
 }
 
-interface Pagination {
-  current_page: number | null;
-  per_page: number | null;
-  total_entries: number | null;
-  total_pages: number | null;
-  next_page: number | null;
-  previous_page: number | null;
-}
-
 interface Producer {
   id: number;
   title: string;
   products_count: number;
   address: Address;
   created_at: string;
-  pagination: Pagination;
 }
 
 export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
   const storeState = store.getState();
   const admin_user = storeState.userState?.user;
   const id = params.id;
+
+    if (!admin_user || admin_user.admin_role !== 'management') {
+      toast.warn('There must be something wrong. Please refresh the page.');
+      return redirect('/');
+    }
 
   const ProducersQuery = {
     queryKey: ['ProducersDetails', id],
@@ -71,37 +66,28 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 const Producers = () => {
   const [searchWord, setSearchWord] = useState('');
   const { Producers } = useLoaderData() as {
-    Producers: Producer[]
+    Producers: ProducersResponse
   };
   const user = useSelector((state: RootState) => state.userState.user);
+  const [loading, setLoading] = useState(false);
   const [producerData, setProducerData] = useState(Producers)
 
-  const handlePagination = async (page: number) => {
+  const handlePagination = async (page: number | null) => {
+    if (!page) return;
+    setLoading(true)
+    
     try {
-      const response = await customFetch.get(`/products?page=${page}&per_page=${per_page}`);
-      const data = response.data
-      setProducerData(data)
+      const response = await customFetch.get(`/products?page=${page}&per_page=${producerData.pagination.per_page || 20}`);
+      const data = response.data;
+      console.log('Products handlePagination - Response:', data);
+      setProducerData(data);
+      setLoading(false);
     }
     catch (error: any) {
-      console.error('Failed to load pagination data:', error);
+      console.error('Products handlePagination - Failed to load pagination data:', error);
       toast.error('Failed to load pagination data');
-      return { pagination: [] };
     }
   }
-
-  // const { data: producers = [] } = useQuery({
-  //     queryKey: ['producers', user?.id],
-  //     queryFn: async () => {
-  //       const response = await customFetch.get('/producers', {
-  //         headers: {
-  //           Authorization: user?.token,
-  //         },
-  //       });
-  //       return response.data;
-  //     },
-  //     initialData: initialProducers,
-  //     refetchOnWindowFocus: false,
-  //   });
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -138,7 +124,7 @@ const Producers = () => {
   return (
     <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
       <div className="max-w-7xl mx-auto">
-        <NavLink to={`/producers/create`} className={'btn bg-primary border-primary rounded-[8px] text-white p-2 pt-1 pb-1 m-1 hover:bg-[hsl(5,100%,98%)] hover:text-primary hover:border-primary'}>
+        <NavLink to={`/producers/create`} className={'btn bg-primary border-primary rounded-[8px] text-white p-2 pt-1 pb-1 m-1 hover:bg-white hover:text-primary hover:border-primary'}>
           Create Producer
         </NavLink>
         {(
@@ -152,7 +138,7 @@ const Producers = () => {
                     placeholder="Search by Name or Date"
                     value={searchWord}
                     onChange={(e) => setSearchWord(e.target.value)}
-                    className="w-full bg-white border border-primary rounded-lg p-3 pl-10 text-black placeholder-[#c27971]"
+                    className="w-full bg-white border border-primary rounded-lg p-3 pl-10 text-black placeholder-[#666666]"
                   />
                   <svg
                     className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-primary"
@@ -168,7 +154,7 @@ const Producers = () => {
                     />
                   </svg>
                 </div>
-                <button className="p-3 bg-[#924b43] hover:bg-[#743b35] border border-primary rounded-lg hover:cursor-pointer transition-colors">
+                <button className="p-3 bg-primary hover:bg-[#03529c] border border-white rounded-lg hover:cursor-pointer transition-colors">
                   <svg
                     className="w-5 h-5"
                     fill="none"
@@ -187,7 +173,7 @@ const Producers = () => {
             </div>
 
             {/* Traders Table */}
-            <div className="bg-white rounded-lg border border-[hsl(5,100%,80%)] overflow-hidden">
+            <div className="bg-transparent rounded-lg border border-primary overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead className="bg-primary">
@@ -213,12 +199,20 @@ const Producers = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredProducers.length > 0 ? (
+                    { loading ?     
+                    <tr className='border-b text-[#000000] border-primary hover:bg-[hsl(0,0%,87%)] transition-colors'>
+                      <td className="p-8 text-center" colSpan={10}>
+                        <div className="h-screen flex items-center justify-center">
+                          <span className="loading loading-ring loading-lg text-black">LOADING</span>
+                        </div>
+                      </td> 
+                    </tr>
+                    : filteredProducers.length > 0 ? (
                       filteredProducers.map((producer: Producer, index: number) => (
                         <tr
                           key={producer.id}
-                          className={`border-b text-[#000000] border-[hsl(5,100%,80%)] hover:bg-[hsl(4,81%,90%)] transition-colors ${
-                            index % 2 === 0 ? 'bg-[hsl(5,100%,98%)]' : 'bg-[hsl(5,100%,98%)]'
+                          className={`border-b text-[#000000] border-primary hover:bg-white transition-colors ${
+                            index % 2 === 0 ? 'bg-transparent' : 'bg-[#f3f3f3]'
                           }`}
                         >
                           <td className="p-4 text-m text-left">
@@ -252,7 +246,7 @@ const Producers = () => {
                       <tr className="w-full">
                         <td
                           colSpan={6}
-                          className="p-8 w-full text-center text-black text-m bg-[hsl(5,100%,98%)]"
+                          className="p-8 w-full text-center text-black text-m bg-transparent"
                         >
                           No producer found
                         </td>
@@ -265,33 +259,41 @@ const Producers = () => {
           </>
         )}
       </div>
-      <div className="join">
-        <input
-          className="join-item btn btn-square" 
-          type="radio" 
-          name="options" 
-          onClick={() => handlePagination(previous_page)}
-          aria-label={`<`} 
-        />
-        {[...Array(total_pages).keys()].map((_, i) => 
-          (
-          <input key={i} 
-          className="join-item btn btn-square" 
-          type="radio" 
-          name="options" 
-          onClick={() => handlePagination(i + 1)}
-          aria-label={`${i + 1}`} 
+      {total_pages && total_pages > 1 && (
+        <div className="join mt-6 flex justify-center">
+          <input
+            className="join-item btn btn-square border-black" 
+            type="radio" 
+            name="options" 
+            onClick={() => handlePagination(previous_page)}
+            disabled={!previous_page}
+            aria-label="❮" 
           />
-          ))
-        }
-        <input
-          className="join-item btn btn-square" 
-          type="radio" 
-          name="options" 
-          onClick={() => handlePagination(next_page)}
-          aria-label={`>`} 
-        />
-      </div>
+          {[...Array(total_pages).keys()].map((_, i) => {
+            const pageNum = i + 1;
+            return (
+              <input 
+                key={i} 
+                className="join-item btn btn-square border-black" 
+                type="radio" 
+                name="options" 
+                checked={current_page === pageNum}
+                onClick={() => handlePagination(pageNum)}
+                aria-label={`${pageNum}`} 
+                readOnly
+              />
+            );
+          })}
+          <input
+            className="join-item btn btn-square border-black" 
+            type="radio" 
+            name="options" 
+            onClick={() => handlePagination(next_page)}
+            disabled={!next_page}
+            aria-label="❯" 
+          />
+        </div>
+      )}
     </div>
   )
 }

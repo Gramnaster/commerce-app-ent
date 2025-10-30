@@ -55,7 +55,6 @@ const PromotionView = () => {
   const { promotion } = useLoaderData() as {
    promotion: Promotion;
   }
-  console.log(promotion)
   const navigate = useNavigate();
 
   const { id, discount_amount, products_count, product_categories, products, created_at } = promotion.data
@@ -69,27 +68,6 @@ const PromotionView = () => {
   };
 
   return (
-    // <div>
-    //   <div>ID: {id}</div>
-    //   <div>Discount amount: {discount_amount}</div>
-    //   <div>Products count: {products_count}</div>
-    //   <div>Product Categories: {product_categories.length !== 0 ? product_categories.map((category: ProductCategory) => {
-    //     return (
-    //       <div key={category.id}></div>
-    //     )
-    //   }) : 'Currently not applied to any categories'}</div>
-    //   <div>Products: {products.length !== 0 ? products.map((product: Product) => {
-    //     const { id, title, price} = product
-    //     return (
-    //       <div key={id}>
-    //         <div>Product Name: {title}</div>
-    //         <div>Price: {price}</div>
-    //       </div>
-    //     )
-    //   }) : 'Currently not applied to any categories' }</div>
-    //   <div><NavLink to={`/promotions/edit/${id}`}>Edit Promotion</NavLink></div>
-    // </div>
-
     <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
       <div className="max-w-7xl mx-auto place-items-center ">
         <div className="mb-6 text-black">
@@ -119,7 +97,7 @@ const PromotionView = () => {
                 Promotion Information
               </h2>
               <NavLink to={`/promotions/edit/${id}`}>
-                <button className="btn bg-[hsl(5,100%,98%)] border-primary text-l rounded-[8px] text-primary p-2 pt-1 pb-1 m-1 hover:border-[hsl(5,100%,98%)] hover:bg-primary hover:text-white">
+                <button className="btn bg-white border-primary text-l rounded-[8px] text-primary p-2 pt-1 pb-1 m-1 hover:border-[hsl(5,100%,98%)] hover:bg-primary hover:text-white">
                   Edit Promotion Info
                 </button>
               </NavLink>
