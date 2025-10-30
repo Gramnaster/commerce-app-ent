@@ -80,7 +80,7 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
     queryKey: ['allProducts'],
     queryFn: async () => {
       const response = await customFetch.get('/products');
-      console.log('Products response.data:', response.data)
+      console.log('Products loader - response.data:', response.data)
       return response.data;
     },
   };
@@ -93,7 +93,7 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
           Authorization: user.token,
         },
       });
-      console.log(`ProductEdit product_categories`, response.data)
+      console.log('Products loader - product_categories response.data:', response.data)
       return response.data;
     },
   };
@@ -104,11 +104,11 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
       queryClient.ensureQueryData(ProductCategoriesQuery)
     ]);
 
-    console.log('Products allProducts :', allProducts)
-    console.log('Products ProductCategories :', ProductCategories)
+    console.log('Products loader - allProducts:', allProducts)
+    console.log('Products loader - ProductCategories:', ProductCategories)
     return { allProducts, ProductCategories };
   } catch (error: any) {
-    console.error('Failed to load Product data:', error);
+    console.error('Products loader - Failed to load Product data:', error);
     toast.error('Failed to load Product data');
     return { allStocks: [] };
   }
@@ -189,6 +189,17 @@ const Products = () => {
 
   console.log('Products component - Current page:', current_page, 'Total pages:', total_pages);
 
+  const handleCategoryChange = (category: string | null) => {
+    console.log('Products handleCategoryChange - Selected category:', category);
+    setSelectedCategory(category);
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    console.log('Products handleSearchChange - Search value:', value);
+    setSearchWord(value);
+  };
+
   return (
     <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
       <div className="max-w-7xl mx-auto">
@@ -196,11 +207,11 @@ const Products = () => {
            Create Product  
         </NavLink>
         <div className='text-primary font-bold'>
-          <button onClick={() => setSelectedCategory(null)} className='m-1 px-2 py-2 border-2 border-primary rounded-2xl hover:cursor-pointer hover:bg-primary hover:text-white' >All</button>
+          <button onClick={() => handleCategoryChange(null)} className='m-1 px-2 py-2 border-2 border-primary rounded-2xl hover:cursor-pointer hover:bg-primary hover:text-white' >All</button>
           {ProductCategories.data.map((category: ProductCategory) => {
             const { id, title } = category;
             return (
-              <button onClick={() => setSelectedCategory(`${title}`)} className='m-1 px-2 py-2 border-2 border-primary rounded-2xl hover:cursor-pointer hover:bg-primary hover:text-white' key={id}>{title}</button>
+              <button onClick={() => handleCategoryChange(title)} className='m-1 px-2 py-2 border-2 border-primary rounded-2xl hover:cursor-pointer hover:bg-primary hover:text-white' key={id}>{title}</button>
             )
           })}
       </div>
@@ -214,7 +225,7 @@ const Products = () => {
                     type="text"
                     placeholder="Search by Name or Date"
                     value={searchWord}
-                    onChange={(e) => setSearchWord(e.target.value)}
+                    onChange={handleSearchChange}
                     className="w-full bg-[white] border border-black rounded-lg p-3 pl-10 text-black placeholder-[#666666]"
                   />
                   <svg
