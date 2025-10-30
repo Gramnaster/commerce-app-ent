@@ -44,7 +44,7 @@ export const loader =
             Authorization: admin_user.token,
           },
         });
-        console.log(`ProductEdit producers`, response.data);
+        console.log('ProductCreate loader - producers response.data:', response.data);
         return response.data;
       },
     };
@@ -57,7 +57,7 @@ export const loader =
             Authorization: admin_user.token,
           },
         });
-        console.log(`ProductEdit product_categories`, response.data);
+        console.log('ProductCreate loader - product_categories response.data:', response.data);
         return response.data;
       },
     };
@@ -66,9 +66,9 @@ export const loader =
         queryClient.ensureQueryData(ProducersQuery),
         queryClient.ensureQueryData(ProductCategoriesQuery),
       ]);
-      console.log(`ProductEdit ProducersDetails`, ProducersDetails);
+      console.log('ProductCreate loader - ProducersDetails:', ProducersDetails);
       console.log(
-        `ProductEdit ProductCategoriesDetails`,
+        'ProductCreate loader - ProductCategoriesDetails:',
         ProductCategoriesDetails
       );
       return { ProducersDetails, ProductCategoriesDetails };
@@ -120,20 +120,24 @@ const ProductCreate = () => {
     }));
   };
 
-    // Handle file selection
+  // Handle file selection
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      console.log('ProductCreate handleFileChange - Selected file:', file.name, file.size, 'bytes');
       setImageFile(file);
       // Create preview URL
-      setImagePreview(URL.createObjectURL(file));
+      const previewUrl = URL.createObjectURL(file);
+      setImagePreview(previewUrl);
+      console.log('ProductCreate handleFileChange - Preview URL created');
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    console.log(`handleSubmit formData:`, formData);
+    console.log('ProductCreate handleSubmit - formData:', formData);
+    console.log('ProductCreate handleSubmit - imageFile:', imageFile);
 
     try {
       // Create FormData object for multipart/form-data
@@ -146,12 +150,15 @@ const ProductCreate = () => {
       
       // Add image file if selected (takes priority over URL)
       if (imageFile) {
+        console.log('ProductCreate - Using image file upload');
         formDataToSend.append('product[product_image]', imageFile);
       } else if (formData.product_image_url) {
+        console.log('ProductCreate - Using image URL:', formData.product_image_url);
         // Fallback to URL if no file is uploaded
         formDataToSend.append('product[product_image_url]', formData.product_image_url);
       }
 
+      console.log('ProductCreate - Sending request to /products');
       const response = await customFetch.post('/products', formDataToSend, {
         headers: {
           Authorization: user?.token,
@@ -160,9 +167,9 @@ const ProductCreate = () => {
       });
 
       if (response.status) {
-        console.log('Product created:', response.data);
+        console.log('ProductCreate - Product created:', response.data);
         console.log(
-          'Image URL from Cloudinary:',
+          'ProductCreate - Image URL from Cloudinary:',
           response.data.data.product_image_url
         );
       }
@@ -170,7 +177,7 @@ const ProductCreate = () => {
       navigate('/products');
       return response.data;
     } catch (error: any) {
-      console.error('Failed to create product:', error);
+      console.error('ProductCreate - Failed to create product:', error);
       toast.error('Failed to create product');
     } finally {
       setLoading(false);

@@ -12,6 +12,7 @@ export const customFetch = axios.create({
 console.log('API Base URL:', baseURL);
 
 customFetch.defaults.headers.common['Accept'] = 'application/json';
+customFetch.defaults.headers.common['ngrok-skip-browser-warning'] = 'true';
 // NOTE: Do NOT set default Content-Type to allow FormData to set multipart/form-data with boundary
 
 customFetch.interceptors.request.use(
