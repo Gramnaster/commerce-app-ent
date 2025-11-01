@@ -1,18 +1,72 @@
-import { useLoaderData } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { customFetch } from '../../utils';
-import { NavLink } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { useState } from 'react';
-import type { RootState } from '../../store';
-import { useQuery } from '@tanstack/react-query';
-import type { ProductCategoriesResponse } from '../Products/Products.tsx';
+import { toast } from "react-toastify";
+import { customFetch } from "../../utils";
+import type { Address } from "../Admin/AdminEdit";
+import type { Pagination } from "../Products/Products";
+import { NavLink, useLoaderData } from "react-router-dom";
+import { useState } from "react";
+import type { RootState } from "../../store";
+import { useSelector } from "react-redux";
+import { useQuery } from "@tanstack/react-query";
+import type { UserCartOrder } from "../Home/Dashboard";
 
-interface ProductCategory {
+export interface Phone {
+  id: number;
+  phone_type: 'mobile' | 'work' | 'home';
+  phone_no: string;
+}
+
+export interface UserDetail {
+  first_name: string;
+  middle_name: string | null;
+  last_name: string;
+  dob: string;
+}
+
+export interface UserPaymentMethod {
+  id: number;
+  balance: string;
+  payment_type: 'e_wallet' | null;
+}
+
+export interface SocialProgram {
   id: number;
   title: string;
-  products_count: number;
+  description: string;
+}
+
+export interface Receipt {
+  id: number;
+  transaction_type: 'purchase' | 'withdraw' | 'deposit' | 'donation';
+  amount: string;
+  balance_before: string;
+  balance_after: string;
+  description: string;
+  user_cart_order_id: number | null;
+  social_programs: SocialProgram;
   created_at: string;
+}
+
+export interface User {
+  id: number;
+  email: string;
+  is_verified: boolean;
+  confirmed_at: string | null;
+  user_detail: UserDetail;
+  phones: Phone[];
+  user_adresses: Address[];
+  user_payment_methods: UserPaymentMethod[];
+  created_at: string;
+  receipts: Receipt[];
+  user_cart_orders: UserCartOrder[]
+}
+
+export interface Data {
+  users: User[];
+}
+
+export interface UserResponse {
+  data: Data;
+  pagination: Pagination;
 }
 
 export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
@@ -20,10 +74,10 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
   const admin_user = storeState.userState?.user;
   const id = params.id;
 
-  const ProductCategoriesQuery = {
-    queryKey: ['ProductCategoriesDetails', id],
+  const UsersQuery = {
+    queryKey: ['users', id],
     queryFn: async () => {
-      const response = await customFetch.get(`/product_categories`, {
+      const response = await customFetch.get(`/users`, {
         headers: {
           Authorization: admin_user.token,
         },
@@ -33,24 +87,23 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
   };
 
   try {
-    const [ProductCategories] = await Promise.all([
-      queryClient.ensureQueryData(ProductCategoriesQuery)
+    const [Users] = await Promise.all([
+      queryClient.ensureQueryData(UsersQuery)
     ]);
-    return { ProductCategories };
+    return { Users };
   } catch (error: any) {
-    console.error('Failed to load Categories data:', error);
-    toast.error('Failed to load Categories data');
-    return { allStocks: [] };
+    console.error('Failed to load Users data:', error);
+    toast.error('Failed to load Users data');
+    return { Users: [] };
   }
 };
 
-const Categories = () => {
-  const { ProductCategories: initialCategories } = useLoaderData() as {
-    ProductCategories: ProductCategoriesResponse
+const Users = () => {
+  const { Users: initialUsers } = useLoaderData() as {
+    Users: UserResponse
   };
-
   const [searchWord, setSearchWord] = useState('');
-  const [categoryData, setCategoriesData] = useState(initialCategories);
+  const [usersData, setUsersData] = useState(initialUsers);
   const [loading, setLoading] = useState(false);
   const user = useSelector((state: RootState) => state.userState.user);
 
@@ -59,20 +112,20 @@ const Categories = () => {
     setLoading(true)
     
     try {
-      const response = await customFetch.get(`/product_categories?page=${page}&per_page=${categoryData.pagination.per_page || 20}`);
+      const response = await customFetch.get(`/users?page=${page}&per_page=${usersData.pagination.per_page || 20}`);
       const data = response.data;
-      console.log('Categories handlePagination - Response:', data);
-      setCategoriesData(data);
+      console.log('Users handlePagination - Response:', data);
+      setUsersData(data);
       setLoading(false);
     }
     catch (error: any) {
-      console.error('Products handlePagination - Failed to load pagination data:', error);
+      console.error('Users handlePagination - Failed to load pagination data:', error);
       toast.error('Failed to load pagination data');
     }
   }
-
-  const { data: categories = [] } = useQuery({
-    queryKey: ['category', user?.id],
+  
+  const { data: users = [] } = useQuery({
+    queryKey: ['users', user?.id],
     queryFn: async () => {
       const response = await customFetch.get('/product_categories', {
         headers: {
@@ -81,7 +134,7 @@ const Categories = () => {
       });
       return response.data;
     },
-    initialData: initialCategories,
+    initialData: initialUsers,
     refetchOnWindowFocus: false,
   });
 
@@ -92,22 +145,44 @@ const Categories = () => {
       day: '2-digit',
     });
   };
+  console.log(`Users users`, users)
+  console.log(`Users users.data`, users.data)
+  console.log(`Users users.data val`, Object.values(users.data.users))
 
-  const filteredCategories = categories.data.filter((category: ProductCategory) => {
+  const filteredUsers = Object.values(users.data.users).filter((user: User) => {
     const matchesSearch =
-      category.id?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
-      category.title?.toLowerCase().includes(searchWord.toLowerCase()) ||
-      category.products_count?.toString().includes(searchWord.toLowerCase()) ||
-      category.created_at?.toString().includes(searchWord.toLowerCase());
+      user.id?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
+      user.email?.toLowerCase().includes(searchWord.toLowerCase()) ||
+      user.is_verified?.toString().includes(searchWord.toLowerCase()) ||
+      user.user_detail?.first_name.includes(searchWord.toLowerCase()) ||
+      user.user_detail?.middle_name?.includes(searchWord.toLowerCase()) ||
+      user.user_detail?.last_name.includes(searchWord.toLowerCase()) ||
+      user.created_at.includes(searchWord.toLowerCase()) ||
+      user.phones?.some(
+        (phone) =>
+          phone.phone_no.toLowerCase().includes(searchWord.toLowerCase()) ||
+          phone.phone_type.toLowerCase().includes(searchWord.toLowerCase())
+      );
+      user.user_adresses?.some(
+        (address) =>
+          address.unit_no.toLowerCase().includes(searchWord.toLowerCase()) ||
+          address.street_no.toLowerCase().includes(searchWord.toLowerCase()) ||
+          address.address_line1.toLowerCase().includes(searchWord.toLowerCase()) ||
+          address.address_line2.toLowerCase().includes(searchWord.toLowerCase()) ||
+          address.city.toLowerCase().includes(searchWord.toLowerCase()) ||
+          address.region.toLowerCase().includes(searchWord.toLowerCase()) ||
+          address.zipcode.toLowerCase().includes(searchWord.toLowerCase()) ||
+          address.country.toLowerCase().includes(searchWord.toLowerCase())
+      );
 
       return matchesSearch;
       })
       .sort(
-        (a: ProductCategory, b: ProductCategory) =>
+        (a: User, b: User) =>
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     ) || [];
 
-    const { current_page, total_pages, next_page, previous_page } = categoryData.pagination || {
+    const { current_page, total_pages, next_page, previous_page } = users.pagination || {
       current_page: 1,
       per_page: 20,
       total_pages: 1,
@@ -118,9 +193,9 @@ const Categories = () => {
   return (
     <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
       <div className="max-w-7xl mx-auto">
-        <NavLink to={`/categories/create`} className={'btn bg-primary border-primary rounded-[8px] text-white p-2 pt-1 pb-1 m-1 hover:bg-white hover:text-primary hover:border-primary'}>
+        {/* <NavLink to={`/categories/create`} className={'btn bg-primary border-primary rounded-[8px] text-white p-2 pt-1 pb-1 m-1 hover:bg-white hover:text-primary hover:border-primary'}>
           Create Category
-        </NavLink>
+        </NavLink> */}
         {(
           <>
             {/* Search and Filter */}
@@ -173,16 +248,16 @@ const Categories = () => {
                   <thead className="bg-primary">
                     <tr className="border-b border-primary">
                       <th className="text-left p-4 text-s font-normal text-white">
-                        Product Category ID
-                      </th>
-                      <th className="text-left p-4 text-s font-normal text-white">
-                        Product Category Name
+                        User ID
                       </th>
                       <th className="text-center p-4 text-s font-normal text-white">
-                        Products Count
+                        Name
+                      </th>
+                      <th className="text-center p-4 text-s font-normal text-white">
+                        Verified?
                       </th> 
                       <th className="text-center p-4 text-s font-normal text-white">
-                        Creation/Addition Date
+                        Account creation date:
                       </th> 
                       <th className="text-center p-4 text-s font-normal text-white">
                         Admin Actions:
@@ -198,29 +273,28 @@ const Categories = () => {
                           </div>
                         </td> 
                       </tr>
-                     : filteredCategories.length > 0 ? (
-                      filteredCategories.map((category: ProductCategory, index: number) => (
+                     : filteredUsers.length > 0 ? (
+                      filteredUsers.map((user: User, index: number) => (
                         <tr
-                          key={category.id}
+                          key={user.id}
                           className={`border-b text-[#000000] border-primary hover:bg-white transition-colors ${
                             index % 2 === 0 ? 'bg-transparent' : 'bg-[#f3f3f3]'
                           }`}
                         >
                           <td className="p-4 text-m text-left">
-                            {category.id}
+                            {user.id}
                           </td>
                           <td className="p-4 text-m text-center">
-                             {category.title}
+                             {user.user_detail.first_name} {user.user_detail.middle_name || null} {user.user_detail.last_name}
                           </td>
                           <td className="p-4 text-m text-center">
-                             {category.products_count}
+                             {user.is_verified ? 'Yes' : 'No'}
                           </td>
-
-                          <td className={`p-4 text-m`}>
-                            {formatDate(category.created_at)}
+                          <td className={`p-4 text-m text-center`}>
+                            {formatDate(user.created_at)}
                           </td>
-                          <td className={`p-4 text-m`}>
-                            <NavLink to={`/categories/${category.id}`}><span className='hover:text-primary hover:underline'>View Category Info</span></NavLink>
+                          <td className={`p-4 text-m text-center`}>
+                            <NavLink to={`/users/${user.id}`}><span className='hover:text-primary hover:underline'>View User Info</span></NavLink>
                           </td>
                         </tr>
                       ))
@@ -230,7 +304,7 @@ const Categories = () => {
                           colSpan={6}
                           className="p-8 w-full text-center text-black text-m bg-transparent"
                         >
-                          No category found
+                          No users found
                         </td>
                       </tr>
                     )}
@@ -280,4 +354,4 @@ const Categories = () => {
   )
 }
 
-export default Categories
+export default Users

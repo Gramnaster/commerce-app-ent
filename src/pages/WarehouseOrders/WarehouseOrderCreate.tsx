@@ -159,7 +159,7 @@ const WarehouseOrderCreate = () => {
                   name="company_site_id"
                   value={formData.company_site_id}
                   onChange={handleInputChange}
-                  className='text-black'
+                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                   required
                 >
                   <option value="" className='text-white'>Select Company Site</option>
@@ -186,7 +186,6 @@ const WarehouseOrderCreate = () => {
                   onChange={handleInputChange}
                   className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                   required
-                  placeholder="+1234567890"
                 />
               </div>
               <div>
@@ -200,7 +199,6 @@ const WarehouseOrderCreate = () => {
                   onChange={handleInputChange}
                   className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                   required
-                  placeholder="John"
                 />
               </div>
               <div>
@@ -227,7 +225,6 @@ const WarehouseOrderCreate = () => {
                   onChange={handleInputChange}
                   className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                   required
-                  placeholder="Doe"
                 />
               </div>
               <div>

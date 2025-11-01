@@ -6,6 +6,8 @@ import { useSelector } from "react-redux";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { RootState } from "../../store";
 import type { Pagination } from "../Products/Products";
+import type { WareHouseOrder } from "../WarehouseOrders/WarehouseOrders";
+import type { SocialProgram } from "../Users/Users";
 
 interface Address {
   id: number,
@@ -28,6 +30,8 @@ export interface UserCartOrder {
   user_address: Address;
   items_count: number;
   created_at: string;
+  warehouse_orders: WareHouseOrder;
+  social_program: SocialProgram;
 }
 
 export interface UserCartOrderResponse {
@@ -184,7 +188,7 @@ const Dashboard = () => {
   };
   // console.log(`cartOrders`, cartOrders)
     
-    const filteredOrders = activeTab !== 'create' && cartOrderData.data !== undefined ? cartOrderData.data
+  const filteredOrders = activeTab !== 'create' && cartOrderData.data !== undefined ? cartOrderData.data
     .filter((order: UserCartOrder) => {
       const matchesSearch =
         order.cart_status.toLowerCase().includes(searchWord.toLowerCase()) ||
@@ -205,12 +209,12 @@ const Dashboard = () => {
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     ) : [];
 
-  const { current_page, total_pages, next_page, previous_page } = cartOrderData.pagination || {
-    current_page: 1,
-    per_page: 20,
-    total_pages: 1,
-    next_page: null,
-    previous_page: null
+    const { current_page, total_pages, next_page, previous_page } = cartOrderData.pagination || {
+      current_page: 1,
+      per_page: 20,
+      total_pages: 1,
+      next_page: null,
+      previous_page: null
   };
 
   return (
@@ -323,6 +327,9 @@ const Dashboard = () => {
                       <th className="text-center p-4 text-s font-extralight text-white">
                         Admin Actions
                       </th>
+                      <th className="text-center p-4 text-s font-extralight text-white">
+                        View
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -404,6 +411,9 @@ const Dashboard = () => {
                                 </span>
                               )}
                             </div>
+                          </td>
+                          <td className={`p-4 text-m ${activeTab === 'pending' ? 'text-center' : 'text-right'}`}>
+                            <NavLink to={`/user_cart_order/${order.id}`}>View cart order info</NavLink>
                           </td>
                         </tr>
                       ))

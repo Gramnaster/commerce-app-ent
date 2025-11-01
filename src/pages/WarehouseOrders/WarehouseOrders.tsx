@@ -16,11 +16,14 @@ export interface Inventory {
   id: number;
   sku: string;
   product_id: number;
+  qty_in_stock: number;
 }
 
 export interface WareHouseOrder {
   id: number;
   qty: number;
+  inventory_id: number;
+  company_site_id: number;
   product_status: 'storage' | 'progress' | 'delivered';
   company_site: CompanySite;
   inventory: Inventory;
@@ -79,7 +82,7 @@ const WarehouseOrders = () => {
     setLoading(true)
     
     try {
-      const response = await customFetch.get(`/user_cart_orders?page=${page}&per_page=${warehouseOrdersData.pagination.per_page || 20}`);
+      const response = await customFetch.get(`/warehouse_orders?page=${page}&per_page=${warehouseOrdersData.pagination.per_page || 20}`);
       const data = response.data;
       console.log('Products handlePagination - Response:', data);
       setWarehouseOrdersData(data);
