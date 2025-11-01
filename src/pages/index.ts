@@ -46,3 +46,8 @@ export { default as SocialPrograms } from './SocialPrograms/SocialPrograms';
 export { default as SocialProgramView } from './SocialPrograms/SocialProgramView';
 export { default as SocialProgramCreate } from './SocialPrograms/SocialProgramCreate';
 export { default as SocialProgramEdit } from './SocialPrograms/SocialProgramEdit';
+export { default as InventoriesHome } from './Inventories/InventoriesHome';
+export { default as Inventories } from './Inventories/Inventories';
+export { default as InventoriesView } from './Inventories/InventoriesView';
+export { default as InventoriesCreate } from './Inventories/InventoriesCreate';
+export { default as InventoriesEdit } from './Inventories/InventoriesEdit';
