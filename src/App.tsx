@@ -2,7 +2,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-import { Error, Home, Landing, Dashboard, Signup, ProductsHome, Products, ProductView, ProductEdit, ProductCreate, ProducersHome, Producers, ProducerView, ProducerEdit, ProducerCreate, CategoriesHome, Categories, CategoryView, CategoryCreate, CategoryEdit, Admins, AdminView, AdminCreate, AdminEdit, AdminsHome, PromotionsHome, Promotions, PromotionCreate, PromotionEdit, PromotionView, WarehouseOrdersHome, WarehouseOrderView, WarehouseOrders, WarehouseOrderEdit, UsersHome, Users, UserView, ReceiptsHome, Receipts, ReceiptView, UserCartOrder, SocialProgramsHome, SocialPrograms, SocialProgramView, SocialProgramCreate, SocialProgramEdit } from './pages/index.ts';
+import { Error, Home, Landing, Dashboard, Signup, ProductsHome, Products, ProductView, ProductEdit, ProductCreate, ProducersHome, Producers, ProducerView, ProducerEdit, ProducerCreate, CategoriesHome, Categories, CategoryView, CategoryCreate, CategoryEdit, Admins, AdminView, AdminCreate, AdminEdit, AdminsHome, PromotionsHome, Promotions, PromotionCreate, PromotionEdit, PromotionView, WarehouseOrdersHome, WarehouseOrderView, WarehouseOrders, WarehouseOrderEdit, UsersHome, Users, UserView, ReceiptsHome, Receipts, ReceiptView, UserCartOrder, SocialProgramsHome, SocialPrograms, SocialProgramView, SocialProgramCreate, SocialProgramEdit, Inventories, InventoriesView, InventoriesCreate, InventoriesEdit, InventoriesHome } from './pages/index.ts';
 import { store } from './store.ts';
 
 // import {action as loginAction} from './pages/Login/Login';
@@ -60,6 +60,12 @@ import {loader as socialProgramsLoader} from './pages/SocialPrograms/SocialProgr
 import {loader as socialProgramViewLoader} from './pages/SocialPrograms/SocialProgramView.tsx';
 import {action as socialProgramCreateAction} from './pages/SocialPrograms/SocialProgramCreate.tsx';
 import {loader as socialProgramEditLoader} from './pages/SocialPrograms/SocialProgramEdit.tsx';
+
+import {loader as inventoriesHomeLoader} from './pages/Inventories/InventoriesHome.tsx';
+import {loader as inventoriesLoader} from './pages/Inventories/Inventories.tsx';
+// import {loader as inventoriesViewLoader} from './pages/Inventories/InventoriesView.tsx';
+// import {action as inventoriesCreateAction} from './pages/Inventories/InventoriesCreate.tsx';
+// import {loader as inventoriesEditLoader} from './pages/Inventories/InventoriesEdit.tsx';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -236,6 +242,35 @@ const router = createBrowserRouter([
             path: 'edit/:id',
             element: <SocialProgramEdit  />,
             loader: socialProgramEditLoader(queryClient, store)
+          },
+        ]
+      },
+      {
+        path: 'inventories',
+        element: <InventoriesHome  />,
+        loader: inventoriesHomeLoader(queryClient, store),
+        children: [
+          {
+            index: true,
+            element: <Inventories />,
+            loader: inventoriesLoader(queryClient, store)
+          },
+          {
+            path: ':id',
+            element: <InventoriesView />,
+            // loader: socialProgramViewLoader(queryClient, store)
+          },
+          {
+            // create
+            path: 'create',
+            element: <InventoriesCreate  />,
+            // action: socialProgramCreateAction
+          },
+          {
+            // edit / update / delete
+            path: 'edit/:id',
+            element: <InventoriesEdit  />,
+            // loader: socialProgramEditLoader(queryClient, store)
           },
         ]
       },

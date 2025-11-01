@@ -182,7 +182,7 @@ const ProductCreate = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }; 
 
   return (
     <div className="min-h-screen bg-transparent text-white p-6">
