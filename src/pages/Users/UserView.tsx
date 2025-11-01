@@ -52,8 +52,6 @@ const UserView = () => {
       dob
     },
     phones,
-    user_addresses,
-    user_payment_methods,
     receipts,
     user_cart_orders
   } = UserViewDetails.data;

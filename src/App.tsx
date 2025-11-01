@@ -52,6 +52,8 @@ import {loader as UserViewLoader} from './pages/Users/UserView.tsx';
 
 import {loader as receiptsHomeLoader} from './pages/Receipts/ReceiptsHome.tsx';
 import {loader as receiptsLoader} from './pages/Receipts/Receipts.tsx';
+import {loader as receiptViewLoader} from './pages/Receipts/ReceiptView.tsx';
+import {loader as userCartOrderViewLoader} from './pages/UserCartOrder/UserCartOrderView.tsx';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -82,7 +84,7 @@ const router = createBrowserRouter([
       {
         path: '/user_cart_order/:id',
         element: <UserCartOrder />,
-        // loader: dashboardLoader(queryClient, store)
+        loader: userCartOrderViewLoader(queryClient, store)
       },
       {
         path: 'receipts',
@@ -97,7 +99,7 @@ const router = createBrowserRouter([
           {
             path: ':id',
             element: <ReceiptView />,
-            // loader: receiptsLoader(queryClient, store)
+            loader: receiptViewLoader(queryClient, store)
           }
         ]
       },

@@ -327,6 +327,9 @@ const Dashboard = () => {
                       <th className="text-center p-4 text-s font-extralight text-white">
                         Admin Actions
                       </th>
+                      <th className="text-center p-4 text-s font-extralight text-white">
+                        View
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -408,6 +411,9 @@ const Dashboard = () => {
                                 </span>
                               )}
                             </div>
+                          </td>
+                          <td className={`p-4 text-m ${activeTab === 'pending' ? 'text-center' : 'text-right'}`}>
+                            <NavLink to={`/user_cart_order/${order.id}`}>View cart order info</NavLink>
                           </td>
                         </tr>
                       ))

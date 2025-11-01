@@ -250,7 +250,7 @@ const Users = () => {
                       <th className="text-left p-4 text-s font-normal text-white">
                         User ID
                       </th>
-                      <th className="text-left p-4 text-s font-normal text-white">
+                      <th className="text-center p-4 text-s font-normal text-white">
                         Name
                       </th>
                       <th className="text-center p-4 text-s font-normal text-white">
@@ -290,10 +290,10 @@ const Users = () => {
                           <td className="p-4 text-m text-center">
                              {user.is_verified ? 'Yes' : 'No'}
                           </td>
-                          <td className={`p-4 text-m`}>
+                          <td className={`p-4 text-m text-center`}>
                             {formatDate(user.created_at)}
                           </td>
-                          <td className={`p-4 text-m`}>
+                          <td className={`p-4 text-m text-center`}>
                             <NavLink to={`/users/${user.id}`}><span className='hover:text-primary hover:underline'>View User Info</span></NavLink>
                           </td>
                         </tr>
