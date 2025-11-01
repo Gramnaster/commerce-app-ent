@@ -2,7 +2,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-import { Error, Home, Landing, Dashboard, Login, Signup, ProductsHome, Products, ProductView, ProductEdit, ProductCreate, ProducersHome, Producers, ProducerView, ProducerEdit, ProducerCreate, CategoriesHome, Categories, CategoryView, CategoryCreate, CategoryEdit, Admins, AdminView, AdminCreate, AdminEdit, AdminsHome, PromotionsHome, Promotions, PromotionCreate, PromotionEdit, PromotionView, WarehouseOrdersHome, WarehouseOrderView, WarehouseOrders, WarehouseOrderCreate, WarehouseOrderEdit } from './pages/index.ts';
+import { Error, Home, Landing, Dashboard, Signup, ProductsHome, Products, ProductView, ProductEdit, ProductCreate, ProducersHome, Producers, ProducerView, ProducerEdit, ProducerCreate, CategoriesHome, Categories, CategoryView, CategoryCreate, CategoryEdit, Admins, AdminView, AdminCreate, AdminEdit, AdminsHome, PromotionsHome, Promotions, PromotionCreate, PromotionEdit, PromotionView, WarehouseOrdersHome, WarehouseOrderView, WarehouseOrders, WarehouseOrderEdit, UsersHome, Users, UserView, ReceiptsHome, Receipts, ReceiptView, UserCartOrder } from './pages/index.ts';
 import { store } from './store.ts';
 
 // import {action as loginAction} from './pages/Login/Login';
@@ -46,6 +46,13 @@ import {loader as warehouseOrdersLoader} from './pages/WarehouseOrders/Warehouse
 import {loader as warehouseOrderViewLoader} from './pages/WarehouseOrders/WarehouseOrderView.tsx';
 import {loader as warehouseOrderEditLoader} from './pages/WarehouseOrders/WarehouseOrderEdit.tsx';
 
+import {loader as UsersHomeLoader} from './pages/Users/UsersHome.tsx';
+import {loader as UsersLoader} from './pages/Users/Users.tsx';
+import {loader as UserViewLoader} from './pages/Users/UserView.tsx';
+
+import {loader as receiptsHomeLoader} from './pages/Receipts/ReceiptsHome.tsx';
+import {loader as receiptsLoader} from './pages/Receipts/Receipts.tsx';
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -71,6 +78,28 @@ const router = createBrowserRouter([
         path: '/dashboard',
         element: <Dashboard />,
         loader: dashboardLoader(queryClient, store)
+      },
+      {
+        path: '/user_cart_order/:id',
+        element: <UserCartOrder />,
+        // loader: dashboardLoader(queryClient, store)
+      },
+      {
+        path: 'receipts',
+        element: <ReceiptsHome />,
+        loader: receiptsHomeLoader(queryClient, store),
+        children: [
+          {
+            index: true,
+            element: <Receipts />,
+            loader: receiptsLoader(queryClient, store)
+          },
+          {
+            path: ':id',
+            element: <ReceiptView />,
+            // loader: receiptsLoader(queryClient, store)
+          }
+        ]
       },
       {
         path: 'products',
@@ -153,6 +182,23 @@ const router = createBrowserRouter([
             path: 'edit/:id',
             element: <WarehouseOrderEdit />,
             loader: warehouseOrderEditLoader(queryClient, store)
+          }
+        ]
+      },
+      {
+        path: 'users',
+        element: <UsersHome  />,
+        loader: UsersHomeLoader(queryClient, store),
+        children: [
+          {
+            index: true,
+            element: <Users />,
+            loader: UsersLoader(queryClient, store)
+          },
+          {
+            path: ':id',
+            element: <UserView />,
+            loader: UserViewLoader(queryClient, store)
           }
         ]
       },
@@ -252,12 +298,6 @@ const router = createBrowserRouter([
       }
     ]
   },
-  // {
-  //   path: '/login',
-  //   element: <Login />,
-  //   errorElement: <Error />,
-  //   action: loginAction(store),
-  // },
   {
     path: '/signup',
     element: <Signup />,

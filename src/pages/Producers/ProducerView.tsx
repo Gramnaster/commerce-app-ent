@@ -130,13 +130,13 @@ const ProducerView = () => {
                         Address:
                       </label>
                       <div>
-                      <div>Unit #: {unit_no}</div>
-                      <div>Street #: {street_no}</div>
-                      <div>Address Line 1: {address_line1}</div>
-                      <div>Address Line 2: {address_line2}</div>
-                      <div>City: {city}</div>
-                      <div>Region: {region}</div>
-                      <div>Country: {country}</div>
+                        <div>Unit #: {unit_no}</div>
+                        <div>Street #: {street_no}</div>
+                        <div>Address Line 1: {address_line1}</div>
+                        <div>Address Line 2: {address_line2}</div>
+                        <div>City: {city}</div>
+                        <div>Region: {region}</div>
+                        <div>Country: {country}</div>
                       </div>
                     </div>
                     <div className="m-1">
