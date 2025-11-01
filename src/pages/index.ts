@@ -29,12 +29,8 @@ export { default as Promotions } from './Promotions/Promotions';
 export { default as PromotionCreate } from './Promotions/PromotionCreate';
 export { default as PromotionView } from './Promotions/PromotionView';
 export { default as PromotionEdit } from './Promotions/PromotionEdit';
-
-// export {default as Profile} from "./Profile/Profile";
-// export {default as ProfileView} from "./Profile/ProfileView";
-// export {default as ProfileEdit} from "./Profile/ProfileEdit";
-// export {default as Cart} from "./Cart/Cart";
-// export { default as Products } from './Products/Products';
-// export { default as FeaturedProducts } from './Products/FeaturedProducts';
-// export { default as ProductView } from './Products/ProductView';
-// export { default as Dashboard } from './Dashboard/Dashboard';
+export { default as WarehouseOrdersHome } from './WarehouseOrders/WarehouseOrdersHome';
+export { default as WarehouseOrders } from './WarehouseOrders/WarehouseOrders';
+export { default as WarehouseOrderCreate } from './WarehouseOrders/WarehouseOrderCreate';
+export { default as WarehouseOrderView } from './WarehouseOrders/WarehouseOrderView';
+export { default as WarehouseOrderEdit } from './WarehouseOrders/WarehouseOrderEdit';
