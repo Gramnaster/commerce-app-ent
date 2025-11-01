@@ -43,6 +43,8 @@ import {action as landingAction} from './pages/Home/Landing.tsx';
 
 import {loader as warehouseHomeLoader} from './pages/WarehouseOrders/WarehouseOrdersHome.tsx';
 import {loader as warehouseOrdersLoader} from './pages/WarehouseOrders/WarehouseOrders.tsx';
+import {loader as warehouseOrderViewLoader} from './pages/WarehouseOrders/WarehouseOrderView.tsx';
+import {loader as warehouseOrderEditLoader} from './pages/WarehouseOrders/WarehouseOrderEdit.tsx';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -144,11 +146,13 @@ const router = createBrowserRouter([
           },
           {
             path: ':id',
-            element: <WarehouseOrderView />
+            element: <WarehouseOrderView />,
+            loader: warehouseOrderViewLoader(queryClient, store)
           },
           {
             path: 'edit/:id',
-            element: <WarehouseOrderEdit />
+            element: <WarehouseOrderEdit />,
+            loader: warehouseOrderEditLoader(queryClient, store)
           }
         ]
       },
