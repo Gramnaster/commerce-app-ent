@@ -2,7 +2,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-import { Error, Home, Landing, Dashboard, Signup, ProductsHome, Products, ProductView, ProductEdit, ProductCreate, ProducersHome, Producers, ProducerView, ProducerEdit, ProducerCreate, CategoriesHome, Categories, CategoryView, CategoryCreate, CategoryEdit, Admins, AdminView, AdminCreate, AdminEdit, AdminsHome, PromotionsHome, Promotions, PromotionCreate, PromotionEdit, PromotionView, WarehouseOrdersHome, WarehouseOrderView, WarehouseOrders, WarehouseOrderEdit, UsersHome, Users, UserView, ReceiptsHome, Receipts, ReceiptView, UserCartOrder } from './pages/index.ts';
+import { Error, Home, Landing, Dashboard, Signup, ProductsHome, Products, ProductView, ProductEdit, ProductCreate, ProducersHome, Producers, ProducerView, ProducerEdit, ProducerCreate, CategoriesHome, Categories, CategoryView, CategoryCreate, CategoryEdit, Admins, AdminView, AdminCreate, AdminEdit, AdminsHome, PromotionsHome, Promotions, PromotionCreate, PromotionEdit, PromotionView, WarehouseOrdersHome, WarehouseOrderView, WarehouseOrders, WarehouseOrderEdit, UsersHome, Users, UserView, ReceiptsHome, Receipts, ReceiptView, UserCartOrder, SocialProgramsHome, SocialPrograms, SocialProgramView, SocialProgramCreate, SocialProgramEdit } from './pages/index.ts';
 import { store } from './store.ts';
 
 // import {action as loginAction} from './pages/Login/Login';
@@ -54,6 +54,12 @@ import {loader as receiptsHomeLoader} from './pages/Receipts/ReceiptsHome.tsx';
 import {loader as receiptsLoader} from './pages/Receipts/Receipts.tsx';
 import {loader as receiptViewLoader} from './pages/Receipts/ReceiptView.tsx';
 import {loader as userCartOrderViewLoader} from './pages/UserCartOrder/UserCartOrderView.tsx';
+
+import {loader as socialProgramsHomeLoader} from './pages/SocialPrograms/SocialProgramsHome.tsx';
+import {loader as socialProgramsLoader} from './pages/SocialPrograms/SocialPrograms.tsx';
+import {loader as socialProgramViewLoader} from './pages/SocialPrograms/SocialProgramView.tsx';
+import {action as socialProgramCreateAction} from './pages/SocialPrograms/SocialProgramCreate.tsx';
+import {loader as socialProgramEditLoader} from './pages/SocialPrograms/SocialProgramEdit.tsx';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -202,6 +208,35 @@ const router = createBrowserRouter([
             element: <UserView />,
             loader: UserViewLoader(queryClient, store)
           }
+        ]
+      },
+      {
+        path: 'social_programs',
+        element: <SocialProgramsHome  />,
+        loader: socialProgramsHomeLoader(queryClient, store),
+        children: [
+          {
+            index: true,
+            element: <SocialPrograms />,
+            loader: socialProgramsLoader(queryClient, store)
+          },
+          {
+            path: ':id',
+            element: <SocialProgramView />,
+            loader: socialProgramViewLoader(queryClient, store)
+          },
+          {
+            // create
+            path: 'create',
+            element: <SocialProgramCreate  />,
+            action: socialProgramCreateAction
+          },
+          {
+            // edit / update / delete
+            path: 'edit/:id',
+            element: <SocialProgramEdit  />,
+            loader: socialProgramEditLoader(queryClient, store)
+          },
         ]
       },
       {
