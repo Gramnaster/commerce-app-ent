@@ -424,7 +424,7 @@ const Dashboard = () => {
           </>
         )}
       </div>
-            {total_pages && total_pages > 1 && (
+      {total_pages && total_pages > 1 && (
         <div className="join mt-6 flex justify-center">
           <input
             className="join-item btn btn-square border-black" 
