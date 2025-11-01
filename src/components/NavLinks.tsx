@@ -14,7 +14,8 @@ const links: LinksType[] = [
   { id: 4, url: 'admins', text: 'Admins' },
   { id: 5, url: 'users', text: 'Users' },
   { id: 6, url: 'promotions', text: 'Promotions' },
-  { id: 7, url: 'warehouse_orders', text: 'Warehouse' }
+  { id: 7, url: 'warehouse_orders', text: 'Warehouse' },
+  { id: 8, url: 'receipts', text: 'Receipts' }
 ];
 
 const NavLinks = () => {

@@ -108,7 +108,6 @@ const ProducerView = () => {
               </NavLink>
             </div>
             <div>
-
                 <div className="place-items-center text-[black] w-full">
                   <div className=" px-6 py-3 rounded-2xl bg-white w-full">
                     <div className="m-1">

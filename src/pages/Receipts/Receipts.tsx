@@ -94,14 +94,6 @@ const Receipts = () => {
     }
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    });
-  };
-
   const filteredReceipts = receiptsData.data.filter((receipt: Receipt) => {
     const matchesSearch =
       receipt.id?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
@@ -126,7 +118,7 @@ const Receipts = () => {
   return (
     <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
       <div className="max-w-7xl mx-auto">
-        {(
+        {
           <>
             {/* Search and Filter */}
             <div className="bg-primary rounded-lg p-6 border border-primary mb-6">
@@ -196,49 +188,71 @@ const Receipts = () => {
                         Cart Status
                       </th>
                       <th className="text-center p-4 text-s font-normal text-white">
-                        View Receipt Info
+                        Actions
                       </th>
                     </tr>
                   </thead>
                   <tbody>
-                    { loading ?     
-                    <tr className='border-b text-[#000000] border-primary hover:bg-[hsl(0,0%,87%)] transition-colors'>
-                      <td className="p-8 text-center" colSpan={10}>
-                        <div className="h-screen flex items-center justify-center">
-                          <span className="loading loading-ring loading-lg text-black">LOADING</span>
-                        </div>
-                      </td> 
-                    </tr>
-                    : filteredReceipts.length > 0 ? (
-                      filteredReceipts.map((receipt: Receipt, index: number) => {
-                        const {id, transaction_type, balance_before, balance_after, user: {email}, order } = receipt
-                        return (
-                        <tr
-                          key={id}
-                          className={`border-b text-[#000000] border-primary hover:bg-white transition-colors ${
-                            index % 2 === 0 ? 'bg-transparent' : 'bg-[#f3f3f3]'
-                          }`}
-                        >
-                          <td className="p-4 text-m text-left">
-                            {id}
-                          </td>
-                          <td className="p-4 text-m text-center">
-                             {transaction_type}
-                          </td>
-                          <td className="p-4 text-m text-center">
-                             {balance_before} - {balance_after}
-                          </td>
-                          <td className="p-4 text-m text-center">
-                            {email}
-                          </td>
-                          <td className={`p-4 text-m`}>
-                            {order.cart_status ? cart_status : '-'}
-                          </td>
-                          <td className={`p-4 text-m`}>
-                            <NavLink to={`/receipts/${id}`}><span className='hover:text-primary hover:underline'>View Producer Info</span></NavLink>
-                          </td>
-                        </tr>
-                      )})
+                    {loading ? (
+                      <tr className="border-b text-[#000000] border-primary hover:bg-[hsl(0,0%,87%)] transition-colors">
+                        <td className="p-8 text-center" colSpan={10}>
+                          <div className="h-screen flex items-center justify-center">
+                            <span className="loading loading-ring loading-lg text-black">
+                              LOADING
+                            </span>
+                          </div>
+                        </td>
+                      </tr>
+                    ) : filteredReceipts.length > 0 ? (
+                      filteredReceipts.map(
+                        (receipt: Receipt, index: number) => {
+                          const {
+                            id,
+                            transaction_type,
+                            balance_before,
+                            balance_after,
+                            description,
+                            user: { email },
+                            order,
+                          } = receipt;
+                          return (
+                            <tr
+                              key={id}
+                              className={`border-b text-[#000000] border-primary hover:bg-white transition-colors ${
+                                index % 2 === 0
+                                  ? "bg-transparent"
+                                  : "bg-[#f3f3f3]"
+                              }`}
+                            >
+                              <td className="p-4 text-m text-left">{id}</td>
+                              <td className="p-4 text-m text-center">
+                                {transaction_type}
+                              </td>
+                              <td className="p-4 text-m text-center">
+                                {balance_before === 0 && balance_after === 0
+                                  ? "-"
+                                  : `${balance_before} - ${balance_after}`}
+                              </td>
+                              <td className="p-4 text-m text-center">
+                                {description}
+                              </td>
+                              <td className="p-4 text-m text-center">
+                                {email}
+                              </td>
+                              <td className={`p-4 text-m $`}>
+                                {order ? order?.cart_status : "-"}
+                              </td>
+                              <td className={`p-4 text-m`}>
+                                <NavLink to={`/receipts/${id}`}>
+                                  <span className="hover:text-primary hover:underline">
+                                    View Receipt Info
+                                  </span>
+                                </NavLink>
+                              </td>
+                            </tr>
+                          );
+                        }
+                      )
                     ) : (
                       <tr className="w-full">
                         <td
@@ -254,45 +268,45 @@ const Receipts = () => {
               </div>
             </div>
           </>
-        )}
+        }
       </div>
       {total_pages && total_pages > 1 && (
         <div className="join mt-6 flex justify-center">
           <input
-            className="join-item btn btn-square border-black" 
-            type="radio" 
-            name="options" 
+            className="join-item btn btn-square border-black"
+            type="radio"
+            name="options"
             onClick={() => handlePagination(previous_page)}
             disabled={!previous_page}
-            aria-label="❮" 
+            aria-label="❮"
           />
           {[...Array(total_pages).keys()].map((_, i) => {
             const pageNum = i + 1;
             return (
-              <input 
-                key={i} 
-                className="join-item btn btn-square border-black" 
-                type="radio" 
-                name="options" 
+              <input
+                key={i}
+                className="join-item btn btn-square border-black"
+                type="radio"
+                name="options"
                 checked={current_page === pageNum}
                 onClick={() => handlePagination(pageNum)}
-                aria-label={`${pageNum}`} 
+                aria-label={`${pageNum}`}
                 readOnly
               />
             );
           })}
           <input
-            className="join-item btn btn-square border-black" 
-            type="radio" 
-            name="options" 
+            className="join-item btn btn-square border-black"
+            type="radio"
+            name="options"
             onClick={() => handlePagination(next_page)}
             disabled={!next_page}
-            aria-label="❯" 
+            aria-label="❯"
           />
         </div>
       )}
     </div>
-  )
+  );
 }
 
 export default Receipts

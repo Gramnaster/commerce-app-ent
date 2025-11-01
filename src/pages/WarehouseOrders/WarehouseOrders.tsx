@@ -16,6 +16,7 @@ export interface Inventory {
   id: number;
   sku: string;
   product_id: number;
+  qty_in_stock: number;
 }
 
 export interface WareHouseOrder {
