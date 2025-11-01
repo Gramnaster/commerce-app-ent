@@ -41,3 +41,8 @@ export { default as UserCartOrder } from './UserCartOrder/UserCartOrderView';
 export { default as ReceiptsHome } from './Receipts/ReceiptsHome';
 export { default as Receipts } from './Receipts/Receipts';
 export { default as ReceiptView } from './Receipts/ReceiptView';
+export { default as SocialProgramsHome } from './SocialPrograms/SocialProgramsHome';
+export { default as SocialPrograms } from './SocialPrograms/SocialPrograms';
+export { default as SocialProgramView } from './SocialPrograms/SocialProgramView';
+export { default as SocialProgramCreate } from './SocialPrograms/SocialProgramCreate';
+export { default as SocialProgramEdit } from './SocialPrograms/SocialProgramEdit';
