@@ -133,12 +133,12 @@ const WarehouseOrderCreate = () => {
   };
   console.log(`companySites`, companySites?.data)
   return (
-    <div className="min-h-screen bg-[#161420] text-white">
+    <div className="min-h-screen bg-transparent text-white p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-white mb-2">Create New Warehouse Order</h1>
-          <p className="text-gray-400">
+        <div className="mb-6 text-black">
+          <h1 className="text-3xl font-bold text-black mb-2">Create New Warehouse Order</h1>
+          <p className="text-black">
             Manually add a warehouse order
           </p>
         </div>
@@ -146,28 +146,29 @@ const WarehouseOrderCreate = () => {
         {/* Create Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Personal Information */}
-          <div className="bg-[#1e1b2e] rounded-lg p-6 border border-gray-700">
-            <h2 className="text-xl font-bold text-white mb-4 pb-2 border-b border-gray-700">
+          <div className="bg-primary rounded-lg p-6">
+            <h2 className="text-xl font-bold text-white mb-4 pb-2 border-b border-white">
               Enter information:
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-gray-400 text-sm font-medium mb-2">
+                <label className="block text-white text-sm font-medium mb-2">
                   Company Site
                 </label>
                 <select
                   name="company_site_id"
                   value={formData.company_site_id}
                   onChange={handleInputChange}
+                  className='text-black'
                   required
                 >
-                  <option value="">Select Company Site</option>
+                  <option value="" className='text-white'>Select Company Site</option>
                   {companySites?.data
                     .sort((a: CompanySite, b: CompanySite) => a.title.localeCompare(b.title))
                     .map((site: CompanySite) => {
                     const { id, title } = site
                     return (
-                      <option key={id} value={id}>
+                      <option key={id} value={id} className='text-black'>
                         {title}
                       </option>
                     )
@@ -175,7 +176,7 @@ const WarehouseOrderCreate = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-gray-400 text-sm font-medium mb-2">
+                <label className="block text-white text-sm font-medium mb-2">
                   Inventory ID
                 </label>
                 <input
@@ -183,13 +184,13 @@ const WarehouseOrderCreate = () => {
                   name="inventory_id"
                   value={formData.inventory_id}
                   onChange={handleInputChange}
-                  className="w-full bg-[#2a2740] border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                   required
                   placeholder="+1234567890"
                 />
               </div>
               <div>
-                <label className="block text-gray-400 text-sm font-medium mb-2">
+                <label className="block text-white text-sm font-medium mb-2">
                   User ID
                 </label>
                 <input
@@ -197,13 +198,13 @@ const WarehouseOrderCreate = () => {
                   name="user_id"
                   value={formData.user_id}
                   onChange={handleInputChange}
-                  className="w-full bg-[#2a2740] border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                   required
                   placeholder="John"
                 />
               </div>
               <div>
-                <label className="block text-gray-400 text-sm font-medium mb-2">
+                <label className="block text-white text-sm font-medium mb-2">
                   Cart Order ID
                 </label>
                 <input
@@ -211,12 +212,12 @@ const WarehouseOrderCreate = () => {
                   name="user_cart_order_id"
                   value={formData.user_cart_order_id}
                   onChange={handleInputChange}
-                  className="w-full bg-[#2a2740] border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                   placeholder="e.g. 1, 2, 3"
                 />
               </div>
               <div>
-                <label className="block text-gray-400 text-sm font-medium mb-2">
+                <label className="block text-white text-sm font-medium mb-2">
                   Quantity
                 </label>
                 <input
@@ -224,20 +225,20 @@ const WarehouseOrderCreate = () => {
                   name="qty"
                   value={formData.qty}
                   onChange={handleInputChange}
-                  className="w-full bg-[#2a2740] border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                   required
                   placeholder="Doe"
                 />
               </div>
               <div>
-                <label className="block text-gray-400 text-sm font-medium mb-2">
+                <label className="block text-white text-sm font-medium mb-2">
                   Product Status
                 </label>
                 <select
                   name="product_status"
                   value={formData.product_status}
                   onChange={handleInputChange}
-                  className="w-full bg-[#2a2740] border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                   required
                 >
                   <option value="">Select Status</option>
@@ -270,7 +271,7 @@ const WarehouseOrderCreate = () => {
             <button
               type="submit"
               disabled={createOrderMutation.isPending}
-              className="px-6 py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white font-semibold rounded-lg transition-colors"
+              className="px-6 py-3 bg-[#11bb11] hover:bg-[#248324] disabled:bg-gray-600 text-white font-semibold rounded-lg transition-colors"
             >
               {createOrderMutation.isPending ? 'Creating Order...' : 'Create Order'}
             </button>

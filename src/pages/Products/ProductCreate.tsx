@@ -214,7 +214,7 @@ const ProductCreate = () => {
           <p className="text-black">Create a Product</p>
         </div>
 
-        {/* Edit Form */}
+        {/* Create Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Personal Information */}
           <div className="bg-primary rounded-lg p-6">
