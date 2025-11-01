@@ -20,7 +20,7 @@ interface Address {
   country: string;
 }
 
-interface UserCartOrder {
+export interface UserCartOrder {
   id: number;
   total_cost: string;
   is_paid: boolean;
@@ -30,7 +30,7 @@ interface UserCartOrder {
   created_at: string;
 }
 
-interface UserCartOrderResponse {
+export interface UserCartOrderResponse {
   data: UserCartOrder[];
   pagination: Pagination;
 }

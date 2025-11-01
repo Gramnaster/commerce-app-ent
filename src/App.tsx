@@ -2,7 +2,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-import { Error, Home, Landing, Dashboard, Login, Signup, ProductsHome, Products, ProductView, ProductEdit, ProductCreate, ProducersHome, Producers, ProducerView, ProducerEdit, ProducerCreate, CategoriesHome, Categories, CategoryView, CategoryCreate, CategoryEdit, Admins, AdminView, AdminCreate, AdminEdit, AdminsHome, PromotionsHome, Promotions, PromotionCreate, PromotionEdit, PromotionView } from './pages/index.ts';
+import { Error, Home, Landing, Dashboard, Login, Signup, ProductsHome, Products, ProductView, ProductEdit, ProductCreate, ProducersHome, Producers, ProducerView, ProducerEdit, ProducerCreate, CategoriesHome, Categories, CategoryView, CategoryCreate, CategoryEdit, Admins, AdminView, AdminCreate, AdminEdit, AdminsHome, PromotionsHome, Promotions, PromotionCreate, PromotionEdit, PromotionView, WarehouseOrdersHome, WarehouseOrderView, WarehouseOrders, WarehouseOrderCreate, WarehouseOrderEdit } from './pages/index.ts';
 import { store } from './store.ts';
 
 // import {action as loginAction} from './pages/Login/Login';
@@ -40,6 +40,9 @@ import {action as promotionCreateAction} from './pages/Promotions/PromotionCreat
 import {loader as promotionEditLoader} from './pages/Promotions/PromotionEdit.tsx';
 
 import {action as landingAction} from './pages/Home/Landing.tsx';
+
+import {loader as warehouseHomeLoader} from './pages/WarehouseOrders/WarehouseOrdersHome.tsx';
+import {loader as warehouseOrdersLoader} from './pages/WarehouseOrders/WarehouseOrders.tsx';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -127,6 +130,26 @@ const router = createBrowserRouter([
             element: <ProducerEdit  />,
             loader: producerEditLoader(queryClient, store)
           },
+        ]
+      },
+      {
+        path: 'warehouse_orders',
+        element: <WarehouseOrdersHome  />,
+        loader: warehouseHomeLoader(queryClient, store),
+        children: [
+          {
+            index: true,
+            element: <WarehouseOrders />,
+            loader: warehouseOrdersLoader(queryClient, store)
+          },
+          {
+            path: ':id',
+            element: <WarehouseOrderView />
+          },
+          {
+            path: 'edit/:id',
+            element: <WarehouseOrderEdit />
+          }
         ]
       },
       {
