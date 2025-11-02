@@ -1,4 +1,4 @@
-import { redirect, useLoaderData } from "react-router-dom";
+import { redirect, useLoaderData, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { customFetch } from "../../utils";
 import type { Item } from "../Receipts/ReceiptView";
@@ -7,7 +7,7 @@ import { BackButton } from "../../components";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 
 interface Address {
   unit_no: string;
@@ -69,14 +69,30 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 };
 
 const UserCartOrderView = () => {
-  const { UserCartOrderViewDetails } = useLoaderData() as {
+  const { UserCartOrderViewDetails: initialData } = useLoaderData() as {
     UserCartOrderViewDetails: UserCartOrderResponse;
   };
-  const { id, total_cost, is_paid, social_program_id, user_address, items, warehouse_orders } = UserCartOrderViewDetails.data;
-  const { unit_no, street_no, barangay, city, region, zipcode } = user_address.address;
-
+  const { id } = useParams();
   const user = useSelector((state: RootState) => state.userState.user);
   const queryClient = useQueryClient();
+
+  // Use useQuery to enable auto-refetch on invalidation
+  const { data: UserCartOrderViewDetails } = useQuery({
+    queryKey: ["UserCartOrderViewDetails", id],
+    queryFn: async () => {
+      const response = await customFetch.get(`/user_cart_orders/${id}`, {
+        headers: {
+          Authorization: user?.token,
+        },
+      });
+      return response.data;
+    },
+    initialData: initialData,
+    refetchOnWindowFocus: false,
+  });
+
+  const { id: cartOrderId, total_cost, is_paid, social_program_id, user_address, items, warehouse_orders } = UserCartOrderViewDetails.data;
+  const { unit_no, street_no, barangay, city, region, zipcode } = user_address.address;
 
   // State for bulk status update
   const [selectedOrders, setSelectedOrders] = useState<number[]>([]);
@@ -115,7 +131,7 @@ const UserCartOrderView = () => {
     if (selectedOrders.length === warehouse_orders.length) {
       setSelectedOrders([]);
     } else {
-      setSelectedOrders(warehouse_orders.map((order) => order.id));
+      setSelectedOrders(warehouse_orders.map((order: WareHouseOrder) => order.id));
     }
   };
 
@@ -139,8 +155,9 @@ const UserCartOrderView = () => {
       toast.success(`Successfully updated ${selectedOrders.length} warehouse order(s) to ${newStatus}`);
       setSelectedOrders([]); // Clear selection after update
       
-      // Refetch the cart order details
-      queryClient.invalidateQueries({ queryKey: ['UserCartOrderViewDetails', id] });
+      // Refetch the cart order details immediately
+      await queryClient.invalidateQueries({ queryKey: ['UserCartOrderViewDetails', id] });
+      await queryClient.refetchQueries({ queryKey: ['UserCartOrderViewDetails', id] });
     } catch (error: any) {
       console.error('Failed to update warehouse orders:', error);
       toast.error('Failed to update some warehouse orders');
