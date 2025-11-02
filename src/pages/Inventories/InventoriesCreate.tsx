@@ -1,14 +1,14 @@
-import { Form, Link, redirect, useLoaderData, useNavigate, useNavigation, type ActionFunctionArgs } from "react-router-dom";
+import { redirect, useLoaderData, useNavigate, useNavigation } from "react-router-dom";
 import { customFetch } from "../../utils";
 import { toast } from "react-toastify";
-import type { AxiosError } from "axios";
-import { FormInput, SubmitBtn } from "../../components";
+import { SearchableDropdown, BackButton } from "../../components";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import type { CompanySite, CompanySiteResponse } from "../WarehouseOrders/WarehouseOrders";
+import type { Product, ProductsResponse } from "../Products/Products";
 
-export const loader = (queryClient: any, store: any) => async () => {
+export const loader = (queryClient: any) => async () => {
 
   const CompanySitesQuery = {
     queryKey: ['CompanySites'],
@@ -18,21 +18,31 @@ export const loader = (queryClient: any, store: any) => async () => {
     },
   };
 
+  const ProductsQuery = {
+    queryKey: ['Products'],
+    queryFn: async () => {
+      const response = await customFetch.get('/products?per_page=10000');
+      return response.data;
+    },
+  };
+
   try {
-    const [ companySites ] = await  Promise.all([
-      queryClient.ensureQueryData(CompanySitesQuery)
+    const [ companySites, products ] = await  Promise.all([
+      queryClient.ensureQueryData(CompanySitesQuery),
+      queryClient.ensureQueryData(ProductsQuery)
     ])
-    return { companySites };
+    return { companySites, products };
   } catch (error: any) {
-    console.error('Failed to load product:', error);
-    toast.error('Failed to load product details');
-    return redirect('/products');
+    console.error('Failed to load data:', error);
+    toast.error('Failed to load data');
+    return redirect('/inventories');
   }
 };
 
 const InventoriesCreate = () => {
-  const { companySites } = useLoaderData() as {
+  const { companySites, products } = useLoaderData() as {
     companySites: CompanySiteResponse;
+    products: ProductsResponse;
   };
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.userState.user);
@@ -44,6 +54,14 @@ const InventoriesCreate = () => {
     product_id: "",
     qty_in_stock: ""
   })
+
+  // Format products for the searchable dropdown
+  const productDropdownItems = useMemo(() => {
+    return products.data.map((product: Product) => ({
+      id: product.id,
+      label: `${product.id} - ${product.title}`
+    }));
+  }, [products.data]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -87,25 +105,7 @@ const InventoriesCreate = () => {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6 text-black">
-          <button
-            onClick={() => navigate('/inventories')}
-            className="mb-4 flex items-center gap-2 hover:underline transition-colors text-black"
-          >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
-              />
-            </svg>
-            Back to Inventories List
-          </button>
+          <BackButton text="Back to Inventories List" />
           <h1 className="text-3xl font-bold text-black mb-2">Create Inventory Interface</h1>
           <p className="text-black">
             Create Inventory
@@ -149,12 +149,12 @@ const InventoriesCreate = () => {
                 <label className="block text-white text-sm font-medium mb-2">
                   Product ID
                 </label>
-                <input
-                  type="text"
-                  name="product_id"
+                <SearchableDropdown
+                  items={productDropdownItems}
                   value={formData.product_id}
-                  onChange={handleInputChange}
-                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
+                  onChange={(value) => setFormData((prev) => ({ ...prev, product_id: value }))}
+                  placeholder="Select a product..."
+                  name="product_id"
                   required
                 />
               </div>
