@@ -1,7 +1,7 @@
 import { useLoaderData, useNavigation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
 
 // Shared Types - Export for use in other Product files
@@ -54,8 +54,8 @@ export interface Product {
   id: number;
   title: string;
   product_title: string;
-  product_category: ProductCategory;
-  producer: Producer;
+  product_category?: ProductCategory; // Optional because /product_categories/:id doesn't include it
+  producer?: Producer; // Optional because /product_categories/:id doesn't include it
   description: string;
   price: number;
   promotion_id: number | null;
@@ -133,49 +133,77 @@ const Products = () => {
     allProducts: ProductsResponse,
     ProductCategories: ProductCategoriesResponse
   };
-    console.log('Products - ProductCategories:', ProductCategories)
+  console.log('Products - ProductCategories:', ProductCategories)
+  
   const [searchWord, setSearchWord] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [productData, setProductData] = useState(initialProducts);
 
   const handlePagination = async (page: number | null) => {
     if (!page) return;
-    setLoading(true)
+    setLoading(true);
     
     try {
-      const response = await customFetch.get(`/products?page=${page}&per_page=${productData.pagination.per_page || 20}`);
-      const data = response.data;
-      console.log('Products handlePagination - Response:', data);
-      setProductData(data);
+      let url = `/products?page=${page}&per_page=${productData.pagination.per_page || 10}`;
+      
+      // If a category is selected, use the category endpoint for pagination
+      if (selectedCategoryId) {
+        url = `/product_categories/${selectedCategoryId}?page=${page}&per_page=${productData.pagination.per_page || 10}`;
+        const response = await customFetch.get(url);
+        console.log('Products handlePagination - Category response:', response.data);
+        
+        // Transform category response to match ProductsResponse structure
+        setProductData({
+          data: response.data.data.products || [],
+          pagination: response.data.pagination || {
+            current_page: page,
+            per_page: 10,
+            total_entries: response.data.data.products?.length || 0,
+            total_pages: 1,
+            next_page: null,
+            previous_page: null
+          }
+        });
+      } else {
+        // Fetch all products with pagination
+        const response = await customFetch.get(url);
+        const data = response.data;
+        console.log('Products handlePagination - Response:', data);
+        setProductData(data);
+      }
+      
       setLoading(false);
-    }
-    catch (error: any) {
+    } catch (error: any) {
       console.error('Products handlePagination - Failed to load pagination data:', error);
       toast.error('Failed to load pagination data');
+      setLoading(false);
     }
-  }
+  };
 
-  const filteredProds = productData.data.filter((product: Product) => {
-    const matchesSearch =
-      product.id?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
-      product.title?.toLowerCase().includes(searchWord.toLowerCase()) ||
-      product.description?.toLowerCase().includes(searchWord.toLowerCase()) ||
-      product.price?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
-      product.product_category?.title.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
-      product.producer?.title.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
-      product.promotion_id?.toString().toLowerCase().includes(searchWord.toLowerCase());
+  // Memoize filtered and sorted products to avoid re-filtering on every render
+  const filteredProds = useMemo(() => {
+    return productData.data
+      .filter((product: Product) => {
+        const matchesSearch =
+          product.id?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
+          product.title?.toLowerCase().includes(searchWord.toLowerCase()) ||
+          product.description?.toLowerCase().includes(searchWord.toLowerCase()) ||
+          product.price?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
+          product.product_category?.title.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
+          product.producer?.title.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
+          product.promotion_id?.toString().toLowerCase().includes(searchWord.toLowerCase());
 
-    const matchesCategory = selectedCategory
-      ? product.product_category.title === selectedCategory
-      : true;
-
-    return matchesSearch && matchesCategory;
-    })
-    .sort(
-    (a: Product, b: Product) =>
-      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-  ) || [];
+        // Category filtering is now handled by API calls in handleCategoryChange
+        // So we only need to filter by search term here
+        return matchesSearch;
+      })
+      .sort(
+        (a: Product, b: Product) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+  }, [productData.data, searchWord]);
   
   const { current_page, total_pages, next_page, previous_page } = productData.pagination || {
     current_page: 1,
@@ -185,9 +213,52 @@ const Products = () => {
     previous_page: null
   };
 
-  const handleCategoryChange = (category: string | null) => {
+  const handleCategoryChange = async (category: string | null) => {
     console.log('Products handleCategoryChange - Selected category:', category);
     setSelectedCategory(category);
+    setSearchWord(''); // Clear search when changing categories
+    setLoading(true);
+
+    try {
+      // If "All" is selected (category is null), fetch all products
+      if (!category) {
+        setSelectedCategoryId(null);
+        const response = await customFetch.get('/products');
+        console.log('Products handleCategoryChange - All products response:', response.data);
+        setProductData(response.data);
+      } else {
+        // Find the category ID from the title
+        const selectedCategoryData = ProductCategories.data.find(
+          (cat: ProductCategory) => cat.title === category
+        );
+        
+        if (selectedCategoryData) {
+          setSelectedCategoryId(selectedCategoryData.id);
+          // Fetch products for this specific category using the category endpoint
+          const response = await customFetch.get(`/product_categories/${selectedCategoryData.id}`);
+          console.log('Products handleCategoryChange - Category products response:', response.data);
+          
+          // The response structure from /product_categories/:id includes products array
+          // We need to transform it to match our ProductsResponse structure
+          setProductData({
+            data: response.data.data.products || [],
+            pagination: response.data.pagination || {
+              current_page: 1,
+              per_page: 10,
+              total_entries: response.data.data.products?.length || 0,
+              total_pages: 1,
+              next_page: null,
+              previous_page: null
+            }
+          });
+        }
+      }
+      setLoading(false);
+    } catch (error: any) {
+      console.error('Products handleCategoryChange - Failed to fetch category products:', error);
+      toast.error('Failed to load products for selected category');
+      setLoading(false);
+    }
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -203,17 +274,32 @@ const Products = () => {
            Create Product  
         </NavLink>
         <div className='text-primary font-bold'>
-          <button onClick={() => handleCategoryChange(null)} className='m-1 px-2 py-2 border-2 border-primary rounded-2xl hover:cursor-pointer hover:bg-primary hover:text-white' >All</button>
+          <button 
+            onClick={() => handleCategoryChange(null)} 
+            className={`m-1 px-2 py-2 border-2 border-primary rounded-2xl hover:cursor-pointer hover:bg-primary hover:text-white ${!selectedCategory ? 'bg-primary text-white' : ''}`}
+          >
+            All
+          </button>
           {ProductCategories?.data?.length
             ? ProductCategories.data.map((category: ProductCategory) => {
             const { id, title } = category;
             console.log(`ProductCategories.data`,ProductCategories.data)
             return (
-              <button onClick={() => handleCategoryChange(title)} className='m-1 px-2 py-2 border-2 border-primary rounded-2xl hover:cursor-pointer hover:bg-primary hover:text-white' key={id}>{title}</button>
+              <button 
+                onClick={() => handleCategoryChange(title)} 
+                className={`m-1 px-2 py-2 border-2 border-primary rounded-2xl hover:cursor-pointer hover:bg-primary hover:text-white ${selectedCategory === title ? 'bg-primary text-white' : ''}`}
+                key={id}
+              >
+                {title}
+              </button>
             )
           }) : null }
       </div>
-        {(
+        {loading ? (
+          <div className="flex justify-center items-center min-h-[400px]">
+            <span className="loading loading-spinner loading-lg text-primary"></span>
+          </div>
+        ) : (
           <>
             {/* Search and Filter */}
             <div className="bg-primary rounded-lg p-6 border border-primary mb-6">
@@ -336,10 +422,10 @@ const Products = () => {
                             </NavLink>
                           </td>
                           <td className="p-4 text-m text-center">
-                            {product.product_category.title}
+                            {product.product_category?.title || 'N/A'}
                           </td>
                           <td className="p-4 text-m text-center">
-                            {product.producer.title}
+                            {product.producer?.title || 'N/A'}
                           </td>
                           <td className={`p-4 text-m`}>
                             {product.description}
