@@ -74,7 +74,7 @@ const ProductView = () => {
               <h2 className="text-xl font-bold text-white">
                 Product Information
               </h2>
-              <NavLink to={`/products/edit/${id}`}><button className="btn bg-white border-primary text-l rounded-[8px] text-primary p-2 pt-1 pb-1 m-1 hover:border-white hover:bg-primary hover:text-white">Edit Product</button></NavLink>
+              <NavLink to={`/products/edit/${id}`}><button className="btn bg-white shadow-none border-primary text-l rounded-[8px] text-primary p-2 pt-1 pb-1 m-1 hover:border-white hover:bg-primary hover:text-white">Edit Product</button></NavLink>
             </div>
             <div>
 
