@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
 import { useState, useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
-import { SearchBar } from '../../components';
+import { SearchBar, PaginationControls } from '../../components';
 
 // Shared Types - Export for use in other Product files
 export interface ProductCategory {
@@ -348,41 +348,11 @@ const Products = () => {
       </div>
       
       {/* Pagination Controls */}
-      {totalPages > 1 && (
-        <div className="join mt-6 flex justify-center">
-          <input
-            className="join-item btn btn-square border-black" 
-            type="radio" 
-            name="options" 
-            onClick={() => handlePagination(currentPage - 1)}
-            disabled={currentPage === 1}
-            aria-label="❮" 
-          />
-          {[...Array(totalPages).keys()].map((_, i) => {
-            const pageNum = i + 1;
-            return (
-              <input 
-                key={i} 
-                className="join-item btn btn-square border-black" 
-                type="radio" 
-                name="options" 
-                checked={currentPage === pageNum}
-                onClick={() => handlePagination(pageNum)}
-                aria-label={`${pageNum}`} 
-                readOnly
-              />
-            );
-          })}
-          <input
-            className="join-item btn btn-square border-black" 
-            type="radio" 
-            name="options" 
-            onClick={() => handlePagination(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            aria-label="❯" 
-          />
-        </div>
-      )}
+      <PaginationControls
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePagination}
+      />
     </div>
   )
 }

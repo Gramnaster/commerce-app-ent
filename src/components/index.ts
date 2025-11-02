@@ -5,3 +5,4 @@ export { default as Navbar } from './Navbar';
 export { default as ErrorElement } from './ErrorElement';
 export { default as Loading } from './Loading';
 export { default as SearchBar } from './SearchBar';
+export { default as PaginationControls } from './PaginationControls';
