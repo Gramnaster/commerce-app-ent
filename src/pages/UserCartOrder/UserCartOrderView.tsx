@@ -4,6 +4,10 @@ import { customFetch } from "../../utils";
 import type { Item } from "../Receipts/ReceiptView";
 import type { WareHouseOrder } from "../WarehouseOrders/WarehouseOrders";
 import { BackButton } from "../../components";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../store";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface Address {
   unit_no: string;
@@ -67,9 +71,83 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 const UserCartOrderView = () => {
   const { UserCartOrderViewDetails } = useLoaderData() as {
     UserCartOrderViewDetails: UserCartOrderResponse;
-  }
+  };
   const { id, total_cost, is_paid, social_program_id, user_address, items, warehouse_orders } = UserCartOrderViewDetails.data;
-  const { unit_no, street_no, barangay, city, region, zipcode } = user_address.address
+  const { unit_no, street_no, barangay, city, region, zipcode } = user_address.address;
+
+  const user = useSelector((state: RootState) => state.userState.user);
+  const queryClient = useQueryClient();
+
+  // State for bulk status update
+  const [selectedOrders, setSelectedOrders] = useState<number[]>([]);
+  const [newStatus, setNewStatus] = useState<'storage' | 'progress' | 'delivered'>('storage');
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  // Mutation for updating warehouse order status
+  const updateStatusMutation = useMutation({
+    mutationFn: async ({ orderId, status }: { orderId: number; status: string }) => {
+      const response = await customFetch.patch(
+        `/warehouse_orders/${orderId}`,
+        { warehouse_order: { product_status: status } },
+        {
+          headers: {
+            Authorization: user?.token,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['UserCartOrderViewDetails', id] });
+    },
+  });
+
+  // Handle select/deselect individual order
+  const handleSelectOrder = (orderId: number) => {
+    setSelectedOrders((prev) =>
+      prev.includes(orderId) ? prev.filter((id) => id !== orderId) : [...prev, orderId]
+    );
+  };
+
+  // Handle select/deselect all orders
+  const handleSelectAll = () => {
+    if (selectedOrders.length === warehouse_orders.length) {
+      setSelectedOrders([]);
+    } else {
+      setSelectedOrders(warehouse_orders.map((order) => order.id));
+    }
+  };
+
+  // Handle bulk status update
+  const handleBulkUpdate = async () => {
+    if (selectedOrders.length === 0) {
+      toast.warn('Please select at least one warehouse order');
+      return;
+    }
+
+    setIsUpdating(true);
+
+    try {
+      // Send individual PATCH requests for each selected order
+      const updatePromises = selectedOrders.map((orderId) =>
+        updateStatusMutation.mutateAsync({ orderId, status: newStatus })
+      );
+
+      await Promise.all(updatePromises);
+
+      toast.success(`Successfully updated ${selectedOrders.length} warehouse order(s) to ${newStatus}`);
+      setSelectedOrders([]); // Clear selection after update
+      
+      // Refetch the cart order details
+      queryClient.invalidateQueries({ queryKey: ['UserCartOrderViewDetails', id] });
+    } catch (error: any) {
+      console.error('Failed to update warehouse orders:', error);
+      toast.error('Failed to update some warehouse orders');
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
 
   const formatDate = (dateString: string) => {
@@ -146,7 +224,6 @@ const UserCartOrderView = () => {
                             id,
                             qty,
                             subtotal,
-                            product,
                             product_title,
                             price,
                           } = item;
@@ -169,11 +246,49 @@ const UserCartOrderView = () => {
                   <label className="block text-l font-bold mb-2">
                     Warehouse orders:
                   </label>
-                  <div>
+                  
+                  {/* Bulk Update Controls */}
+                  {warehouse_orders && warehouse_orders.length > 0 && (
+                    <div className="mb-4 p-4 bg-gray-100 rounded-lg">
+                      <div className="flex items-center gap-4 mb-3">
+                        <label className="flex items-center gap-2 font-medium">
+                          <input
+                            type="checkbox"
+                            checked={selectedOrders.length === warehouse_orders.length}
+                            onChange={handleSelectAll}
+                            className="w-4 h-4 cursor-pointer"
+                          />
+                          Select All
+                        </label>
+                        <div className="flex items-center gap-2">
+                          <label className="font-medium">Update selected to:</label>
+                          <select
+                            value={newStatus}
+                            onChange={(e) => setNewStatus(e.target.value as 'storage' | 'progress' | 'delivered')}
+                            className="px-3 py-1 border border-gray-600 rounded-lg text-black"
+                          >
+                            <option value="storage">Storage</option>
+                            <option value="progress">In Progress</option>
+                            <option value="delivered">Delivered</option>
+                          </select>
+                          <button
+                            onClick={handleBulkUpdate}
+                            disabled={selectedOrders.length === 0 || isUpdating}
+                            className="px-4 py-1 bg-secondary hover:bg-red-700 disabled:bg-gray-600 text-white font-semibold rounded-lg transition-colors"
+                          >
+                            {isUpdating ? 'Updating...' : `Update Selected (${selectedOrders.length})`}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Warehouse Orders List */}
+                  <div className="space-y-4">
                     {warehouse_orders && warehouse_orders.length > 0
                       ? warehouse_orders.map((order: WareHouseOrder) => {
                           const {
-                            id,
+                            id: orderId,
                             qty,
                             product_status,
                             created_at,
@@ -190,24 +305,47 @@ const UserCartOrderView = () => {
                           const site_type = company_site?.site_type || '-';
 
                           return (
-                            <div key={id}>
-                              <div>Status: {product_status}</div>
-                              <div>Ordered on: {formatDate(created_at)}</div>
-                              <div>Quantity: {qty}</div>
-                              <div>
-                                <div>Inventory info:</div>
-                                <div>
-                                  <div>Inventory ID: {inventory_id}</div>
-                                  <div>SKU: {sku}</div>
-                                  <div>Product ID: {product_id}</div>
-                                  <div>Quantity in stock: {qty_in_stock}</div>
-                                </div>
-                              </div>
-                              <div>
-                                <div>Company Site:</div>
-                                <div>
-                                  <div>Site: {title}</div>
-                                  <div>Type: {site_type}</div>
+                            <div
+                              key={orderId}
+                              className="p-4 border-2 border-gray-300 rounded-lg bg-gray-50"
+                            >
+                              <div className="flex items-start gap-3">
+                                <input
+                                  type="checkbox"
+                                  checked={selectedOrders.includes(orderId)}
+                                  onChange={() => handleSelectOrder(orderId)}
+                                  className="mt-1 w-4 h-4 cursor-pointer"
+                                />
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <span className="font-bold">Order ID: {orderId}</span>
+                                    <span
+                                      className={`px-3 py-1 rounded-full text-sm font-medium ${
+                                        product_status === 'delivered'
+                                          ? 'bg-green-500/20 text-green-700 border border-green-700'
+                                          : product_status === 'progress'
+                                          ? 'bg-yellow-500/20 text-yellow-700 border border-yellow-700'
+                                          : 'bg-gray-500/20 text-gray-700 border border-gray-700'
+                                      }`}
+                                    >
+                                      {product_status.charAt(0).toUpperCase() + product_status.slice(1)}
+                                    </span>
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                      <div><strong>Ordered on:</strong> {formatDate(created_at)}</div>
+                                      <div><strong>Quantity:</strong> {qty}</div>
+                                    </div>
+                                    <div>
+                                      <div><strong>Warehouse:</strong> {title}</div>
+                                      <div><strong>Type:</strong> {site_type}</div>
+                                    </div>
+                                  </div>
+                                  <div className="mt-2 pt-2 border-t border-gray-300">
+                                    <div className="text-sm">
+                                      <strong>Inventory Info:</strong> ID: {inventory_id}, SKU: {sku}, Product ID: {product_id}, Stock: {qty_in_stock}
+                                    </div>
+                                  </div>
                                 </div>
                               </div>
                             </div>
