@@ -6,6 +6,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store";
 import type { ProducersResponse, ProductCategoriesResponse, ProductDetailsResponse } from "./Products";
+import { SubmitBtn } from "../../components";
 
 export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
   const storeState = store.getState();
@@ -390,13 +391,7 @@ const ProductEdit = () => {
             >
               Cancel
             </button>
-            <button
-              type="submit"
-              disabled={updateProductMutation.isPending || loading}
-              className="px-6 py-3 bg-[#11bb11] hover:bg-[#248324] disabled:bg-gray-600 text-white font-semibold rounded-lg transition-colors"
-            >
-              {(updateProductMutation.isPending || loading) ? 'Updating...' : 'Update Product'}
-            </button>
+            <SubmitBtn text="Update Product" isSubmitting={updateProductMutation.isPending || loading} loadingText="Updating..." />
             <button type="button" onClick={handleDelete} className="btn bg-[#8f1e14] text-white">Delete?</button>
           </div>
         </form>
