@@ -1,9 +1,10 @@
-import { NavLink, redirect, useLoaderData, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, redirect, useLoaderData, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
 import type { Product, User } from '../Products/Products';
 import type { Address } from '../Admin/AdminEdit';
 import type { CompanySite } from '../WarehouseOrders/WarehouseOrders';
+import { BackButton } from '../../components';
 
 
 export interface Inventory {
@@ -51,7 +52,6 @@ const InventoriesView = () => {
   const { InventoryViewDetails } = useLoaderData() as {
     InventoryViewDetails: InventoryViewResponse;
   }
-  const navigate = useNavigate();
   const {
     id,
     sku,
@@ -73,24 +73,7 @@ const InventoriesView = () => {
      <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
         <div className="max-w-7xl mx-auto place-items-center ">
           <div className="mb-6 text-black">
-            <button
-            onClick={() => navigate(`/inventories`)}
-            className="mb-4 flex items-center gap-2 hover:underline transition-colors text-black">
-            <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
-              />
-            </svg>
-            Back to Inventories list
-          </button>
+            <BackButton text="Back to Inventories list" />
           </div>
   
             <div className="w-[60%] bg-primary rounded-lg p-6 border border-gray-700">

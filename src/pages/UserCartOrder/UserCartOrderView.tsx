@@ -1,8 +1,9 @@
-import { redirect, useLoaderData, useNavigate } from "react-router-dom";
+import { redirect, useLoaderData } from "react-router-dom";
 import { toast } from "react-toastify";
 import { customFetch } from "../../utils";
 import type { Item } from "../Receipts/ReceiptView";
 import type { WareHouseOrder } from "../WarehouseOrders/WarehouseOrders";
+import { BackButton } from "../../components";
 
 interface Address {
   unit_no: string;
@@ -67,7 +68,6 @@ const UserCartOrderView = () => {
   const { UserCartOrderViewDetails } = useLoaderData() as {
     UserCartOrderViewDetails: UserCartOrderResponse;
   }
-  const navigate = useNavigate();
   const { id, total_cost, is_paid, social_program_id, user_address, items, warehouse_orders } = UserCartOrderViewDetails.data;
   const { unit_no, street_no, barangay, city, region, zipcode } = user_address.address
 
@@ -81,113 +81,114 @@ const UserCartOrderView = () => {
   };
 
   return (
-   <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
+    <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
       <div className="max-w-7xl mx-auto place-items-center ">
-        <div className="mb-6 text-black">
-          <button
-          onClick={() => navigate(`/dashboard`)}
-          className="mb-4 flex items-center gap-2 hover:underline transition-colors text-black">
-          <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M10 19l-7-7m0 0l7-7m-7 7h18"
-            />
-          </svg>
-          Back to Dashboard
-        </button>
-        </div>
+        <BackButton />
 
-          <div className="w-[60%] bg-primary rounded-lg p-6 border border-gray-700">
-            <div className=" mb-4 pb-2 border-b border-white flex items-center justify-between gap-1">
-              <h2 className="text-xl font-bold text-white">
-                Receipt Information
-              </h2>
-            </div>
-            <div>
-                <div className="place-items-center text-[black] w-full">
-                  <div className=" px-6 py-3 rounded-2xl bg-white w-full">
-                    <div className="m-1">
-                      <label className="block text-l font-bold mb-2">
-                        Cart Order ID:
-                      </label>
-                      <div>
-                        {id}
-                      </div>
-                    </div>
-                    <div className="m-1">
-                      <label className="block text-l font-bold mb-2">
-                        Total Cost:
-                      </label>
-                      {total_cost}
-                    </div>
-                    <div className="m-1">
-                      <label className="block text-l font-bold mb-2">
-                        Paid?
-                      </label>
-                      {is_paid ? 'Yes' : 'No'}
-                    </div>
-                    <div className="m-1">
-                      <label className="block text-l font-bold mb-2">
-                        social_program_id:
-                      </label>
-                      {id}
-                    </div>
-                    <div className="m-1">
-                      <label className="block text-l font-bold mb-2">
-                        Social Program ID:
-                      </label>
-                      {social_program_id}
-                    </div>
-                    <div className="m-1">
-                      <label className="block text-l font-bold mb-2">
-                        Address:
-                      </label>
-                      <div>
-                        <div>Unit #: {unit_no}</div>
-                        <div>Street #: {street_no}</div>
-                        <div>Brgy: {barangay}</div>
-                        <div>City: {city}</div>
-                        <div>Region: {region}</div>
-                        <div>Zipcode: {zipcode}</div>
-                      </div>
-                    </div>
-                    <div className="m-1">
-                      <label className="block text-l font-bold mb-2">
-                        Items ordered:
-                      </label>
-                      <div>
-                        { items && items.length > 0 ? items.map((item: Item) => {
-                          const { id, qty, subtotal, product, product_title, price} = item;
+        <div className="w-[60%] bg-primary rounded-lg p-6 border border-gray-700">
+          <div className=" mb-4 pb-2 border-b border-white flex items-center justify-between gap-1">
+            <h2 className="text-xl font-bold text-white">
+              Receipt Information
+            </h2>
+          </div>
+          <div>
+            <div className="place-items-center text-[black] w-full">
+              <div className=" px-6 py-3 rounded-2xl bg-white w-full">
+                <div className="m-1">
+                  <label className="block text-l font-bold mb-2">
+                    Cart Order ID:
+                  </label>
+                  <div>{id}</div>
+                </div>
+                <div className="m-1">
+                  <label className="block text-l font-bold mb-2">
+                    Total Cost:
+                  </label>
+                  {total_cost}
+                </div>
+                <div className="m-1">
+                  <label className="block text-l font-bold mb-2">Paid?</label>
+                  {is_paid ? 'Yes' : 'No'}
+                </div>
+                <div className="m-1">
+                  <label className="block text-l font-bold mb-2">
+                    social_program_id:
+                  </label>
+                  {id}
+                </div>
+                <div className="m-1">
+                  <label className="block text-l font-bold mb-2">
+                    Social Program ID:
+                  </label>
+                  {social_program_id}
+                </div>
+                <div className="m-1">
+                  <label className="block text-l font-bold mb-2">
+                    Address:
+                  </label>
+                  <div>
+                    <div>Unit #: {unit_no}</div>
+                    <div>Street #: {street_no}</div>
+                    <div>Brgy: {barangay}</div>
+                    <div>City: {city}</div>
+                    <div>Region: {region}</div>
+                    <div>Zipcode: {zipcode}</div>
+                  </div>
+                </div>
+                <div className="m-1">
+                  <label className="block text-l font-bold mb-2">
+                    Items ordered:
+                  </label>
+                  <div>
+                    {items && items.length > 0
+                      ? items.map((item: Item) => {
+                          const {
+                            id,
+                            qty,
+                            subtotal,
+                            product,
+                            product_title,
+                            price,
+                          } = item;
 
                           return (
                             <div key={id}>
                               <div>Name: {product_title}</div>
                               <div>Quantity: {qty}</div>
                               <div>Price: {price}</div>
-                              <div className='underline'>Subtotal: {subtotal}</div>
+                              <div className="underline">
+                                Subtotal: {subtotal}
+                              </div>
                             </div>
-                          )
-                        }) : 'No items'}
-                      </div>
-                    </div>
-                    <div className="m-1">
-                      <label className="block text-l font-bold mb-2">
-                        Warehouse orders:
-                      </label>
-                      <div>
-                        { warehouse_orders && warehouse_orders.length > 0 ? warehouse_orders.map((order: WareHouseOrder) => {
-                          const { id, qty, product_status, created_at, inventory: { id: inventory_id, sku, product_id, qty_in_stock }, company_site} = order;
+                          );
+                        })
+                      : 'No items'}
+                  </div>
+                </div>
+                <div className="m-1">
+                  <label className="block text-l font-bold mb-2">
+                    Warehouse orders:
+                  </label>
+                  <div>
+                    {warehouse_orders && warehouse_orders.length > 0
+                      ? warehouse_orders.map((order: WareHouseOrder) => {
+                          const {
+                            id,
+                            qty,
+                            product_status,
+                            created_at,
+                            inventory: {
+                              id: inventory_id,
+                              sku,
+                              product_id,
+                              qty_in_stock,
+                            },
+                            company_site,
+                          } = order;
 
-                          const title = company_site?.title || '-' ;
-                          const site_type = company_site?.site_type || '-' ;
-                          
+                          const title = company_site?.title || '-';
+                          const site_type = company_site?.site_type || '-';
+
                           return (
                             <div key={id}>
                               <div>Status: {product_status}</div>
@@ -210,17 +211,18 @@ const UserCartOrderView = () => {
                                 </div>
                               </div>
                             </div>
-                          )
-                        }) : 'No warehouse orders'}
-                      </div>
-                    </div>
+                          );
+                        })
+                      : 'No warehouse orders'}
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-  )
+      </div>
+    </div>
+  );
 }
 
 export default UserCartOrderView

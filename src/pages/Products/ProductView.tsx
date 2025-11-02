@@ -1,7 +1,8 @@
-import { NavLink, redirect, useLoaderData, useNavigate } from "react-router-dom";
+import { NavLink, redirect, useLoaderData } from "react-router-dom";
 import { toast } from "react-toastify";
 import { customFetch } from "../../utils";
 import type { ProductDetailsResponse } from "./Products";
+import { BackButton } from "../../components";
 
 export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
   const storeState = store.getState();
@@ -41,7 +42,6 @@ const ProductView = () => {
   const { ProductDetails } = useLoaderData() as {
     ProductDetails: ProductDetailsResponse;
   }
-  const navigate = useNavigate();
   const { id, title, product_image_url, product_category, producer, description, price, promotion  } = ProductDetails?.data
   
   console.log('ProductView component - ProductDetails:', ProductDetails);
@@ -51,27 +51,8 @@ const ProductView = () => {
     <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
       <div className="max-w-7xl mx-auto place-items-center">
       <div className="mb-6 text-black">
-          <button
-          onClick={() => navigate(`/products`)}
-          className="mb-4 flex items-center gap-2 hover:underline transition-colors text-black">
-          <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M10 19l-7-7m0 0l7-7m-7 7h18"
-            />
-          </svg>
-          Back to Products list
-        </button>
-      </div>
-
-          <div className="w-[60%] bg-primary rounded-lg p-6 border border-gray-700">
+          <BackButton text="Back to Products list" />
+        </div>          <div className="w-[60%] bg-primary rounded-lg p-6 border border-gray-700">
             <div className="mb-4 pb-2 border-b border-white flex items-center justify-between gap-1">
               <h2 className="text-xl font-bold text-white">
                 Product Information
