@@ -41,67 +41,97 @@ interface UserCartOrderResponse {
 }
 
 export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
+  console.log('UserCartOrderView loader - START');
+  console.log('UserCartOrderView loader - params:', params);
   const storeState = store.getState();
+  console.log('UserCartOrderView loader - storeState:', storeState);
   const admin_user = storeState.userState?.user;
+  console.log('UserCartOrderView loader - admin_user:', admin_user);
   const id = params.id;
+  console.log('UserCartOrderView loader - Order ID:', id);
 
   const UserCartOrderViewQuery = {
     queryKey: ["UserCartOrderViewDetails", id],
     queryFn: async () => {
+      console.log('UserCartOrderView loader - Fetching order details for ID:', id);
       const response = await customFetch.get(`/user_cart_orders/${id}`, {
         headers: {
           Authorization: admin_user.token,
         },
       });
-      console.log(`UserCartOrderViewQuery response.data: `, response.data)
+      console.log('UserCartOrderViewQuery response.data:', response.data);
+      console.log('UserCartOrderViewQuery response.data.warehouse_orders:', response.data?.data?.warehouse_orders);
+      console.log('UserCartOrderViewQuery response.data.items:', response.data?.data?.items);
       return response.data;
     },
   };
 
   try {
     const UserCartOrderViewDetails = await queryClient.ensureQueryData(UserCartOrderViewQuery);
+    console.log('UserCartOrderView loader - SUCCESS - Returning data');
     return { UserCartOrderViewDetails };
   } catch (error: any) {
-    console.error('Failed to load cart order info:', error);
+    console.error('UserCartOrderView loader - Failed to load cart order info:', error);
+    console.error('UserCartOrderView loader - Error response:', error.response?.data);
     toast.error('Failed to load cart order info');
     return redirect('/dashboard');
   }
 };
 
 const UserCartOrderView = () => {
+  console.log('UserCartOrderView component - RENDER START');
   const { UserCartOrderViewDetails: initialData } = useLoaderData() as {
     UserCartOrderViewDetails: UserCartOrderResponse;
   };
+  console.log('UserCartOrderView component - initialData:', initialData);
   const { id } = useParams();
+  console.log('UserCartOrderView component - Order ID from params:', id);
   const user = useSelector((state: RootState) => state.userState.user);
+  console.log('UserCartOrderView component - user from Redux:', user);
   const queryClient = useQueryClient();
 
   // Use useQuery to enable auto-refetch on invalidation
   const { data: UserCartOrderViewDetails } = useQuery({
     queryKey: ["UserCartOrderViewDetails", id],
     queryFn: async () => {
+      console.log('UserCartOrderView useQuery - Fetching order details for ID:', id);
       const response = await customFetch.get(`/user_cart_orders/${id}`, {
         headers: {
           Authorization: user?.token,
         },
       });
+      console.log('UserCartOrderView useQuery - Response:', response.data);
       return response.data;
     },
     initialData: initialData,
     refetchOnWindowFocus: false,
   });
 
+  console.log('UserCartOrderView component - UserCartOrderViewDetails:', UserCartOrderViewDetails);
+  console.log('UserCartOrderView component - UserCartOrderViewDetails.data:', UserCartOrderViewDetails.data);
   const { id: _cartOrderId, total_cost, is_paid, social_program_id, user_address, warehouse_orders, items } = UserCartOrderViewDetails.data;
+  console.log('UserCartOrderView component - Destructured data:');
+  console.log('  - total_cost:', total_cost);
+  console.log('  - is_paid:', is_paid);
+  console.log('  - social_program_id:', social_program_id);
+  console.log('  - user_address:', user_address);
+  console.log('  - warehouse_orders:', warehouse_orders);
+  console.log('  - warehouse_orders length:', warehouse_orders?.length);
+  console.log('  - items:', items);
+  console.log('  - items length:', items?.length);
   const { unit_no, street_no, barangay, city, region, zipcode } = user_address.address;
 
   // State for bulk status update
   const [selectedOrders, setSelectedOrders] = useState<number[]>([]);
   const [newStatus, setNewStatus] = useState<'storage' | 'progress' | 'delivered'>('storage');
   const [isUpdating, setIsUpdating] = useState(false);
+  console.log('UserCartOrderView component - selectedOrders:', selectedOrders);
+  console.log('UserCartOrderView component - newStatus:', newStatus);
 
   // Mutation for updating warehouse order status
   const updateStatusMutation = useMutation({
     mutationFn: async ({ orderId, status }: { orderId: number; status: string }) => {
+      console.log('UserCartOrderView updateStatusMutation - Updating order:', orderId, 'to status:', status);
       const response = await customFetch.patch(
         `/warehouse_orders/${orderId}`,
         { warehouse_order: { product_status: status } },
@@ -112,32 +142,47 @@ const UserCartOrderView = () => {
           },
         }
       );
+      console.log('UserCartOrderView updateStatusMutation - Response:', response.data);
       return response.data;
     },
     onSuccess: () => {
+      console.log('UserCartOrderView updateStatusMutation - SUCCESS - Invalidating query');
       queryClient.invalidateQueries({ queryKey: ['UserCartOrderViewDetails', id] });
     },
   });
 
   // Handle select/deselect individual order
   const handleSelectOrder = (orderId: number) => {
-    setSelectedOrders((prev) =>
-      prev.includes(orderId) ? prev.filter((id) => id !== orderId) : [...prev, orderId]
-    );
+    console.log('UserCartOrderView handleSelectOrder - Order ID:', orderId);
+    setSelectedOrders((prev) => {
+      const newSelection = prev.includes(orderId) ? prev.filter((id) => id !== orderId) : [...prev, orderId];
+      console.log('UserCartOrderView handleSelectOrder - New selection:', newSelection);
+      return newSelection;
+    });
   };
 
   // Handle select/deselect all orders
   const handleSelectAll = () => {
+    console.log('UserCartOrderView handleSelectAll - Current selection:', selectedOrders.length);
+    console.log('UserCartOrderView handleSelectAll - Total warehouse orders:', warehouse_orders.length);
     if (selectedOrders.length === warehouse_orders.length) {
+      console.log('UserCartOrderView handleSelectAll - Deselecting all');
       setSelectedOrders([]);
     } else {
-      setSelectedOrders(warehouse_orders.map((order: WareHouseOrder) => order.id));
+      const allIds = warehouse_orders.map((order: WareHouseOrder) => order.id);
+      console.log('UserCartOrderView handleSelectAll - Selecting all:', allIds);
+      setSelectedOrders(allIds);
     }
   };
 
   // Handle bulk status update
   const handleBulkUpdate = async () => {
+    console.log('UserCartOrderView handleBulkUpdate - START');
+    console.log('UserCartOrderView handleBulkUpdate - Selected orders:', selectedOrders);
+    console.log('UserCartOrderView handleBulkUpdate - New status:', newStatus);
+    
     if (selectedOrders.length === 0) {
+      console.log('UserCartOrderView handleBulkUpdate - No orders selected');
       toast.warn('Please select at least one warehouse order');
       return;
     }
@@ -146,23 +191,29 @@ const UserCartOrderView = () => {
 
     try {
       // Send individual PATCH requests for each selected order
+      console.log('UserCartOrderView handleBulkUpdate - Creating update promises...');
       const updatePromises = selectedOrders.map((orderId) =>
         updateStatusMutation.mutateAsync({ orderId, status: newStatus })
       );
 
+      console.log('UserCartOrderView handleBulkUpdate - Awaiting all updates...');
       await Promise.all(updatePromises);
 
+      console.log('UserCartOrderView handleBulkUpdate - All updates successful');
       toast.success(`Successfully updated ${selectedOrders.length} warehouse order(s) to ${newStatus}`);
       setSelectedOrders([]); // Clear selection after update
       
       // Refetch the cart order details immediately
+      console.log('UserCartOrderView handleBulkUpdate - Refetching query data...');
       await queryClient.invalidateQueries({ queryKey: ['UserCartOrderViewDetails', id] });
       await queryClient.refetchQueries({ queryKey: ['UserCartOrderViewDetails', id] });
+      console.log('UserCartOrderView handleBulkUpdate - Query refetched');
     } catch (error: any) {
-      console.error('Failed to update warehouse orders:', error);
+      console.error('UserCartOrderView handleBulkUpdate - Failed to update warehouse orders:', error);
       toast.error('Failed to update some warehouse orders');
     } finally {
       setIsUpdating(false);
+      console.log('UserCartOrderView handleBulkUpdate - COMPLETE');
     }
   };
 
@@ -236,17 +287,24 @@ const UserCartOrderView = () => {
                   </label>
                   <div>
                     {items && items.length > 0
-                      ? items.map((item: any, index: number) => {
-                          return (
-                            <div key={index} className="mb-3 pb-2 border-b border-gray-300">
-                              <div><strong>Product:</strong> {item.product_title}</div>
-                              <div><strong>Quantity:</strong> {item.qty}</div>
-                              <div><strong>Price:</strong> ${item.price}</div>
-                              {item.subtotal && <div className="underline"><strong>Subtotal:</strong> ${item.subtotal}</div>}
-                            </div>
-                          );
-                        })
-                      : 'No items'}
+                      ? (() => {
+                          console.log('UserCartOrderView render - Rendering items:', items);
+                          return items.map((item: any, index: number) => {
+                            console.log('UserCartOrderView render - Item:', index, item);
+                            return (
+                              <div key={index} className="mb-3 pb-2 border-b border-gray-300">
+                                <div><strong>Product:</strong> {item.product_title}</div>
+                                <div><strong>Quantity:</strong> {item.qty}</div>
+                                <div><strong>Price:</strong> ${item.price}</div>
+                                {item.subtotal && <div className="underline"><strong>Subtotal:</strong> ${item.subtotal}</div>}
+                              </div>
+                            );
+                          });
+                        })()
+                      : (() => {
+                          console.log('UserCartOrderView render - No items to display');
+                          return 'No items';
+                        })()}
                   </div>
                 </div>
                 <div className="m-1">
@@ -293,33 +351,52 @@ const UserCartOrderView = () => {
                   {/* Warehouse Orders List */}
                   <div className="space-y-4">
                     {warehouse_orders && warehouse_orders.length > 0
-                      ? warehouse_orders.map((order: WareHouseOrder) => {
-                          // Check if inventory exists before destructuring
-                          if (!order.inventory || !order.inventory.product) {
-                            return null;
-                          }
+                      ? (() => {
+                          console.log('UserCartOrderView render - Rendering warehouse_orders:', warehouse_orders);
+                          return warehouse_orders.map((order: WareHouseOrder) => {
+                            console.log('UserCartOrderView render - Processing warehouse order:', order);
+                            console.log('UserCartOrderView render - order.inventory:', order.inventory);
+                            console.log('UserCartOrderView render - order.inventory.product:', order.inventory?.product);
+                            
+                            // Check if inventory exists before destructuring
+                            if (!order.inventory || !order.inventory.product) {
+                              console.log('UserCartOrderView render - Skipping order - no inventory or product:', order.id);
+                              return null;
+                            }
 
-                          const {
-                            id: orderId,
-                            qty,
-                            subtotal,
-                            product_status,
-                            created_at,
-                            inventory: {
-                              id: inventory_id,
+                            const {
+                              id: orderId,
+                              qty,
+                              subtotal,
+                              product_status,
+                              created_at,
+                              inventory: {
+                                id: inventory_id,
+                                sku,
+                                product_id,
+                                qty_in_stock,
+                                product,
+                              },
+                              company_site,
+                            } = order;
+
+                            console.log('UserCartOrderView render - Destructured warehouse order data:', {
+                              orderId,
+                              qty,
+                              subtotal,
+                              product_status,
+                              inventory_id,
                               sku,
                               product_id,
-                              qty_in_stock,
                               product,
-                            },
-                            company_site,
-                          } = order;
+                              company_site
+                            });
 
-                          const title = company_site?.title || '-';
-                          const site_type = company_site?.site_type || '-';
+                            const title = company_site?.title || '-';
+                            const site_type = company_site?.site_type || '-';
 
-                          return (
-                            <div
+                            return (
+                              <div
                               key={orderId}
                               className="p-4 border-2 border-gray-300 rounded-lg bg-gray-50"
                             >
@@ -372,8 +449,12 @@ const UserCartOrderView = () => {
                               </div>
                             </div>
                           );
-                        })
-                      : 'No warehouse orders'}
+                        });
+                      })()
+                      : (() => {
+                          console.log('UserCartOrderView render - No warehouse orders to display');
+                          return 'No warehouse orders';
+                        })()}
                   </div>
                 </div>
               </div>
