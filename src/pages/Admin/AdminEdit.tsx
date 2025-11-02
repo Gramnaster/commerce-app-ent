@@ -15,6 +15,7 @@ export interface Address {
   address_line2: string;
   city: string;
   region: string;
+  barangay?: string;
   zipcode: string;
   country_id: number;
   country: string;
