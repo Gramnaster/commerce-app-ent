@@ -18,6 +18,7 @@ interface Promotion {
   discount_amount: string;
   products_count: number;
   product_categories: ProductCategory[];
+  products?: Product[];
   created_at: string;
 }
 
@@ -125,7 +126,7 @@ const PromotionView = () => {
                       <label className="block text-l font-bold mb-2">
                         Products:
                       </label>
-                      {products.length !== 0 ? products.map((product: Product) => {
+                      {products && products.length !== 0 ? products.map((product: Product) => {
                         const { id, title, price} = product
                         return (
                           <div key={id} className='pl-2'>

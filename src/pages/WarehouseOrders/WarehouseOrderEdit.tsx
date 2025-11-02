@@ -56,7 +56,7 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 
 const WarehouseOrderEdit = () => {
   const { WarehouseOrderDetails, CompanySites } = useLoaderData() as {
-    WarehouseOrderDetails: WareHouseOrder;
+    WarehouseOrderDetails: { data: WareHouseOrder };
     CompanySites: CompanySiteResponse;
   }
   console.log(`CompanySites`, CompanySites)
@@ -64,9 +64,10 @@ const WarehouseOrderEdit = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const user = useSelector((state: RootState) => state.userState.user);
-  const [loading, setLoading] = useState(false);
 
-  const { qty, product_status, company_site: { id: company_site_id }, inventory: { id: inventory_id,  }, user: { id: user_id }, user_cart_order_id, } = WarehouseOrderDetails.data;
+  const { qty, product_status, company_site: { id: company_site_id }, inventory: { id: inventory_id,  }, user, user_cart_order_id, } = WarehouseOrderDetails.data;
+  
+  const user_id = user?.id || 0;
 
   const [formData, setFormData] = useState({
     company_site_id: company_site_id,

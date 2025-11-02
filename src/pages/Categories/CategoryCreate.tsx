@@ -47,9 +47,6 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 };
 
 const CategoryCreate = () => {
-  const { ProductCategoriesDetails } = useLoaderData() as {
-    ProductCategoriesDetails: ProductCategory;
-  }
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.userState.user);
   const navigation = useNavigation();

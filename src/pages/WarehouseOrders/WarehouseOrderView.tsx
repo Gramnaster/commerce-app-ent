@@ -36,7 +36,10 @@ const WarehouseOrderView = () => {
   const { WarehouseOrderDetails } = useLoaderData() as {
     WarehouseOrderDetails: { data: WareHouseOrder };
   }
-  const { id, qty, product_status, company_site: { id: company_site_id, title, site_type }, inventory: { id: inventory_id, sku, qty_in_stock, product_id }, user: { id: user_id, email}, user_cart_order_id, created_at } = WarehouseOrderDetails.data;
+  const { id, qty, product_status, company_site: { id: company_site_id, title, site_type }, inventory: { id: inventory_id, sku, qty_in_stock, product_id }, user, user_cart_order_id, created_at } = WarehouseOrderDetails.data;
+  
+  const user_id = user?.id;
+  const email = user?.email;
 
 
   const formatDate = (dateString: string) => {
