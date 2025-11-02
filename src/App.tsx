@@ -182,7 +182,7 @@ const router = createBrowserRouter([
             // create
             path: 'create',
             element: <ProducerCreate  />,
-            loader: producerCreateLoader(queryClient, store)
+            loader: producerCreateLoader(queryClient)
           },
           {
             // edit / update / delete
@@ -200,7 +200,7 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <WarehouseOrders />,
-            loader: warehouseOrdersLoader(queryClient, store)
+            loader: warehouseOrdersLoader(queryClient)
           },
           {
             path: ':id',
@@ -279,7 +279,7 @@ const router = createBrowserRouter([
             // create
             path: 'create',
             element: <InventoriesCreate  />,
-            loader: inventoriesCreateLoader(queryClient, store)
+            loader: inventoriesCreateLoader(queryClient)
           },
           {
             // edit / update / delete

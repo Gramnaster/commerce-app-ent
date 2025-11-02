@@ -3,8 +3,6 @@ import { toast } from 'react-toastify';
 import { NavLink, useLoaderData } from 'react-router-dom';
 import type { Pagination } from '../Products/Products';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
-import type { RootState } from '../../store';
 import { SearchBar, PaginationControls } from '../../components';
 
 interface User {
@@ -75,7 +73,6 @@ const Receipts = () => {
     Receipts: ReceiptsResponse
   };
     const [receiptsData, setReceiptsData] = useState(Receipts)
-    const user = useSelector((state: RootState) => state.userState.user);
     const [loading, setLoading] = useState(false);
     console.log(`Receipts`, Receipts)
 

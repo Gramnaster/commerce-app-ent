@@ -12,22 +12,36 @@ export interface CompanySite {
   site_type: 'management' | 'warehouse';
 }
 
+export interface Product {
+  id: number;
+  title: string;
+  description: string;
+  price: number;
+  product_image_url: string | null;
+}
+
 export interface Inventory {
   id: number;
   sku: string;
   product_id: number;
   qty_in_stock: number;
+  product: Product;
 }
 
 export interface WareHouseOrder {
   id: number;
   qty: number;
+  subtotal?: string;
   inventory_id: number;
   company_site_id: number;
-  product_status: 'storage' | 'progress' | 'delivered';
+  product_status: 'storage' | 'progress' | 'delivered' | 'on_delivery';
   company_site: CompanySite;
   inventory: Inventory;
   user_cart_order_id: number;
+  user?: {
+    id: number;
+    email: string;
+  };
   created_at: string;
 }
 
@@ -41,10 +55,7 @@ export interface CompanySiteResponse {
   pagination: Pagination;
 }
 
-export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
-  const storeState = store.getState();
-  const user = storeState.userState?.user;
-  const id = params.id;
+export const loader = (queryClient: any) => async () => {
 
   const WarehouseOrdersQuery = {
     queryKey: ['WarehouseOrders'],

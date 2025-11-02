@@ -3,8 +3,6 @@ import { toast } from 'react-toastify';
 import { NavLink, useLoaderData } from 'react-router-dom';
 import type { Pagination } from '../Products/Products';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
-import type { RootState } from '../../store';
 import type { Address } from '../Admin/AdminEdit';
 import { SearchBar, PaginationControls } from '../../components';
 
@@ -57,7 +55,6 @@ const SocialPrograms = () => {
   const [socialProgramsData, setSocialProgramsData] = useState(SocialPrograms)
   console.log(`socialProgramsData`, socialProgramsData)
   const [searchWord, setSearchWord] = useState('');
-  const user = useSelector((state: RootState) => state.userState.user);
   const [loading, setLoading] = useState(false);
 
   const handlePagination = async (page: number | null) => {

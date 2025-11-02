@@ -1,4 +1,4 @@
-import { redirect, useLoaderData, useNavigate, useNavigation } from "react-router-dom";
+import { redirect, useLoaderData, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { customFetch } from "../../utils";
 import { useState } from "react";
@@ -12,7 +12,7 @@ interface Country {
   code: string;
 }
 
-export const loader = (queryClient: any, store: any) => async () => {
+export const loader = (queryClient: any) => async () => {
   const countriesQuery = {
     queryKey: ['countries'],
     queryFn: async () => {
@@ -35,7 +35,7 @@ export const loader = (queryClient: any, store: any) => async () => {
 
 const ProducerCreate = () => {
   const { countries } = useLoaderData() as {
-    countries: Country[];
+    countries: { data: Country[] };
   };
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.userState.user);
@@ -78,7 +78,7 @@ const ProducerCreate = () => {
         return {
       ...prev,
       [parentKey]: {
-      ...prev[parentKey],
+      ...(prev[parentKey as keyof typeof prev] as any),
       [name]: value,
         },
       }

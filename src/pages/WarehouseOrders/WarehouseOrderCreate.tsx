@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import type { UserCartOrder, UserCartOrderResponse } from '../Home/Dashboard';
 import type { CompanySite, CompanySiteResponse } from './WarehouseOrders';
 import { customFetch } from '../../utils';
 import type { RootState } from '../../store';
@@ -10,27 +9,11 @@ import { SubmitBtn } from '../../components';
 
 const WarehouseOrderCreate = () => {
   const queryClient = useQueryClient();
-  const [userCartOrders, setUserCartOrders] = useState<UserCartOrder[]>([]);
   const [companySites, setCompanySites] = useState<CompanySiteResponse>();
 
   const user = useSelector((state: RootState) => state.userState.user);
 
   useEffect(() => {
-    const fetchUserCartOrders = async () => {
-      try {
-        const response = await customFetch.get('/company_sites', {
-        headers: {
-          Authorization: user?.token,
-        },
-      });
-        console.log(`fetchUserCartOrders`, response.data)
-        setUserCartOrders(response.data);
-      } catch (error) {
-        console.error('Failed to load user cart orders:', error);
-        toast.error('Failed to load user cart orders');
-      }
-    };
-    
     const fetchCompanySites = async () => {
       try {
       const response = await customFetch.get('/company_sites', {
@@ -45,7 +28,6 @@ const WarehouseOrderCreate = () => {
         toast.error('Failed to load countries');
       }
     };
-    fetchUserCartOrders();
     fetchCompanySites();
   }, []);
 

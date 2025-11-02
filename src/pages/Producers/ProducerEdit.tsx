@@ -1,36 +1,12 @@
-import { redirect, useLoaderData, useNavigate, useNavigation } from "react-router-dom";
+import { redirect, useLoaderData, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { customFetch } from "../../utils";
 import { useState } from "react";
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { Producer } from "./Producers";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store";
 import { SubmitBtn } from "../../components";
-
-interface ProductCategory {
-  id: number;
-  title: string;
-}
-
-interface Address {
-  id: number,
-  unit_no: string;
-  street_no: string;
-  address_line1: string;
-  address_line2: string;
-  city: string;
-  region: string;
-  zipcode: string;
-  country_id: number;
-  country: string;
-}
-
-interface Producer {
-  id: number;
-  title: string;
-  products_count: number
-  address: Address
-}
 
 export interface User {
   id: number;
@@ -85,12 +61,12 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 
 const ProducerEdit = () => {
   const { ProducerDetails, countries } = useLoaderData() as {
-    ProducerDetails: Producer;
-    countries: Country[];
+    ProducerDetails: { data: Producer };
+    countries: { data: Country[] };
   }
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { id, title, address: { id: address_id, unit_no, street_no, address_line1, address_line2, city, region, zipcode, country_id, country} } = ProducerDetails.data
+  const { id, title, address: { id: address_id, unit_no, street_no, address_line1, address_line2, city, region, zipcode, country_id} } = ProducerDetails.data
 
   const user = useSelector((state: RootState) => state.userState.user);
 
@@ -160,7 +136,7 @@ const ProducerEdit = () => {
         return {
       ...prev,
       [parentKey]: {
-      ...prev[parentKey],
+      ...(prev[parentKey as keyof typeof prev] as any),
       [name]: value,
         },
       }
@@ -183,7 +159,7 @@ const ProducerEdit = () => {
     updateProductMutation.mutate(payload);
   };
 
-  const handleDelete = async (e: React.FormEvent) => {
+  const handleDelete = async () => {
     if (!confirm("Are you sure you want to delete this producer?")) return;
   
     console.log(`handleSubmit formData:`, formData)

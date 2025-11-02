@@ -52,7 +52,7 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 
 const PromotionEdit = () => {
   const { promotion } = useLoaderData() as {
-    promotion: Promotion;
+    promotion: { data: Promotion };
   }
   console.log(`PromotionEdit PromotionDetails`, promotion)
   const navigate = useNavigate();
@@ -118,7 +118,7 @@ const PromotionEdit = () => {
     updatePromotionMutation.mutate(payload);
   };
 
-  const handleDelete = async (e: React.FormEvent) => {
+  const handleDelete = async () => {
   if (!confirm("Are you sure you want to delete this promotion?")) return;
   
     console.log(`handleSubmit formData:`, formData)

@@ -3,8 +3,6 @@ import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
 import { NavLink } from 'react-router-dom';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
-import type { RootState } from '../../store';
 import type { ProducersResponse } from '../Products/Products';
 import { SearchBar, PaginationControls } from '../../components';
 
@@ -21,7 +19,7 @@ interface Address {
   country: string;
 }
 
-interface Producer {
+export interface Producer {
   id: number;
   title: string;
   products_count: number;
@@ -69,7 +67,6 @@ const Producers = () => {
   const { Producers } = useLoaderData() as {
     Producers: ProducersResponse
   };
-  const user = useSelector((state: RootState) => state.userState.user);
   const [loading, setLoading] = useState(false);
   const [producerData, setProducerData] = useState(Producers)
 

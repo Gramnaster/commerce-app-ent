@@ -208,7 +208,7 @@ const UserCartOrders = () => {
       );
   }, [userCartOrdersData.data, searchWord]);
 
-  const { current_page, total_pages, next_page, previous_page } = userCartOrdersData.pagination || {
+  const { current_page, total_pages } = userCartOrdersData.pagination || {
     current_page: 1,
     per_page: 30,
     total_pages: 1,

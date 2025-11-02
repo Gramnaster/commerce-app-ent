@@ -1,15 +1,10 @@
-import { redirect, useLoaderData, useNavigate, useNavigation } from "react-router-dom";
+import { redirect, useNavigate, useNavigation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { customFetch } from "../../utils";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store";
 import { SubmitBtn } from "../../components";
-
-interface ProductCategory {
-  id: number;
-  title: string;
-}
 
 export interface User {
   id: number;
@@ -47,9 +42,6 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 };
 
 const CategoryCreate = () => {
-  const { ProductCategoriesDetails } = useLoaderData() as {
-    ProductCategoriesDetails: ProductCategory;
-  }
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.userState.user);
   const navigation = useNavigation();

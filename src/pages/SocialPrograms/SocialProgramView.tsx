@@ -4,20 +4,6 @@ import { customFetch } from "../../utils";
 import type { SocialProgram } from "./SocialPrograms";
 import { BackButton } from "../../components";
 
-interface Address {
-  id: number,
-  unit_no: string;
-  street_no: string;
-  address_line1: string;
-  address_line2: string;
-  city: string;
-  region: string;
-  barangay: string;
-  zipcode: string;
-  country_id: number;
-  country: string;
-}
-
 export interface SocialProgramResponse {
   data: SocialProgram;
 }

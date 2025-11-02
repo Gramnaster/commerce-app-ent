@@ -44,7 +44,7 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 
 const CategoryEdit = () => {
   const { CategoryDetails } = useLoaderData() as {
-    CategoryDetails: ProductCategory;
+    CategoryDetails: { data: ProductCategory };
   }
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -109,7 +109,7 @@ const CategoryEdit = () => {
     updateCategoryMutation.mutate(payload);
   };
 
-  const handleDelete = async (e: React.FormEvent) => {
+  const handleDelete = async () => {
   if (!confirm("Are you sure you want to delete this category?")) return;
     navigate(`/categories`)
     // Create the payload matching the API format

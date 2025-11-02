@@ -1,8 +1,7 @@
-import { NavLink, redirect, useLoaderData, useLocation } from 'react-router-dom';
+import { NavLink, redirect, useLoaderData } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
-import type { Product, User } from '../Products/Products';
-import type { Address } from '../Admin/AdminEdit';
+import type { Product } from '../Products/Products';
 import type { CompanySite } from '../WarehouseOrders/WarehouseOrders';
 import { BackButton } from '../../components';
 
