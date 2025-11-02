@@ -3,9 +3,6 @@ import { toast } from 'react-toastify';
 import { NavLink, useLoaderData } from 'react-router-dom';
 import type { Pagination, Product } from '../Products/Products';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
-import type { RootState } from '../../store';
-import type { Address } from '../Admin/AdminEdit';
 import type { CompanySite, CompanySiteResponse } from '../WarehouseOrders/WarehouseOrders';
 import { SearchBar, PaginationControls } from '../../components';
 
@@ -75,7 +72,6 @@ const Inventories = () => {
     console.log(`inventoriesData`, inventoriesData)
     const [searchWord, setSearchWord] = useState('');
     const [selectedSite, setSelectedSite] = useState<string | null>(null);
-    const user = useSelector((state: RootState) => state.userState.user);
     const [loading, setLoading] = useState(false);
   
     const handlePagination = async (page: number | null) => {
