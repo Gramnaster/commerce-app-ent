@@ -392,7 +392,7 @@ const Dashboard = () => {
                             <td
                               className={`p-4 text-m ${activeTab === 'pending' ? 'text-center' : 'text-right'}`}
                             >
-                              <NavLink to={`/user_cart_order/${order.id}`}>
+                              <NavLink to={`/orders/${order.id}`}>
                                 View cart order info
                               </NavLink>
                             </td>

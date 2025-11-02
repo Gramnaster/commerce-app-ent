@@ -445,7 +445,7 @@ const UserView = () => {
                               <td
                                 className={`p-4 text-m  ${activeTab === 'orders' ? 'text-center' : 'text-right'} hover:text-primary hover:underline`}
                               >
-                                <NavLink to={`/user_cart_order/${order.id}`}>
+                                <NavLink to={`/orders/${order.id}`}>
                                   View User Cart Order Info
                                 </NavLink>
                               </td>
