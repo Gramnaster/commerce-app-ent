@@ -1,4 +1,3 @@
-import React from 'react'
 import { NavLink, redirect, useLoaderData } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
