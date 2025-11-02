@@ -240,6 +240,8 @@ const AdminCreate = () => {
                   name="dob"
                   value={formData.admin_detail_attributes.dob}
                   onChange={handleInputChange}
+                  min="1900-01-01"
+                  max={new Date().toISOString().split('T')[0]}
                   className="input w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                   required
                 />
@@ -254,12 +256,7 @@ const AdminCreate = () => {
             >
               Cancel
             </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="px-6 py-3 bg-[#11bb11] hover:bg-[#248324] disabled:bg-gray-600 text-white font-semibold rounded-lg transition-colors"
-            >Submit
-            </button>
+            <SubmitBtn text="Submit" isSubmitting={isSubmitting} />
           </div>
         </form>
       </div>

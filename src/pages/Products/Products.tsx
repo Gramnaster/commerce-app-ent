@@ -1,8 +1,9 @@
-import { useLoaderData, useNavigation } from 'react-router-dom';
+import { useLoaderData } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
+import { SearchBar, PaginationControls } from '../../components';
 
 // Shared Types - Export for use in other Product files
 export interface ProductCategory {
@@ -54,8 +55,8 @@ export interface Product {
   id: number;
   title: string;
   product_title: string;
-  product_category: ProductCategory;
-  producer: Producer;
+  product_category?: ProductCategory; // Optional because /product_categories/:id doesn't include it
+  producer?: Producer; // Optional because /product_categories/:id doesn't include it
   description: string;
   price: number;
   promotion_id: number | null;
@@ -89,11 +90,11 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
   const user = storeState.userState?.user;
   const id = params.id;
 
-
+  // Fetch ALL products at once for client-side filtering and pagination
   const allProductsQuery = {
     queryKey: ['allProducts'],
     queryFn: async () => {
-      const response = await customFetch.get('/products');
+      const response = await customFetch.get('/products?per_page=10000');
       console.log('Products loader - response.data:', response.data)
       return response.data;
     },
@@ -124,76 +125,89 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
   } catch (error: any) {
     console.error('Products loader - Failed to load Product data:', error);
     toast.error('Failed to load Product data');
-    return { allStocks: [] };
+    return { allProducts: { data: [], pagination: null }, ProductCategories: { data: [] } };
   }
 };
 
 const Products = () => {
-  const { allProducts: initialProducts, ProductCategories } = useLoaderData() as {
+  const { allProducts, ProductCategories } = useLoaderData() as {
     allProducts: ProductsResponse,
     ProductCategories: ProductCategoriesResponse
   };
-    console.log('Products - ProductCategories:', ProductCategories)
+  console.log('Products - ProductCategories:', ProductCategories)
+  console.log('Products - All products loaded:', allProducts.data.length)
+  
   const [searchWord, setSearchWord] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [productData, setProductData] = useState(initialProducts);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
-  const handlePagination = async (page: number | null) => {
-    if (!page) return;
-    setLoading(true)
+  // When user types in search, automatically switch to "All" category
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    console.log('Products handleSearchChange - Search value:', value);
+    setSearchWord(value);
     
-    try {
-      const response = await customFetch.get(`/products?page=${page}&per_page=${productData.pagination.per_page || 20}`);
-      const data = response.data;
-      console.log('Products handlePagination - Response:', data);
-      setProductData(data);
-      setLoading(false);
+    // If user starts typing, switch to "All" category to search across all products
+    if (value && selectedCategory !== null) {
+      setSelectedCategory(null);
+      console.log('Products handleSearchChange - Switched to "All" category for search');
     }
-    catch (error: any) {
-      console.error('Products handlePagination - Failed to load pagination data:', error);
-      toast.error('Failed to load pagination data');
-    }
-  }
-
-  const filteredProds = productData.data.filter((product: Product) => {
-    const matchesSearch =
-      product.id?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
-      product.title?.toLowerCase().includes(searchWord.toLowerCase()) ||
-      product.description?.toLowerCase().includes(searchWord.toLowerCase()) ||
-      product.price?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
-      product.product_category?.title.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
-      product.producer?.title.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
-      product.promotion_id?.toString().toLowerCase().includes(searchWord.toLowerCase());
-
-    const matchesCategory = selectedCategory
-      ? product.product_category.title === selectedCategory
-      : true;
-
-    return matchesSearch && matchesCategory;
-    })
-    .sort(
-    (a: Product, b: Product) =>
-      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-  ) || [];
-  
-  const { current_page, total_pages, next_page, previous_page } = productData.pagination || {
-    current_page: 1,
-    per_page: 20,
-    total_pages: 1,
-    next_page: null,
-    previous_page: null
+    
+    // Reset to page 1 when searching
+    setCurrentPage(1);
   };
 
   const handleCategoryChange = (category: string | null) => {
     console.log('Products handleCategoryChange - Selected category:', category);
     setSelectedCategory(category);
+    setSearchWord(''); // Clear search when changing categories
+    setCurrentPage(1); // Reset to page 1 when changing categories
   };
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    console.log('Products handleSearchChange - Search value:', value);
-    setSearchWord(value);
+  // Client-side filtering: category and search
+  const filteredProds = useMemo(() => {
+    let filtered = allProducts.data;
+
+    // Filter by category first (if not "All")
+    if (selectedCategory) {
+      filtered = filtered.filter((product: Product) => 
+        product.product_category?.title === selectedCategory
+      );
+    }
+
+    // Then filter by search term
+    if (searchWord) {
+      filtered = filtered.filter((product: Product) => {
+        const matchesSearch =
+          product.id?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
+          product.title?.toLowerCase().includes(searchWord.toLowerCase()) ||
+          product.description?.toLowerCase().includes(searchWord.toLowerCase()) ||
+          product.price?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
+          product.product_category?.title.toLowerCase().includes(searchWord.toLowerCase()) ||
+          product.producer?.title.toLowerCase().includes(searchWord.toLowerCase()) ||
+          product.promotion_id?.toString().toLowerCase().includes(searchWord.toLowerCase());
+        return matchesSearch;
+      });
+    }
+
+    // Sort by created_at (newest first)
+    return filtered.sort(
+      (a: Product, b: Product) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+  }, [allProducts.data, selectedCategory, searchWord]);
+
+  // Client-side pagination
+  const totalPages = Math.ceil(filteredProds.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedProds = filteredProds.slice(startIndex, endIndex);
+
+  const handlePagination = (page: number) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+    console.log('Products handlePagination - Page:', page);
   };
 
   return (
@@ -203,62 +217,35 @@ const Products = () => {
            Create Product  
         </NavLink>
         <div className='text-primary font-bold'>
-          <button onClick={() => handleCategoryChange(null)} className='m-1 px-2 py-2 border-2 border-primary rounded-2xl hover:cursor-pointer hover:bg-primary hover:text-white' >All</button>
+          <button 
+            onClick={() => handleCategoryChange(null)} 
+            className={`m-1 px-2 py-2 border-2 border-primary rounded-2xl hover:cursor-pointer hover:bg-primary hover:text-white ${!selectedCategory ? 'bg-primary text-white' : ''}`}
+          >
+            All
+          </button>
           {ProductCategories?.data?.length
             ? ProductCategories.data.map((category: ProductCategory) => {
             const { id, title } = category;
             console.log(`ProductCategories.data`,ProductCategories.data)
             return (
-              <button onClick={() => handleCategoryChange(title)} className='m-1 px-2 py-2 border-2 border-primary rounded-2xl hover:cursor-pointer hover:bg-primary hover:text-white' key={id}>{title}</button>
+              <button 
+                onClick={() => handleCategoryChange(title)} 
+                className={`m-1 px-2 py-2 border-2 border-primary rounded-2xl hover:cursor-pointer hover:bg-primary hover:text-white ${selectedCategory === title ? 'bg-primary text-white' : ''}`}
+                key={id}
+              >
+                {title}
+              </button>
             )
           }) : null }
       </div>
-        {(
-          <>
-            {/* Search and Filter */}
-            <div className="bg-primary rounded-lg p-6 border border-primary mb-6">
-              <div className="flex items-center gap-4">
-                <div className="flex-1 relative">
-                  <input
-                    type="text"
-                    placeholder="Search by Name or Date"
-                    value={searchWord}
-                    onChange={handleSearchChange}
-                    className="w-full bg-[white] border border-black rounded-lg p-3 pl-10 text-black placeholder-[#666666]"
-                  />
-                  <svg
-                    className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-primary"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
-                </div>
-                <button className="p-3 bg-primary hover:bg-[#03529c] border border-[white] rounded-lg hover:cursor-pointer transition-colors">
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </div>
+        
+        {/* Search and Filter */}
+        <SearchBar
+          searchValue={searchWord}
+          onSearchChange={handleSearchChange}
+        />
 
-            {/* Traders Table */}
+        {/* Traders Table */}
             <div className="bg-transparent rounded-lg border border-primary overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
@@ -291,17 +278,9 @@ const Products = () => {
                     </tr>
                   </thead>
                   <tbody >
-                    { loading ?     
-                    <tr className='border-b text-[#000000] border-primary hover:bg-[hsl(0,0%,87%)] transition-colors'>
-                      <td className="p-8 text-center" colSpan={10}>
-                        <div className="h-screen flex items-center justify-center">
-                          <span className="loading loading-ring loading-lg text-black">LOADING</span>
-                        </div>
-                      </td> 
-                    </tr>
-                    : filteredProds.length > 0 ? 
+                    {paginatedProds.length > 0 ? 
                       (
-                      filteredProds.map((product: Product, index: number) => (
+                      paginatedProds.map((product: Product, index: number) => (
                         <tr
                           key={product.id}
                           className={`border-b text-[#000000] border-primary hover:bg-white transition-colors ${
@@ -336,10 +315,10 @@ const Products = () => {
                             </NavLink>
                           </td>
                           <td className="p-4 text-m text-center">
-                            {product.product_category.title}
+                            {product.product_category?.title || 'N/A'}
                           </td>
                           <td className="p-4 text-m text-center">
-                            {product.producer.title}
+                            {product.producer?.title || 'N/A'}
                           </td>
                           <td className={`p-4 text-m`}>
                             {product.description}
@@ -366,45 +345,14 @@ const Products = () => {
                 </table>
               </div>
             </div>
-          </>
-        )}
       </div>
+      
       {/* Pagination Controls */}
-      {total_pages && total_pages > 1 && (
-        <div className="join mt-6 flex justify-center">
-          <input
-            className="join-item btn btn-square border-black" 
-            type="radio" 
-            name="options" 
-            onClick={() => handlePagination(previous_page)}
-            disabled={!previous_page}
-            aria-label="❮" 
-          />
-          {[...Array(total_pages).keys()].map((_, i) => {
-            const pageNum = i + 1;
-            return (
-              <input 
-                key={i} 
-                className="join-item btn btn-square border-black" 
-                type="radio" 
-                name="options" 
-                checked={current_page === pageNum}
-                onClick={() => handlePagination(pageNum)}
-                aria-label={`${pageNum}`} 
-                readOnly
-              />
-            );
-          })}
-          <input
-            className="join-item btn btn-square border-black" 
-            type="radio" 
-            name="options" 
-            onClick={() => handlePagination(next_page)}
-            disabled={!next_page}
-            aria-label="❯" 
-          />
-        </div>
-      )}
+      <PaginationControls
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePagination}
+      />
     </div>
   )
 }

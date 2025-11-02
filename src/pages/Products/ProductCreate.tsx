@@ -4,6 +4,7 @@ import { customFetch } from '../../utils';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store';
+import { SubmitBtn } from '../../components';
 
 interface ProductCategory {
   id: number;
@@ -263,17 +264,20 @@ const ProductCreate = () => {
               </div>
               {/* File input for image */}
               <div>
-                <label>Product Image:</label>
+                <label className="block text-white text-sm font-medium mb-2">
+                  Product Image
+                </label>
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleFileChange}
+                  className="w-full bg-secondary border border-gray-600 rounded-lg p-2 text-white shadow-lg file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-[#4a7ba7] cursor-pointer"
                 />
                 {imagePreview && (
                   <img
                     src={imagePreview}
                     alt="Preview"
-                    style={{ width: '200px' }}
+                    className="mt-2 w-[200px] h-[200px] object-cover rounded"
                   />
                 )}
               </div>
@@ -344,13 +348,7 @@ const ProductCreate = () => {
             >
               Cancel
             </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="px-6 py-3 bg-[#11bb11] hover:bg-[#248324] disabled:bg-gray-600 text-white font-semibold rounded-lg transition-colors"
-            >
-              {loading ? 'Creating Product...' : 'Submit'}
-            </button>
+            <SubmitBtn text="Submit" isSubmitting={loading} loadingText="Creating Product..." />
           </div>
         </form>
       </div>

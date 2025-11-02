@@ -37,7 +37,9 @@ export { default as WarehouseOrderEdit } from './WarehouseOrders/WarehouseOrderE
 export { default as UsersHome } from './Users/UsersHome';
 export { default as Users } from './Users/Users';
 export { default as UserView } from './Users/UserView';
-export { default as UserCartOrder } from './UserCartOrder/UserCartOrderView';
+export { default as UserCartOrdersHome } from './UserCartOrder/UserCartOrdersHome';
+export { default as UserCartOrders } from './UserCartOrder/UserCartOrders';
+export { default as UserCartOrderView } from './UserCartOrder/UserCartOrderView';
 export { default as ReceiptsHome } from './Receipts/ReceiptsHome';
 export { default as Receipts } from './Receipts/Receipts';
 export { default as ReceiptView } from './Receipts/ReceiptView';

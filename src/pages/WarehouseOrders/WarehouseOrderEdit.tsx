@@ -6,6 +6,7 @@ import type { CompanySite, CompanySiteResponse, WareHouseOrder } from './Warehou
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { RootState } from '../../store';
 import { useSelector } from 'react-redux';
+import { SubmitBtn } from '../../components';
 
 export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
   const storeState = store.getState();
@@ -312,13 +313,11 @@ const WarehouseOrderEdit = () => {
             >
               Clear Form
             </button>
-            <button
-              type="submit"
-              disabled={updateWarehouseOrderMutation.isPending}
-              className="px-6 py-3 bg-[#11bb11] hover:bg-[#248324] disabled:bg-gray-600 text-white font-semibold rounded-lg transition-colors"
-            >
-              {updateWarehouseOrderMutation.isPending ? 'Updating Order...' : 'Update Order'}
-            </button>
+            <SubmitBtn 
+              text="Update Order" 
+              isSubmitting={updateWarehouseOrderMutation.isPending} 
+              loadingText="Updating Order..." 
+            />
           </div>
         </form>
       </div>

@@ -6,6 +6,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store";
 import type { ProducersResponse, ProductCategoriesResponse, ProductDetailsResponse } from "./Products";
+import { SubmitBtn } from "../../components";
 
 export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
   const storeState = store.getState();
@@ -127,7 +128,8 @@ const ProductEdit = () => {
     onSuccess: () => {
       console.log('ProductEdit mutation - Success, updating product ID:', ProductDetails.data.id);
       toast.success('Product Details updated successfully');
-      queryClient.invalidateQueries({ queryKey: ['products', ProductDetails.data.id] });
+      // Invalidate the ProductDetails query to refresh ProductView
+      queryClient.invalidateQueries({ queryKey: ['ProductDetails', ProductDetails.data.id] });
       navigate(`/products/${ProductDetails.data.id}`);
     },
     onError: (error: any) => {
@@ -322,7 +324,7 @@ const ProductEdit = () => {
                   type="file"
                   accept="image/*"
                   onChange={handleFileChange}
-                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black"
+                  className="w-full bg-secondary border border-gray-600 rounded-lg p-3 text-white shadow-lg file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-[#4a7ba7] cursor-pointer"
                 />
                 {imagePreview && (
                   <img
@@ -389,13 +391,7 @@ const ProductEdit = () => {
             >
               Cancel
             </button>
-            <button
-              type="submit"
-              disabled={updateProductMutation.isPending || loading}
-              className="px-6 py-3 bg-[#11bb11] hover:bg-[#248324] disabled:bg-gray-600 text-white font-semibold rounded-lg transition-colors"
-            >
-              {(updateProductMutation.isPending || loading) ? 'Updating...' : 'Update Product'}
-            </button>
+            <SubmitBtn text="Update Product" isSubmitting={updateProductMutation.isPending || loading} loadingText="Updating..." />
             <button type="button" onClick={handleDelete} className="btn bg-[#8f1e14] text-white">Delete?</button>
           </div>
         </form>

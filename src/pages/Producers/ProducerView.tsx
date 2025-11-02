@@ -1,6 +1,7 @@
-import { NavLink, redirect, useLoaderData, useNavigate } from "react-router-dom";
+import { NavLink, redirect, useLoaderData } from "react-router-dom";
 import { toast } from "react-toastify";
 import { customFetch } from "../../utils";
+import { BackButton } from "../../components";
 
 interface ProductCategory {
   id: number;
@@ -61,7 +62,6 @@ const ProducerView = () => {
   const { ProducerDetails } = useLoaderData() as {
     ProducerDetails: Producer;
   }
-  const navigate = useNavigate();
   const { id, title, products_count, address: { unit_no, street_no, address_line1, address_line2, city, region, zipcode, country }, created_at } = ProducerDetails.data;
 
   const formatDate = (dateString: string) => {
@@ -76,24 +76,7 @@ const ProducerView = () => {
     <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
       <div className="max-w-7xl mx-auto place-items-center ">
         <div className="mb-6 text-black">
-          <button
-          onClick={() => navigate(`/producers`)}
-          className="mb-4 flex items-center gap-2 hover:underline transition-colors text-black">
-          <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M10 19l-7-7m0 0l7-7m-7 7h18"
-            />
-          </svg>
-          Back to Producers list
-        </button>
+          <BackButton text="Back to Producers list" to="/producers" />
         </div>
 
           <div className="w-[60%] bg-primary rounded-lg p-6 border border-gray-700">

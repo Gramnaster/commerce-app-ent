@@ -4,6 +4,7 @@ import { customFetch } from "../../utils";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store";
+import { SubmitBtn } from "../../components";
 
 interface ProductCategory {
   id: number;
@@ -157,12 +158,7 @@ const CategoryCreate = () => {
             >
               Cancel
             </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="px-6 py-3 bg-[#11bb11] hover:bg-[#248324] disabled:bg-gray-600 text-white font-semibold rounded-lg transition-colors"
-            >Submit
-            </button>
+            <SubmitBtn text="Submit" isSubmitting={isSubmitting} />
           </div>
         </form>
       </div>

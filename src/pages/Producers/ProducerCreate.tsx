@@ -1,9 +1,10 @@
-import { redirect, useLoaderData, useNavigate } from "react-router-dom";
+import { redirect, useLoaderData, useNavigate, useNavigation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { customFetch } from "../../utils";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store";
+import { SubmitBtn } from "../../components";
 
 interface Country {
   id: number;
@@ -298,11 +299,7 @@ const ProducerCreate = () => {
             >
               Cancel
             </button>
-            <button
-              type="submit"
-              className="px-6 py-3 bg-[#11bb11] hover:bg-[#248324] disabled:bg-gray-600 text-white font-semibold rounded-lg transition-colors"
-            >Submit
-            </button>
+            <SubmitBtn text="Submit" />
           </div>
         </form>
       </div>

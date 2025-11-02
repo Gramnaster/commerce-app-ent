@@ -2,7 +2,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-import { Error, Home, Landing, Dashboard, Signup, ProductsHome, Products, ProductView, ProductEdit, ProductCreate, ProducersHome, Producers, ProducerView, ProducerEdit, ProducerCreate, CategoriesHome, Categories, CategoryView, CategoryCreate, CategoryEdit, Admins, AdminView, AdminCreate, AdminEdit, AdminsHome, PromotionsHome, Promotions, PromotionCreate, PromotionEdit, PromotionView, WarehouseOrdersHome, WarehouseOrderView, WarehouseOrders, WarehouseOrderEdit, UsersHome, Users, UserView, ReceiptsHome, Receipts, ReceiptView, UserCartOrder, SocialProgramsHome, SocialPrograms, SocialProgramView, SocialProgramCreate, SocialProgramEdit, Inventories, InventoriesView, InventoriesCreate, InventoriesEdit, InventoriesHome } from './pages/index.ts';
+import { Error, Home, Landing, Dashboard, Signup, ProductsHome, Products, ProductView, ProductEdit, ProductCreate, ProducersHome, Producers, ProducerView, ProducerEdit, ProducerCreate, CategoriesHome, Categories, CategoryView, CategoryCreate, CategoryEdit, Admins, AdminView, AdminCreate, AdminEdit, AdminsHome, PromotionsHome, Promotions, PromotionCreate, PromotionEdit, PromotionView, WarehouseOrdersHome, WarehouseOrderView, WarehouseOrders, WarehouseOrderEdit, UsersHome, Users, UserView, ReceiptsHome, Receipts, ReceiptView, UserCartOrdersHome, UserCartOrders, UserCartOrderView, SocialProgramsHome, SocialPrograms, SocialProgramView, SocialProgramCreate, SocialProgramEdit, Inventories, InventoriesView, InventoriesCreate, InventoriesEdit, InventoriesHome } from './pages/index.ts';
 import { store } from './store.ts';
 
 // import {action as loginAction} from './pages/Login/Login';
@@ -53,6 +53,9 @@ import {loader as UserViewLoader} from './pages/Users/UserView.tsx';
 import {loader as receiptsHomeLoader} from './pages/Receipts/ReceiptsHome.tsx';
 import {loader as receiptsLoader} from './pages/Receipts/Receipts.tsx';
 import {loader as receiptViewLoader} from './pages/Receipts/ReceiptView.tsx';
+
+import {loader as userCartOrdersHomeLoader} from './pages/UserCartOrder/UserCartOrdersHome.tsx';
+import {loader as userCartOrdersLoader} from './pages/UserCartOrder/UserCartOrders.tsx';
 import {loader as userCartOrderViewLoader} from './pages/UserCartOrder/UserCartOrderView.tsx';
 
 import {loader as socialProgramsHomeLoader} from './pages/SocialPrograms/SocialProgramsHome.tsx';
@@ -94,9 +97,21 @@ const router = createBrowserRouter([
         loader: dashboardLoader(queryClient, store)
       },
       {
-        path: '/user_cart_order/:id',
-        element: <UserCartOrder />,
-        loader: userCartOrderViewLoader(queryClient, store)
+        path: 'orders',
+        element: <UserCartOrdersHome />,
+        loader: userCartOrdersHomeLoader(queryClient, store),
+        children: [
+          {
+            index: true,
+            element: <UserCartOrders />,
+            loader: userCartOrdersLoader(queryClient, store)
+          },
+          {
+            path: ':id',
+            element: <UserCartOrderView />,
+            loader: userCartOrderViewLoader(queryClient, store)
+          }
+        ]
       },
       {
         path: 'receipts',
