@@ -5,9 +5,7 @@ import type { RootState } from '../../store';
 import { FormInput, SubmitBtn } from '../../components/index';
 import {
   Form,
-  Link,
   redirect,
-  useNavigate,
   NavLink,
   type ActionFunctionArgs,
 } from 'react-router-dom';
