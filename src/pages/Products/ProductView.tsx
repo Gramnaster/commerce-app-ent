@@ -40,7 +40,7 @@ const ProductView = () => {
     ProductDetails: ProductDetailsResponse;
   }
   const navigate = useNavigate();
-  const { id, title, product_image_url, product_category, producer, description, price, promotion_id } = ProductDetails.data
+  const { id, title, product_image_url, product_category, producer, description, price, promotion: { id: promotion_id}  } = ProductDetails.data
   
   console.log('ProductView component - ProductDetails:', ProductDetails);
   console.log('ProductView component - product_image_url:', product_image_url);
