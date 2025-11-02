@@ -10,7 +10,7 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Provider store={store}>
       <App />
-      <ToastContainer position="top-center" />
+      <ToastContainer position="top-center" autoClose={1000} />
     </Provider>
   </StrictMode>
 )
