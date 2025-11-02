@@ -45,7 +45,7 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
   const id = params.id;
 
   const ReceiptsQuery = {
-    queryKey: ['ProductCategoriesDetails', id],
+    queryKey: ['Receipts', id],
     queryFn: async () => {
       const response = await customFetch.get(`/receipts`, {
         headers: {
@@ -76,6 +76,7 @@ const Receipts = () => {
     const [receiptsData, setReceiptsData] = useState(Receipts)
     const user = useSelector((state: RootState) => state.userState.user);
     const [loading, setLoading] = useState(false);
+    console.log(`Receipts`, Receipts)
 
   const handlePagination = async (page: number | null) => {
     if (!page) return;
@@ -212,9 +213,10 @@ const Receipts = () => {
                             balance_before,
                             balance_after,
                             description,
-                            user: { email },
+                            user,
                             order,
                           } = receipt;
+                          console.log(`receipt`, receipt)
                           return (
                             <tr
                               key={id}
@@ -237,7 +239,7 @@ const Receipts = () => {
                                 {description}
                               </td>
                               <td className="p-4 text-m text-center">
-                                {email}
+                                {user?.email || 'Email not found, try refreshing the page'}
                               </td>
                               <td className={`p-4 text-m $`}>
                                 {order ? order?.cart_status : "-"}

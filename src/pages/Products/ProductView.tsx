@@ -40,11 +40,10 @@ const ProductView = () => {
     ProductDetails: ProductDetailsResponse;
   }
   const navigate = useNavigate();
-  const { id, title, product_image_url, product_category, producer, description, price, promotion: { id: promotion_id}  } = ProductDetails.data
+  const { id, title, product_image_url, product_category, producer, description, price, promotion  } = ProductDetails?.data
   
   console.log('ProductView component - ProductDetails:', ProductDetails);
   console.log('ProductView component - product_image_url:', product_image_url);
-  console.log('ProductView component - promotion_id:', promotion_id);
 
   return (
     <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
@@ -136,7 +135,7 @@ const ProductView = () => {
                       <label className="block text-l font-bold mb-2">
                         Promotion IDs:
                       </label>
-                      {promotion_id || "No active promotions"}
+                      {promotion?.id || "No active promotions"}
                     </div>
                   </div>
                 </div>
