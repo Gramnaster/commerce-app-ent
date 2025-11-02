@@ -322,7 +322,7 @@ const ProductEdit = () => {
                   type="file"
                   accept="image/*"
                   onChange={handleFileChange}
-                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black"
+                  className="w-full bg-secondary border border-gray-600 rounded-lg p-3 text-white shadow-lg file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-[#4a7ba7] cursor-pointer"
                 />
                 {imagePreview && (
                   <img
