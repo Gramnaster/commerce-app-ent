@@ -2,10 +2,13 @@ import { NavLink, redirect, useLoaderData, useNavigate } from "react-router-dom"
 import { toast } from "react-toastify";
 import { customFetch } from "../../utils";
 import type { Phone, Receipt, User } from "./Users";
-import type { Address } from "../Admin/AdminEdit";
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import type { UserCartOrder } from "../Home/Dashboard";
+import { PaginationControls } from "../../components";
+
+interface UserViewResponse {
+  data: User;
+}
 
 
 export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
@@ -38,7 +41,7 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 
 const UserView = () => {
   const { UserViewDetails } = useLoaderData() as {
-    UserViewDetails: User;
+    UserViewDetails: UserViewResponse;
   }
   const {
     email,
@@ -58,8 +61,9 @@ const UserView = () => {
 
   const [activeTab, setActiveTab] = useState<'receipts' | 'orders'>('receipts');
   const [searchWord, setSearchWord] = useState('');
-  const [cartOrderData, setCartOrderData] = useState(user_cart_orders);
-  const [userReceiptsData, setUserReceiptsData] = useState(receipts);
+  const [cartOrderData, setCartOrderData] = useState<UserCartOrder[]>(user_cart_orders);
+  const [userReceiptsData, setUserReceiptsData] = useState<Receipt[]>(receipts);
+  const [pagination, setPagination] = useState({ current_page: 1, total_pages: 1, per_page: 20 });
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   console.log(`userReceiptsData`, userReceiptsData)
@@ -70,10 +74,11 @@ const UserView = () => {
     setLoading(true)
     
     try {
-      const response = await customFetch.get(`/user_cart_orders?page=${page}&per_page=${cartOrderData.pagination.per_page || 20}`);
+      const response = await customFetch.get(`/user_cart_orders?page=${page}&per_page=${pagination.per_page || 20}`);
       const data = response.data;
       console.log('Products handlePagination - Response:', data);
-      setCartOrderData(data);
+      setCartOrderData(data.data);
+      setPagination(data.pagination);
       setLoading(false);
     }
     catch (error: any) {
@@ -87,10 +92,11 @@ const UserView = () => {
     setLoading(true)
     
     try {
-      const response = await customFetch.get(`/receipts?page=${page}&per_page=${cartOrderData.pagination.per_page || 20}`);
+      const response = await customFetch.get(`/receipts?page=${page}&per_page=${pagination.per_page || 20}`);
       const data = response.data;
       console.log('Receipts handlePagination - Response:', data);
-      setUserReceiptsData(data);
+      setUserReceiptsData(data.data);
+      setPagination(data.pagination);
       setLoading(false);
     }
     catch (error: any) {
@@ -158,27 +164,21 @@ const UserView = () => {
           receipt.balance_before.toLowerCase().includes(searchWord.toLowerCase()) ||
           receipt.balance_after.toLowerCase().includes(searchWord.toLowerCase()) ||
           receipt.description.toLowerCase().includes(searchWord.toLowerCase()) ||
-          receipt.user_cart_order_id?.toLowerCase().includes(searchWord.toLowerCase()) ||
+          receipt.user_cart_order_id?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
           receipt.created_at.toLowerCase().includes(searchWord.toLowerCase());
   
 
         return matchesSearch;
       })
       .sort(
-        (a: UserCartOrder, b: UserCartOrder) =>
+        (a: Receipt, b: Receipt) =>
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       ) : [];
 
       console.log(`filteredOrders`, filteredOrders)
       console.log(`filteredReceipts`, filteredReceipts)
   
-    const { current_page, total_pages, next_page, previous_page } = cartOrderData.pagination || {
-        current_page: 1,
-        per_page: 20,
-        total_pages: 1,
-        next_page: null,
-        previous_page: null
-    };
+    const { current_page, total_pages } = pagination;
 
   return (
     <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
@@ -501,74 +501,18 @@ const UserView = () => {
                 )}
               </div>
             </div>
-              {total_pages && total_pages > 1 && activeTab === 'receipts' ? (
-                <div className="join mt-6 flex justify-center">
-                  <input
-                    className="join-item btn btn-square border-black" 
-                    type="radio" 
-                    name="options" 
-                    onClick={() => handleReceiptPagination(previous_page)}
-                    disabled={!previous_page}
-                    aria-label="❮" 
-                  />
-                  {[...Array(total_pages).keys()].map((_, i) => {
-                    const pageNum = i + 1;
-                    return (
-                      <input 
-                        key={i} 
-                        className="join-item btn btn-square border-black" 
-                        type="radio" 
-                        name="options" 
-                        checked={current_page === pageNum}
-                        onClick={() => handleReceiptPagination(pageNum)}
-                        aria-label={`${pageNum}`} 
-                        readOnly
-                      />
-                    );
-                  })}
-                  <input
-                    className="join-item btn btn-square border-black" 
-                    type="radio" 
-                    name="options" 
-                    onClick={() => handleReceiptPagination(next_page)}
-                    disabled={!next_page}
-                    aria-label="❯" 
-                  />
-                </div>
-              ) :  (
-                <div className="join mt-6 flex justify-center">
-                  <input
-                    className="join-item btn btn-square border-black" 
-                    type="radio" 
-                    name="options" 
-                    onClick={() => handleUserCartOrderPagination(previous_page)}
-                    disabled={!previous_page}
-                    aria-label="❮" 
-                  />
-                  {[...Array(total_pages).keys()].map((_, i) => {
-                    const pageNum = i + 1;
-                    return (
-                      <input 
-                        key={i} 
-                        className="join-item btn btn-square border-black" 
-                        type="radio" 
-                        name="options" 
-                        checked={current_page === pageNum}
-                        onClick={() => handleUserCartOrderPagination(pageNum)}
-                        aria-label={`${pageNum}`} 
-                        readOnly
-                      />
-                    );
-                  })}
-                  <input
-                    className="join-item btn btn-square border-black" 
-                    type="radio" 
-                    name="options" 
-                    onClick={() => handleUserCartOrderPagination(next_page)}
-                    disabled={!next_page}
-                    aria-label="❯" 
-                  />
-                </div>
+              {activeTab === 'receipts' ? (
+                <PaginationControls
+                  currentPage={current_page || 1}
+                  totalPages={total_pages || 1}
+                  onPageChange={(page) => handleReceiptPagination(page)}
+                />
+              ) : (
+                <PaginationControls
+                  currentPage={current_page || 1}
+                  totalPages={total_pages || 1}
+                  onPageChange={(page) => handleUserCartOrderPagination(page)}
+                />
               ) 
               }
         </div>
