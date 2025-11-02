@@ -3,38 +3,40 @@ import { useNavigate, useLocation } from "react-router-dom";
 /**
  * BackButton Component
  * 
- * A reusable button that navigates back to the previous page in the browser history.
- * Uses React Router's navigate(-1) to handle back navigation properly for nested routes.
- * Falls back to a parent route if no history exists.
+ * A reusable button that navigates back.
+ * 
+ * Two modes:
+ * 1. useHistory=true (default): Uses navigate(-1) for browser back button behavior
+ * 2. useHistory=false: Always navigates to specified route (better for "Back to List" buttons)
  * 
  * @param {string} text - Optional custom text for the button (default: "Back to Previous Page")
- * @param {string} fallbackPath - Optional fallback path if no history exists
+ * @param {string} to - Optional specific route to navigate to (overrides history behavior)
+ * @param {boolean} useHistory - Whether to use browser history (default: true)
  */
 
 interface BackButtonProps {
   text?: string;
-  fallbackPath?: string;
+  to?: string;
+  useHistory?: boolean;
 }
 
-const BackButton = ({ text = "Back to Previous Page", fallbackPath }: BackButtonProps) => {
+const BackButton = ({ text = "Back to Previous Page", to, useHistory = true }: BackButtonProps) => {
   const navigate = useNavigate();
   const location = useLocation();
 
   const handleBack = () => {
-    // Check if there's history to go back to
-    if (window.history.length > 1) {
+    // If specific route is provided, always use it
+    if (to) {
+      navigate(to);
+    } else if (useHistory && window.history.length > 1) {
+      // Use browser history if enabled and available
       navigate(-1);
     } else {
-      // Fallback: navigate to parent route or provided fallback
-      if (fallbackPath) {
-        navigate(fallbackPath);
-      } else {
-        // Extract parent route from current path
-        const pathParts = location.pathname.split('/').filter(Boolean);
-        pathParts.pop(); // Remove last segment
-        const parentPath = '/' + pathParts.join('/');
-        navigate(parentPath || '/');
-      }
+      // Fallback: navigate to parent route
+      const pathParts = location.pathname.split('/').filter(Boolean);
+      pathParts.pop(); // Remove last segment
+      const parentPath = '/' + pathParts.join('/');
+      navigate(parentPath || '/');
     }
   };
 
