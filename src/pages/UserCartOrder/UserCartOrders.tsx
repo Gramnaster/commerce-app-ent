@@ -6,6 +6,8 @@ import { NavLink, useLoaderData } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { SearchBar, PaginationControls } from "../../components";
 import type { CompanySite, CompanySiteResponse } from "../WarehouseOrders/WarehouseOrders";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../store";
 
 interface Address {
   unit_no: string;
@@ -88,6 +90,7 @@ const UserCartOrders = () => {
   };
 
   const [userCartOrdersData, setUserCartOrdersData] = useState(initialUserCartOrders);
+  const user = useSelector((state: RootState) => state.userState.user);
 
   // Filter warehouses from company sites
   const warehouses = useMemo(() => {
@@ -105,12 +108,18 @@ const UserCartOrders = () => {
           ? `/user_cart_orders/warehouse/${selectedWarehouse}?page=1&per_page=30`
           : `/user_cart_orders?page=1&per_page=30`;
 
-        const response = await customFetch.get(endpoint);
+        const response = await customFetch.get(endpoint, {
+          headers: {
+            Authorization: user?.token,
+          },
+        });
         console.log('UserCartOrders warehouse filter - Response:', response.data);
         setUserCartOrdersData(response.data);
       } catch (error: any) {
         console.error('UserCartOrders warehouse filter - Failed to load data:', error);
-        toast.error('Failed to load filtered cart orders');
+        console.error('Error response data:', error.response?.data);
+        console.error('Error status:', error.response?.status);
+        toast.error(`Failed to load filtered cart orders: ${error.response?.data?.error || error.message}`);
       } finally {
         setLoading(false);
       }
