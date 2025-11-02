@@ -30,7 +30,7 @@ interface UserCartOrder {
   cart_status: 'approved' | 'rejected' | 'pending';
   social_program_id: number;
   user_address: UserAddress;
-  items: Item[];
+  items?: Item[]; // Keep for backward compatibility, but warehouse_orders is the source of truth
   warehouse_orders: WareHouseOrder[];
   warehouse_orders_count: number;
   created_at: string;
@@ -91,7 +91,7 @@ const UserCartOrderView = () => {
     refetchOnWindowFocus: false,
   });
 
-  const { id: cartOrderId, total_cost, is_paid, social_program_id, user_address, items, warehouse_orders } = UserCartOrderViewDetails.data;
+  const { id: cartOrderId, total_cost, is_paid, social_program_id, user_address, warehouse_orders } = UserCartOrderViewDetails.data;
   const { unit_no, street_no, barangay, city, region, zipcode } = user_address.address;
 
   // State for bulk status update
@@ -235,23 +235,30 @@ const UserCartOrderView = () => {
                     Items ordered:
                   </label>
                   <div>
-                    {items && items.length > 0
-                      ? items.map((item: Item) => {
+                    {warehouse_orders && warehouse_orders.length > 0
+                      ? warehouse_orders.map((order: WareHouseOrder) => {
                           const {
                             id,
                             qty,
                             subtotal,
-                            product_title,
-                            price,
-                          } = item;
+                            inventory: { product },
+                            company_site,
+                            product_status,
+                          } = order;
 
                           return (
-                            <div key={id}>
-                              <div>Name: {product_title}</div>
-                              <div>Quantity: {qty}</div>
-                              <div>Price: {price}</div>
-                              <div className="underline">
-                                Subtotal: {subtotal}
+                            <div key={id} className="mb-3 pb-2 border-b border-gray-300">
+                              <div><strong>Product:</strong> {product.title}</div>
+                              <div><strong>Quantity:</strong> {qty}</div>
+                              <div><strong>Price:</strong> ${product.price}</div>
+                              {subtotal && <div className="underline"><strong>Subtotal:</strong> ${subtotal}</div>}
+                              <div className="text-sm mt-1">
+                                <div><strong>Warehouse:</strong> {company_site.title}</div>
+                                <div><strong>Status:</strong> <span className={`font-medium ${
+                                  product_status === 'delivered' ? 'text-green-600' :
+                                  product_status === 'progress' || product_status === 'on_delivery' ? 'text-yellow-600' :
+                                  'text-gray-600'
+                                }`}>{product_status}</span></div>
                               </div>
                             </div>
                           );
@@ -307,6 +314,7 @@ const UserCartOrderView = () => {
                           const {
                             id: orderId,
                             qty,
+                            subtotal,
                             product_status,
                             created_at,
                             inventory: {
@@ -314,6 +322,7 @@ const UserCartOrderView = () => {
                               sku,
                               product_id,
                               qty_in_stock,
+                              product,
                             },
                             company_site,
                           } = order;
@@ -340,7 +349,7 @@ const UserCartOrderView = () => {
                                       className={`px-3 py-1 rounded-full text-sm font-medium ${
                                         product_status === 'delivered'
                                           ? 'bg-green-500/20 text-green-700 border border-green-700'
-                                          : product_status === 'progress'
+                                          : product_status === 'progress' || product_status === 'on_delivery'
                                           ? 'bg-yellow-500/20 text-yellow-700 border border-yellow-700'
                                           : 'bg-gray-500/20 text-gray-700 border border-gray-700'
                                       }`}
@@ -348,6 +357,14 @@ const UserCartOrderView = () => {
                                       {product_status.charAt(0).toUpperCase() + product_status.slice(1)}
                                     </span>
                                   </div>
+                                  
+                                  {/* Product Details */}
+                                  <div className="mb-3 p-2 bg-blue-50 rounded">
+                                    <div className="font-semibold text-blue-900">{product.title}</div>
+                                    <div className="text-sm text-blue-700">Price: ${product.price}</div>
+                                    {subtotal && <div className="text-sm text-blue-700">Subtotal: ${subtotal}</div>}
+                                  </div>
+
                                   <div className="grid grid-cols-2 gap-4">
                                     <div>
                                       <div><strong>Ordered on:</strong> {formatDate(created_at)}</div>
