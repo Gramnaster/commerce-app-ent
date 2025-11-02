@@ -90,11 +90,11 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
   const user = storeState.userState?.user;
   const id = params.id;
 
-
+  // Fetch ALL products at once for client-side filtering and pagination
   const allProductsQuery = {
     queryKey: ['allProducts'],
     queryFn: async () => {
-      const response = await customFetch.get('/products');
+      const response = await customFetch.get('/products?per_page=10000');
       console.log('Products loader - response.data:', response.data)
       return response.data;
     },
@@ -125,147 +125,89 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
   } catch (error: any) {
     console.error('Products loader - Failed to load Product data:', error);
     toast.error('Failed to load Product data');
-    return { allStocks: [] };
+    return { allProducts: { data: [], pagination: null }, ProductCategories: { data: [] } };
   }
 };
 
 const Products = () => {
-  const { allProducts: initialProducts, ProductCategories } = useLoaderData() as {
+  const { allProducts, ProductCategories } = useLoaderData() as {
     allProducts: ProductsResponse,
     ProductCategories: ProductCategoriesResponse
   };
   console.log('Products - ProductCategories:', ProductCategories)
+  console.log('Products - All products loaded:', allProducts.data.length)
   
   const [searchWord, setSearchWord] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [productData, setProductData] = useState(initialProducts);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
-  const handlePagination = async (page: number | null) => {
-    if (!page) return;
-    setLoading(true);
+  // When user types in search, automatically switch to "All" category
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    console.log('Products handleSearchChange - Search value:', value);
+    setSearchWord(value);
     
-    try {
-      let url = `/products?page=${page}&per_page=${productData.pagination.per_page || 10}`;
-      
-      // If a category is selected, use the category endpoint for pagination
-      if (selectedCategoryId) {
-        url = `/product_categories/${selectedCategoryId}?page=${page}&per_page=${productData.pagination.per_page || 10}`;
-        const response = await customFetch.get(url);
-        console.log('Products handlePagination - Category response:', response.data);
-        
-        // Transform category response to match ProductsResponse structure
-        setProductData({
-          data: response.data.data.products || [],
-          pagination: response.data.pagination || {
-            current_page: page,
-            per_page: 10,
-            total_entries: response.data.data.products?.length || 0,
-            total_pages: 1,
-            next_page: null,
-            previous_page: null
-          }
-        });
-      } else {
-        // Fetch all products with pagination
-        const response = await customFetch.get(url);
-        const data = response.data;
-        console.log('Products handlePagination - Response:', data);
-        setProductData(data);
-      }
-      
-      setLoading(false);
-    } catch (error: any) {
-      console.error('Products handlePagination - Failed to load pagination data:', error);
-      toast.error('Failed to load pagination data');
-      setLoading(false);
+    // If user starts typing, switch to "All" category to search across all products
+    if (value && selectedCategory !== null) {
+      setSelectedCategory(null);
+      console.log('Products handleSearchChange - Switched to "All" category for search');
     }
+    
+    // Reset to page 1 when searching
+    setCurrentPage(1);
   };
 
-  // Memoize filtered and sorted products to avoid re-filtering on every render
+  const handleCategoryChange = (category: string | null) => {
+    console.log('Products handleCategoryChange - Selected category:', category);
+    setSelectedCategory(category);
+    setSearchWord(''); // Clear search when changing categories
+    setCurrentPage(1); // Reset to page 1 when changing categories
+  };
+
+  // Client-side filtering: category and search
   const filteredProds = useMemo(() => {
-    return productData.data
-      .filter((product: Product) => {
+    let filtered = allProducts.data;
+
+    // Filter by category first (if not "All")
+    if (selectedCategory) {
+      filtered = filtered.filter((product: Product) => 
+        product.product_category?.title === selectedCategory
+      );
+    }
+
+    // Then filter by search term
+    if (searchWord) {
+      filtered = filtered.filter((product: Product) => {
         const matchesSearch =
           product.id?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
           product.title?.toLowerCase().includes(searchWord.toLowerCase()) ||
           product.description?.toLowerCase().includes(searchWord.toLowerCase()) ||
           product.price?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
-          product.product_category?.title.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
-          product.producer?.title.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
+          product.product_category?.title.toLowerCase().includes(searchWord.toLowerCase()) ||
+          product.producer?.title.toLowerCase().includes(searchWord.toLowerCase()) ||
           product.promotion_id?.toString().toLowerCase().includes(searchWord.toLowerCase());
-
-        // Category filtering is now handled by API calls in handleCategoryChange
-        // So we only need to filter by search term here
         return matchesSearch;
-      })
-      .sort(
-        (a: Product, b: Product) =>
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      );
-  }, [productData.data, searchWord]);
-  
-  const { current_page, total_pages, next_page, previous_page } = productData.pagination || {
-    current_page: 1,
-    per_page: 20,
-    total_pages: 1,
-    next_page: null,
-    previous_page: null
-  };
-
-  const handleCategoryChange = async (category: string | null) => {
-    console.log('Products handleCategoryChange - Selected category:', category);
-    setSelectedCategory(category);
-    setSearchWord(''); // Clear search when changing categories
-    setLoading(true);
-
-    try {
-      // If "All" is selected (category is null), fetch all products
-      if (!category) {
-        setSelectedCategoryId(null);
-        const response = await customFetch.get('/products');
-        console.log('Products handleCategoryChange - All products response:', response.data);
-        setProductData(response.data);
-      } else {
-        // Find the category ID from the title
-        const selectedCategoryData = ProductCategories.data.find(
-          (cat: ProductCategory) => cat.title === category
-        );
-        
-        if (selectedCategoryData) {
-          setSelectedCategoryId(selectedCategoryData.id);
-          // Fetch products for this specific category using the category endpoint
-          const response = await customFetch.get(`/product_categories/${selectedCategoryData.id}`);
-          console.log('Products handleCategoryChange - Category products response:', response.data);
-          
-          // The response structure from /product_categories/:id includes products array
-          // We need to transform it to match our ProductsResponse structure
-          setProductData({
-            data: response.data.data.products || [],
-            pagination: response.data.pagination || {
-              current_page: 1,
-              per_page: 10,
-              total_entries: response.data.data.products?.length || 0,
-              total_pages: 1,
-              next_page: null,
-              previous_page: null
-            }
-          });
-        }
-      }
-      setLoading(false);
-    } catch (error: any) {
-      console.error('Products handleCategoryChange - Failed to fetch category products:', error);
-      toast.error('Failed to load products for selected category');
-      setLoading(false);
+      });
     }
-  };
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    console.log('Products handleSearchChange - Search value:', value);
-    setSearchWord(value);
+    // Sort by created_at (newest first)
+    return filtered.sort(
+      (a: Product, b: Product) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+  }, [allProducts.data, selectedCategory, searchWord]);
+
+  // Client-side pagination
+  const totalPages = Math.ceil(filteredProds.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedProds = filteredProds.slice(startIndex, endIndex);
+
+  const handlePagination = (page: number) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+    console.log('Products handlePagination - Page:', page);
   };
 
   return (
@@ -296,20 +238,14 @@ const Products = () => {
             )
           }) : null }
       </div>
-        {loading ? (
-          <div className="flex justify-center items-center min-h-[400px]">
-            <span className="loading loading-spinner loading-lg text-primary"></span>
-          </div>
-        ) : (
-          <>
-            {/* Search and Filter */}
-            <SearchBar
-              searchValue={searchWord}
-              onSearchChange={handleSearchChange}
-              isLoading={loading}
-            />
+        
+        {/* Search and Filter */}
+        <SearchBar
+          searchValue={searchWord}
+          onSearchChange={handleSearchChange}
+        />
 
-            {/* Traders Table */}
+        {/* Traders Table */}
             <div className="bg-transparent rounded-lg border border-primary overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
@@ -342,17 +278,9 @@ const Products = () => {
                     </tr>
                   </thead>
                   <tbody >
-                    { loading ?     
-                    <tr className='border-b text-[#000000] border-primary hover:bg-[hsl(0,0%,87%)] transition-colors'>
-                      <td className="p-8 text-center" colSpan={10}>
-                        <div className="h-screen flex items-center justify-center">
-                          <span className="loading loading-ring loading-lg text-black">LOADING</span>
-                        </div>
-                      </td> 
-                    </tr>
-                    : filteredProds.length > 0 ? 
+                    {paginatedProds.length > 0 ? 
                       (
-                      filteredProds.map((product: Product, index: number) => (
+                      paginatedProds.map((product: Product, index: number) => (
                         <tr
                           key={product.id}
                           className={`border-b text-[#000000] border-primary hover:bg-white transition-colors ${
@@ -417,21 +345,20 @@ const Products = () => {
                 </table>
               </div>
             </div>
-          </>
-        )}
       </div>
+      
       {/* Pagination Controls */}
-      {total_pages && total_pages > 1 && (
+      {totalPages > 1 && (
         <div className="join mt-6 flex justify-center">
           <input
             className="join-item btn btn-square border-black" 
             type="radio" 
             name="options" 
-            onClick={() => handlePagination(previous_page)}
-            disabled={!previous_page}
+            onClick={() => handlePagination(currentPage - 1)}
+            disabled={currentPage === 1}
             aria-label="❮" 
           />
-          {[...Array(total_pages).keys()].map((_, i) => {
+          {[...Array(totalPages).keys()].map((_, i) => {
             const pageNum = i + 1;
             return (
               <input 
@@ -439,7 +366,7 @@ const Products = () => {
                 className="join-item btn btn-square border-black" 
                 type="radio" 
                 name="options" 
-                checked={current_page === pageNum}
+                checked={currentPage === pageNum}
                 onClick={() => handlePagination(pageNum)}
                 aria-label={`${pageNum}`} 
                 readOnly
@@ -450,8 +377,8 @@ const Products = () => {
             className="join-item btn btn-square border-black" 
             type="radio" 
             name="options" 
-            onClick={() => handlePagination(next_page)}
-            disabled={!next_page}
+            onClick={() => handlePagination(currentPage + 1)}
+            disabled={currentPage === totalPages}
             aria-label="❯" 
           />
         </div>
