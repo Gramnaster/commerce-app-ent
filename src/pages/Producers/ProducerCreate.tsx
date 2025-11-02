@@ -34,8 +34,8 @@ export const loader = (queryClient: any, store: any) => async () => {
 
 const ProducerCreate = () => {
   const { countries } = useLoaderData() as {
-    countries: Country[]
-  }
+    countries: Country[];
+  };
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.userState.user);
 
