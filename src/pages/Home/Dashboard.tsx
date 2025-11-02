@@ -102,7 +102,7 @@ const Dashboard = () => {
     }
   }
 
-  const { data: cartOrders = [] } = useQuery({
+  const { data: _cartOrders = [] } = useQuery({
     queryKey: ['cartOrders', user?.id],
     queryFn: async () => {
       const response = await customFetch.get('/user_cart_orders', {

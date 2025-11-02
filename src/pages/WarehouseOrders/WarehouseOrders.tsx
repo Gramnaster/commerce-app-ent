@@ -55,10 +55,7 @@ export interface CompanySiteResponse {
   pagination: Pagination;
 }
 
-export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
-  const storeState = store.getState();
-  const user = storeState.userState?.user;
-  const id = params.id;
+export const loader = (queryClient: any) => async () => {
 
   const WarehouseOrdersQuery = {
     queryKey: ['WarehouseOrders'],

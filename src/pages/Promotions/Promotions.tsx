@@ -88,7 +88,7 @@ const Promotions = () => {
     }
   }
 
-  const { data: promotions = [] } = useQuery({
+  useQuery({
     queryKey: ['promotion', admin_user?.id],
     queryFn: async () => {
       const response = await customFetch.get('/promotions', {

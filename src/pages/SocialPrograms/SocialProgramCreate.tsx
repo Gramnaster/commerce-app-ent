@@ -2,7 +2,7 @@ import { redirect, useNavigate, useNavigation, type ActionFunctionArgs } from "r
 import { customFetch } from "../../utils";
 import { toast } from "react-toastify";
 import type { AxiosError } from "axios";
-import { FormInput, SubmitBtn } from "../../components";
+import { SubmitBtn } from "../../components";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store";
 import { useState } from "react";

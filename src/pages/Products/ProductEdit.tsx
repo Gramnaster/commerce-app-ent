@@ -94,8 +94,8 @@ const ProductEdit = () => {
     description: description,
     price: price,
     product_image_url: product_image_url || '',
-    product_category_id:  product_category.id,
-    producer_id: producer.id,
+    product_category_id:  product_category?.id || 0,
+    producer_id: producer?.id || 0,
     promotion_id: promotion?.id || null
   })
 
