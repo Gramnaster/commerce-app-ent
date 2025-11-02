@@ -356,11 +356,10 @@ const UserCartOrderView = () => {
                           return warehouse_orders.map((order: WareHouseOrder) => {
                             console.log('UserCartOrderView render - Processing warehouse order:', order);
                             console.log('UserCartOrderView render - order.inventory:', order.inventory);
-                            console.log('UserCartOrderView render - order.inventory.product:', order.inventory?.product);
                             
-                            // Check if inventory exists before destructuring
-                            if (!order.inventory || !order.inventory.product) {
-                              console.log('UserCartOrderView render - Skipping order - no inventory or product:', order.id);
+                            // Check if inventory exists
+                            if (!order.inventory) {
+                              console.log('UserCartOrderView render - Skipping order - no inventory:', order.id);
                               return null;
                             }
 
@@ -375,7 +374,6 @@ const UserCartOrderView = () => {
                                 sku,
                                 product_id,
                                 qty_in_stock,
-                                product,
                               },
                               company_site,
                             } = order;
@@ -388,7 +386,6 @@ const UserCartOrderView = () => {
                               inventory_id,
                               sku,
                               product_id,
-                              product,
                               company_site
                             });
 
@@ -425,8 +422,7 @@ const UserCartOrderView = () => {
                                   
                                   {/* Product Details */}
                                   <div className="mb-3 p-2 bg-blue-50 rounded">
-                                    <div className="font-semibold text-blue-900">{product.title}</div>
-                                    <div className="text-sm text-blue-700">Price: ${product.price}</div>
+                                    <div className="font-semibold text-blue-900">Product ID: {product_id}</div>
                                     {subtotal && <div className="text-sm text-blue-700">Subtotal: ${subtotal}</div>}
                                   </div>
 

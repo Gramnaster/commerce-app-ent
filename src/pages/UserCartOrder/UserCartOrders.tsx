@@ -31,6 +31,7 @@ export interface UserCartOrder {
   social_program_id: number | null;
   user_address: UserAddress;
   items_count: number;
+  warehouse_orders_count: number;
   created_at: string;
   updated_at: string;
 }
@@ -231,7 +232,7 @@ const UserCartOrders = () => {
           order.user_address?.address?.city?.toLowerCase().includes(searchWord.toLowerCase()) ||
           order.user_address?.address?.region?.toLowerCase().includes(searchWord.toLowerCase()) ||
           order.social_program_id?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
-          order.items_count?.toString().toLowerCase().includes(searchWord.toLowerCase());
+          order.warehouse_orders_count?.toString().toLowerCase().includes(searchWord.toLowerCase());
 
         return matchesSearch;
       })
@@ -294,7 +295,7 @@ const UserCartOrders = () => {
                   <th className="px-6 py-4 text-left text-sm font-semibold">Payment Status</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold">Order Status</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold">Delivery Address</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold">Items</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold">Warehouse Orders</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold">Social Program</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold">Created Date</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold">Actions</th>
@@ -333,7 +334,7 @@ const UserCartOrders = () => {
                       <td className="px-6 py-4 text-black">
                         {order.user_address.address.barangay}, {order.user_address.address.city}
                       </td>
-                      <td className="px-6 py-4 text-black text-center">{order.items_count}</td>
+                      <td className="px-6 py-4 text-black text-center">{order.warehouse_orders_count || 0}</td>
                       <td className="px-6 py-4 text-black text-center">
                         {order.social_program_id || 'N/A'}
                       </td>
