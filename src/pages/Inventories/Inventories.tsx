@@ -28,7 +28,7 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
   const InventoriesQuery = {
     queryKey: ['Inventories', id],
     queryFn: async () => {
-      const response = await customFetch.get(`/inventories`, {
+      const response = await customFetch.get(`/inventories?per_page=10000`, {
         headers: {
           Authorization: admin_user.token,
         },
@@ -68,29 +68,14 @@ const Inventories = () => {
     Inventories: InventoriesResponse
     CompanySites: CompanySiteResponse
   };
-    const [inventoriesData, setInventoriesData] = useState(Inventories)
+    const [inventoriesData] = useState(Inventories) // Remove setInventoriesData since we won't update it
     console.log(`inventoriesData`, inventoriesData)
     const [searchWord, setSearchWord] = useState('');
     const [selectedSite, setSelectedSite] = useState<string | null>(null);
-    const [loading, setLoading] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
   
-    const handlePagination = async (page: number | null) => {
-      if (!page) return;
-      setLoading(true)
-      
-      try {
-        const response = await customFetch.get(`/inventories?page=${page}&per_page=${inventoriesData.pagination.per_page || 20}`);
-        const data = response.data;
-        console.log('SocialPrograms handlePagination - Response:', data);
-        setInventoriesData(data);
-        setLoading(false);
-      }
-      catch (error: any) {
-        console.error('Products handlePagination - Failed to load pagination data:', error);
-        toast.error('Failed to load pagination data');
-      }
-    }
-   
+    // Client-side filtering
     const filteredInventories = inventoriesData.data.filter((inventory: Inventory) => {
       const matchesSearch =
         inventory.id?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
@@ -100,28 +85,53 @@ const Inventories = () => {
         inventory.product.title.toLowerCase().includes(searchWord.toLowerCase()) ||
         inventory.created_at?.toString().toLowerCase().includes(searchWord.toLowerCase());
 
-    const matchesCategory = selectedSite
-      ? inventory.company_site.title === selectedSite
-      : true;
+      const matchesSite = selectedSite
+        ? inventory.company_site.title === selectedSite
+        : true;
 
-    return matchesSearch && matchesCategory;
-      })
-      .sort(
+      return matchesSearch && matchesSite;
+    })
+    .sort(
       (a: Inventory, b: Inventory) =>
-      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      ) || [];
-  
-    const { current_page, total_pages } = inventoriesData.pagination
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+
+    // Client-side pagination
+    const totalFilteredItems = filteredInventories.length;
+    const totalPages = Math.ceil(totalFilteredItems / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedInventories = filteredInventories.slice(startIndex, endIndex);
+
+    const handlePagination = (page: number | null) => {
+      if (!page) return;
+      setCurrentPage(page);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+   
+    // Create pagination object for PaginationControls component
+    const paginationData = {
+      current_page: currentPage,
+      total_pages: totalPages,
+      next_page: currentPage < totalPages ? currentPage + 1 : null,
+      previous_page: currentPage > 1 ? currentPage - 1 : null,
+    };
 
 
   const handleSiteChange = (site: string | null) => {
+    console.log('Inventories handleSiteChange - Selected site:', site);
+    console.log('Inventories handleSiteChange - Current inventory sites:', 
+      inventoriesData.data.map(inv => inv.company_site.title)
+    );
     setSelectedSite(site);
+    setCurrentPage(1); // Reset to first page when filtering
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    console.log('Products handleSearchChange - Search value:', value);
+    console.log('Inventories handleSearchChange - Search value:', value);
     setSearchWord(value);
+    setCurrentPage(1); // Reset to first page when searching
   };
 
   return (
@@ -179,69 +189,57 @@ const Inventories = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {loading ? (
-                          <tr className="border-b text-[#000000] border-primary hover:bg-[hsl(0,0%,87%)] transition-colors">
-                            <td className="p-8 text-center" colSpan={10}>
-                              <div className="h-screen flex items-center justify-center">
-                                <span className="loading loading-ring loading-lg text-black">
-                                  LOADING
-                                </span>
-                              </div>
-                            </td>
-                          </tr>
-                        ) : filteredInventories.length > 0 ? (
-                          filteredInventories.map(
-                            (inventory: Inventory, index: number) => {
-                              const {
-                                id,
-                                sku,
-                                qty_in_stock,
-                                company_site :{
-                                  title
-                                },
-                                product: {
-                                  title: product_title,
-                                  price
-                                }
-                              } = inventory;
-                              return (
-                                <tr
-                                  key={id}
-                                  className={`border-b text-[#000000] border-primary hover:bg-white transition-colors ${
-                                    index % 2 === 0
-                                      ? "bg-transparent"
-                                      : "bg-[#f3f3f3]"
-                                  }`}
-                                >
-                                  <td className="p-4 text-m text-center">
-                                    {id}
-                                  </td>
-                                  <td className="p-4 text-m text-center">
-                                    {sku}
-                                  </td>
-                                  <td className="p-4 text-m text-center">
-                                    {qty_in_stock}
-                                  </td>
-                                  <td className="p-4 text-m text-center">
-                                    {title}
-                                  </td>
-                                  <td className="p-4 text-m text-center">
-                                    {product_title}
-                                  </td>
-                                  <td className="p-4 text-m text-center">
-                                    {price}
-                                  </td>
-                                  <td className={`p-4 text-m`}>
-                                    <NavLink to={`/inventories/${id}`}>
-                                      <span className="hover:text-primary hover:underline">
-                                        View Inventory Info
-                                      </span>
-                                    </NavLink>
-                                  </td>
-                                </tr>
-                              );
-                            }
-                          )
+                        {paginatedInventories.length > 0 ? (
+                          paginatedInventories.map((inventory: Inventory, index: number) => {
+                            const {
+                              id,
+                              sku,
+                              qty_in_stock,
+                              company_site :{
+                                title
+                              },
+                              product: {
+                                title: product_title,
+                                price
+                              }
+                            } = inventory;
+                            return (
+                              <tr
+                                key={id}
+                                className={`border-b text-[#000000] border-primary hover:bg-white transition-colors ${
+                                  index % 2 === 0
+                                    ? "bg-transparent"
+                                    : "bg-[#f3f3f3]"
+                                }`}
+                              >
+                                <td className="p-4 text-m text-center">
+                                  {id}
+                                </td>
+                                <td className="p-4 text-m text-center">
+                                  {sku}
+                                </td>
+                                <td className="p-4 text-m text-center">
+                                  {qty_in_stock}
+                                </td>
+                                <td className="p-4 text-m text-center">
+                                  {title}
+                                </td>
+                                <td className="p-4 text-m text-center">
+                                  {product_title}
+                                </td>
+                                <td className="p-4 text-m text-center">
+                                  {price}
+                                </td>
+                                <td className={`p-4 text-m`}>
+                                  <NavLink to={`/inventories/${id}`}>
+                                    <span className="hover:text-primary hover:underline">
+                                      View Inventory Info
+                                    </span>
+                                  </NavLink>
+                                </td>
+                              </tr>
+                            );
+                          })
                         ) : (
                           <tr className="w-full">
                             <td
@@ -260,8 +258,8 @@ const Inventories = () => {
             }
           </div>
           <PaginationControls
-            currentPage={current_page || 1}
-            totalPages={total_pages || 1}
+            currentPage={paginationData.current_page}
+            totalPages={paginationData.total_pages}
             onPageChange={(page) => handlePagination(page)}
           />
         </div>
