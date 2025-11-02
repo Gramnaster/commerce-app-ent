@@ -127,7 +127,8 @@ const ProductEdit = () => {
     onSuccess: () => {
       console.log('ProductEdit mutation - Success, updating product ID:', ProductDetails.data.id);
       toast.success('Product Details updated successfully');
-      queryClient.invalidateQueries({ queryKey: ['products', ProductDetails.data.id] });
+      // Invalidate the ProductDetails query to refresh ProductView
+      queryClient.invalidateQueries({ queryKey: ['ProductDetails', ProductDetails.data.id] });
       navigate(`/products/${ProductDetails.data.id}`);
     },
     onError: (error: any) => {
