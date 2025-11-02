@@ -6,7 +6,7 @@ import type { RootState } from '../../store';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-
+import { SubmitBtn } from '../../components';
 
 const WarehouseOrderCreate = () => {
   const queryClient = useQueryClient();
@@ -265,13 +265,11 @@ const WarehouseOrderCreate = () => {
             >
               Clear Form
             </button>
-            <button
-              type="submit"
-              disabled={createOrderMutation.isPending}
-              className="px-6 py-3 bg-[#11bb11] hover:bg-[#248324] disabled:bg-gray-600 text-white font-semibold rounded-lg transition-colors"
-            >
-              {createOrderMutation.isPending ? 'Creating Order...' : 'Create Order'}
-            </button>
+            <SubmitBtn 
+              text="Create Order" 
+              isSubmitting={createOrderMutation.isPending} 
+              loadingText="Creating Order..." 
+            />
           </div>
         </form>
       </div>
