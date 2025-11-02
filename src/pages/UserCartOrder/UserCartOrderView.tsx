@@ -246,6 +246,11 @@ const UserCartOrderView = () => {
                             product_status,
                           } = order;
 
+                          // Skip if product is not available
+                          if (!product) {
+                            return null;
+                          }
+
                           return (
                             <div key={id} className="mb-3 pb-2 border-b border-gray-300">
                               <div><strong>Product:</strong> {product.title}</div>
@@ -326,6 +331,11 @@ const UserCartOrderView = () => {
                             },
                             company_site,
                           } = order;
+
+                          // Skip if product is not available
+                          if (!product) {
+                            return null;
+                          }
 
                           const title = company_site?.title || '-';
                           const site_type = company_site?.site_type || '-';
