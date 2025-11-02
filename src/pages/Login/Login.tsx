@@ -2,14 +2,12 @@ import { FormInput, SubmitBtn } from '../../components/index';
 import {
   Form,
   redirect,
-  useNavigate,
   type ActionFunctionArgs,
 } from 'react-router-dom';
 import { customFetch } from '../../utils';
 import { toast } from 'react-toastify';
 import type { AxiosError } from 'axios';
 import { loginUser } from '../../features/user/userSlice';
-import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../store';
 
 export const action =  (store: { dispatch: AppDispatch }) => async ({ request }: ActionFunctionArgs) => {
@@ -49,30 +47,6 @@ export const action =  (store: { dispatch: AppDispatch }) => async ({ request }:
 };
 
 const Login = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  const _loginAsGuestUser = async () => {
-    try {
-      const formData = new FormData();
-      formData.append('user[email]', 'manuel@test.com');
-      formData.append('user[password]', 'test123456');
-
-      const response = await customFetch.post('/admin_users/login', formData);
-      
-      // Extract token and user data (same as form submission)
-      const token = response.headers.authorization; // Keep the full "Bearer <token>" format
-      const userData = response.data.data;
-
-      dispatch(loginUser({ user: userData, token }));
-      toast.success('Welcome, guest user');
-      navigate('/');
-    } catch (error) {
-      console.log(error);
-      toast.error('Please try again')
-    }
-  };
-
   return (
     <section className="h-screen grid place-items-center">
       <Form
