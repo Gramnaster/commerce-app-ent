@@ -53,6 +53,7 @@ export interface Promotion {
 export interface Product {
   id: number;
   title: string;
+  product_title: string;
   product_category: ProductCategory;
   producer: Producer;
   description: string;
@@ -132,6 +133,7 @@ const Products = () => {
     allProducts: ProductsResponse,
     ProductCategories: ProductCategoriesResponse
   };
+    console.log('Products - ProductCategories:', ProductCategories)
   const [searchWord, setSearchWord] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -183,8 +185,6 @@ const Products = () => {
     previous_page: null
   };
 
-  console.log('Products component - Current page:', current_page, 'Total pages:', total_pages);
-
   const handleCategoryChange = (category: string | null) => {
     console.log('Products handleCategoryChange - Selected category:', category);
     setSelectedCategory(category);
@@ -204,12 +204,14 @@ const Products = () => {
         </NavLink>
         <div className='text-primary font-bold'>
           <button onClick={() => handleCategoryChange(null)} className='m-1 px-2 py-2 border-2 border-primary rounded-2xl hover:cursor-pointer hover:bg-primary hover:text-white' >All</button>
-          {ProductCategories.data.map((category: ProductCategory) => {
+          {ProductCategories?.data?.length
+            ? ProductCategories.data.map((category: ProductCategory) => {
             const { id, title } = category;
+            console.log(`ProductCategories.data`,ProductCategories.data)
             return (
               <button onClick={() => handleCategoryChange(title)} className='m-1 px-2 py-2 border-2 border-primary rounded-2xl hover:cursor-pointer hover:bg-primary hover:text-white' key={id}>{title}</button>
             )
-          })}
+          }) : null }
       </div>
         {(
           <>
