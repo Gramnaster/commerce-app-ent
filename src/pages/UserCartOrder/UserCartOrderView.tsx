@@ -68,7 +68,7 @@ const UserCartOrderView = () => {
     UserCartOrderViewDetails: UserCartOrderResponse;
   }
   const navigate = useNavigate();
-  const { id, total_cost, is_paid, social_program_id, user_address, items, warehouse_orders, warehouse_orders_count, created_at } = UserCartOrderViewDetails.data;
+  const { id, total_cost, is_paid, social_program_id, user_address, items, warehouse_orders } = UserCartOrderViewDetails.data;
   const { unit_no, street_no, barangay, city, region, zipcode } = user_address.address
 
 
@@ -164,10 +164,11 @@ const UserCartOrderView = () => {
                       </label>
                       <div>
                         { items && items.length > 0 ? items.map((item: Item) => {
-                          const { id, qty, subtotal, product: {title, price}} = item;
+                          const { id, qty, subtotal, product, product_title, price} = item;
+
                           return (
                             <div key={id}>
-                              <div>Name: {title}</div>
+                              <div>Name: {product_title}</div>
                               <div>Quantity: {qty}</div>
                               <div>Price: {price}</div>
                               <div className='underline'>Subtotal: {subtotal}</div>
@@ -182,7 +183,11 @@ const UserCartOrderView = () => {
                       </label>
                       <div>
                         { warehouse_orders && warehouse_orders.length > 0 ? warehouse_orders.map((order: WareHouseOrder) => {
-                          const { id, qty, product_status, created_at, inventory: { id: inventory_id, sku, product_id, qty_in_stock }, company_site:  {title, site_type }} = order;
+                          const { id, qty, product_status, created_at, inventory: { id: inventory_id, sku, product_id, qty_in_stock }, company_site} = order;
+
+                          const title = company_site?.title || '-' ;
+                          const site_type = company_site?.site_type || '-' ;
+                          
                           return (
                             <div key={id}>
                               <div>Status: {product_status}</div>

@@ -9,6 +9,8 @@ export interface Item {
   qty: string;
   subtotal: string;
   product: Product;
+  product_title: string;
+  price: string;
 }
 
 interface Order {
@@ -47,6 +49,7 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
           Authorization: admin_user.token,
         },
       });
+      console.log(`ReceiptViewQuery response.data`, response.data)
       return response.data;
     },
   };
@@ -55,9 +58,9 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
     const ReceiptViewDetails = await queryClient.ensureQueryData(ReceiptViewQuery);
     return { ReceiptViewDetails };
   } catch (error: any) {
-    console.error('Failed to load producer:', error);
-    toast.error('Failed to load producer details');
-    return redirect('/producers');
+    console.error('Failed to load receipt:', error);
+    toast.error('Failed to load receipt details');
+    return redirect('/receipts');
   }
 };
 
@@ -67,9 +70,15 @@ const ReceiptView = () => {
     ReceiptViewDetails: ReceiptShow;
   }
   const navigate = useNavigate();
-  const { id, transaction_type, amount, description, user: { id: user_id, email }, order: { id: order_id, cart_status, is_paid, created_at, items }, items_count, total_quantity } = ReceiptViewDetails;
-  console.log(`ReceiptView ReceiptViewDetails`, ReceiptViewDetails)
-  console.log(`ReceiptView items`, items)
+  const { id, transaction_type, amount, description, user, order, items_count, total_quantity } = ReceiptViewDetails;
+
+  const user_id = user?.id ?? 'N/A';
+  const email = user?.email ?? 'Unknown';
+  const order_id = order?.id ?? 'N/A';
+  const cart_status = order?.cart_status ?? 'N/A';
+  const is_paid = order?.is_paid ?? false;
+  const created_at = order?.created_at ?? '';
+  const items = order?.items ?? [];
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
