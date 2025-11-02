@@ -23,7 +23,7 @@ const Navbar = () => {
 // [#BE493D]
   return (
     <nav className="bg-primary px-10 max-h-[75px]">
-      <div className="navbar align-element">
+      <div className="navbar mx-auto max-w-9xl px-8">
         <div className="navbar-start">
           <NavLink
             to="dashboard"
