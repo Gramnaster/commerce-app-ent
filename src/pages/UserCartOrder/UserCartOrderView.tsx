@@ -237,6 +237,11 @@ const UserCartOrderView = () => {
                   <div>
                     {warehouse_orders && warehouse_orders.length > 0
                       ? warehouse_orders.map((order: WareHouseOrder) => {
+                          // Check if inventory exists before destructuring
+                          if (!order.inventory || !order.inventory.product) {
+                            return null;
+                          }
+
                           const {
                             id,
                             qty,
@@ -245,11 +250,6 @@ const UserCartOrderView = () => {
                             company_site,
                             product_status,
                           } = order;
-
-                          // Skip if product is not available
-                          if (!product) {
-                            return null;
-                          }
 
                           return (
                             <div key={id} className="mb-3 pb-2 border-b border-gray-300">
@@ -316,6 +316,11 @@ const UserCartOrderView = () => {
                   <div className="space-y-4">
                     {warehouse_orders && warehouse_orders.length > 0
                       ? warehouse_orders.map((order: WareHouseOrder) => {
+                          // Check if inventory exists before destructuring
+                          if (!order.inventory || !order.inventory.product) {
+                            return null;
+                          }
+
                           const {
                             id: orderId,
                             qty,
@@ -331,11 +336,6 @@ const UserCartOrderView = () => {
                             },
                             company_site,
                           } = order;
-
-                          // Skip if product is not available
-                          if (!product) {
-                            return null;
-                          }
 
                           const title = company_site?.title || '-';
                           const site_type = company_site?.site_type || '-';
