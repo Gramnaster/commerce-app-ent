@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store";
+import { SubmitBtn } from "../../components";
 
 export interface Address {
   id: number,
@@ -557,13 +558,7 @@ const handleInputChange = (
             >
               Cancel
             </button>
-            <button
-              type="submit"
-              disabled={updateAdminMutation.isPending}
-              className="px-6 py-3 bg-[#11bb11] hover:bg-[#248324] disabled:bg-gray-600 text-white font-semibold rounded-lg transition-colors"
-            >
-              {updateAdminMutation.isPending ? 'Updating...' : 'Update User'}
-            </button>
+            <SubmitBtn text="Update User" isSubmitting={updateAdminMutation.isPending} loadingText="Updating..." />
           </div>
         </form>
       </div>
