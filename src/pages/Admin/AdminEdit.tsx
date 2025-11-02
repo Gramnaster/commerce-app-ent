@@ -24,7 +24,8 @@ interface CompanySite {
   id: number;
   title: string;
   site_type: "management" | "warehouse";
-  address: Address
+  address: Address;
+  company_site_id?: number;
 }
 
 interface Country {
@@ -85,7 +86,7 @@ const AdminEdit = () => {
   const { AdminDetails, Countries, CompanySites } = useLoaderData() as{
     AdminDetails: { data: any },
     Countries: { data: Country[] },
-    CompanySites: CompanySite[]
+    CompanySites: { data: CompanySite[] }
   }
     const user = useSelector((state: RootState) => state.userState.user);
     const navigate = useNavigate();
@@ -115,7 +116,7 @@ const AdminEdit = () => {
               city: '',
               region: '',
               zipcode: '',
-              country_id: Countries?.[0]?.id || ''
+              country_id: Countries?.data?.[0]?.id || ''
             }
           }],
       admin_users_company_sites_attributes: AdminDetails.data.company_sites?.length
@@ -540,7 +541,7 @@ const handleInputChange = (
               <option value="" className="text-black">Select Site...</option>
               {CompanySites.data
                 .slice()
-                .sort((a, b) => a.title.localeCompare(b.title))
+                .sort((a: CompanySite, b: CompanySite) => a.title.localeCompare(b.title))
                 .map((siteOption: CompanySite) => (
                   <option key={siteOption.id} value={siteOption.id} className="text-black">
                     {siteOption.title} ({siteOption.site_type})

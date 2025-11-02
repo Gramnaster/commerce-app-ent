@@ -1,4 +1,4 @@
-import { NavLink, redirect, useLoaderData, useNavigate } from "react-router-dom";
+import { redirect, useLoaderData, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { customFetch } from "../../utils";
 import { useState } from "react";
@@ -7,25 +7,6 @@ import type { Producer } from "./Producers";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store";
 import { SubmitBtn } from "../../components";
-interface Address {
-  id: number,
-  unit_no: string;
-  street_no: string;
-  address_line1: string;
-  address_line2: string;
-  city: string;
-  region: string;
-  zipcode: string;
-  country_id: number;
-  country: string;
-}
-
-interface Producer {
-  id: number;
-  title: string;
-  products_count: number
-  address: Address
-}
 
 export interface User {
   id: number;
@@ -155,7 +136,7 @@ const ProducerEdit = () => {
         return {
       ...prev,
       [parentKey]: {
-      ...prev[parentKey],
+      ...(prev[parentKey as keyof typeof prev] as any),
       [name]: value,
         },
       }
