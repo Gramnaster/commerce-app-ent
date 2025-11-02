@@ -240,6 +240,8 @@ const AdminCreate = () => {
                   name="dob"
                   value={formData.admin_detail_attributes.dob}
                   onChange={handleInputChange}
+                  min="1900-01-01"
+                  max={new Date().toISOString().split('T')[0]}
                   className="input w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
                   required
                 />
