@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import type { RootState } from "../../store";
 import type { InventoryViewResponse } from "./InventoriesView";
 import type { CompanySite, CompanySiteResponse } from "../WarehouseOrders/WarehouseOrders";
+import { SubmitBtn } from "../../components";
 
 export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
   const storeState = store.getState();
@@ -242,12 +243,7 @@ const InventoriesEdit = () => {
             >
               Cancel
             </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="px-6 py-3 bg-[#11bb11] hover:bg-[#248324] disabled:bg-gray-600 text-white font-semibold rounded-lg transition-colors"
-            >Submit
-            </button>
+            <SubmitBtn text="Submit" isSubmitting={isSubmitting} />
           </div>
         </form>
       </div>
