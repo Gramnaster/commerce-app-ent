@@ -91,7 +91,7 @@ const UserCartOrderView = () => {
     refetchOnWindowFocus: false,
   });
 
-  const { id: _cartOrderId, total_cost, is_paid, social_program_id, user_address, warehouse_orders } = UserCartOrderViewDetails.data;
+  const { id: _cartOrderId, total_cost, is_paid, social_program_id, user_address, warehouse_orders, items } = UserCartOrderViewDetails.data;
   const { unit_no, street_no, barangay, city, region, zipcode } = user_address.address;
 
   // State for bulk status update
@@ -235,36 +235,14 @@ const UserCartOrderView = () => {
                     Items ordered:
                   </label>
                   <div>
-                    {warehouse_orders && warehouse_orders.length > 0
-                      ? warehouse_orders.map((order: WareHouseOrder) => {
-                          // Check if inventory exists before destructuring
-                          if (!order.inventory || !order.inventory.product) {
-                            return null;
-                          }
-
-                          const {
-                            id,
-                            qty,
-                            subtotal,
-                            inventory: { product },
-                            company_site,
-                            product_status,
-                          } = order;
-
+                    {items && items.length > 0
+                      ? items.map((item: any, index: number) => {
                           return (
-                            <div key={id} className="mb-3 pb-2 border-b border-gray-300">
-                              <div><strong>Product:</strong> {product.title}</div>
-                              <div><strong>Quantity:</strong> {qty}</div>
-                              <div><strong>Price:</strong> ${product.price}</div>
-                              {subtotal && <div className="underline"><strong>Subtotal:</strong> ${subtotal}</div>}
-                              <div className="text-sm mt-1">
-                                <div><strong>Warehouse:</strong> {company_site.title}</div>
-                                <div><strong>Status:</strong> <span className={`font-medium ${
-                                  product_status === 'delivered' ? 'text-green-600' :
-                                  product_status === 'progress' || product_status === 'on_delivery' ? 'text-yellow-600' :
-                                  'text-gray-600'
-                                }`}>{product_status}</span></div>
-                              </div>
+                            <div key={index} className="mb-3 pb-2 border-b border-gray-300">
+                              <div><strong>Product:</strong> {item.product_title}</div>
+                              <div><strong>Quantity:</strong> {item.qty}</div>
+                              <div><strong>Price:</strong> ${item.price}</div>
+                              {item.subtotal && <div className="underline"><strong>Subtotal:</strong> ${item.subtotal}</div>}
                             </div>
                           );
                         })
