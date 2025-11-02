@@ -41,12 +41,17 @@ export interface UserCartOrdersResponse {
 }
 
 export const loader = (queryClient: any, store: any) => async () => {
+  console.log('UserCartOrders loader - START');
   const storeState = store.getState();
+  console.log('UserCartOrders loader - storeState:', storeState);
   const user = storeState.userState?.user;
+  console.log('UserCartOrders loader - user:', user);
+  console.log('UserCartOrders loader - user token exists:', !!user?.token);
 
   const userCartOrdersQuery = {
     queryKey: ['UserCartOrders', 'all'],
     queryFn: async () => {
+      console.log('UserCartOrders loader - Fetching cart orders...');
       const response = await customFetch.get('/user_cart_orders?page=1&per_page=30', {
         headers: {
           Authorization: user.token,
@@ -60,6 +65,7 @@ export const loader = (queryClient: any, store: any) => async () => {
   const companySitesQuery = {
     queryKey: ['CompanySites'],
     queryFn: async () => {
+      console.log('UserCartOrders loader - Fetching company sites...');
       const response = await customFetch.get('/company_sites');
       console.log('UserCartOrders loader - company sites:', response.data);
       return response.data;
@@ -71,6 +77,9 @@ export const loader = (queryClient: any, store: any) => async () => {
       queryClient.ensureQueryData(userCartOrdersQuery),
       queryClient.ensureQueryData(companySitesQuery),
     ]);
+    console.log('UserCartOrders loader - SUCCESS - Returning data');
+    console.log('UserCartOrders loader - userCartOrders count:', userCartOrders?.data?.length);
+    console.log('UserCartOrders loader - companySites count:', companySites?.data?.length);
     return { userCartOrders, companySites };
   } catch (error: any) {
     console.error('UserCartOrders loader - Failed to load data:', error);
@@ -80,6 +89,7 @@ export const loader = (queryClient: any, store: any) => async () => {
 };
 
 const UserCartOrders = () => {
+  console.log('UserCartOrders component - RENDER START');
   const [selectedWarehouse, setSelectedWarehouse] = useState<number | null>(null);
   const [searchWord, setSearchWord] = useState('');
   const [loading, setLoading] = useState(false);
@@ -88,25 +98,36 @@ const UserCartOrders = () => {
     userCartOrders: UserCartOrdersResponse;
     companySites: CompanySiteResponse;
   };
+  console.log('UserCartOrders component - initialUserCartOrders:', initialUserCartOrders);
+  console.log('UserCartOrders component - companySites:', companySites);
 
   const [userCartOrdersData, setUserCartOrdersData] = useState(initialUserCartOrders);
   const user = useSelector((state: RootState) => state.userState.user);
+  console.log('UserCartOrders component - user from Redux:', user);
+  console.log('UserCartOrders component - selectedWarehouse:', selectedWarehouse);
+  console.log('UserCartOrders component - searchWord:', searchWord);
 
   // Filter warehouses from company sites
   const warehouses = useMemo(() => {
-    return companySites.data
+    console.log('UserCartOrders useMemo - Filtering warehouses from company sites');
+    const filtered = companySites.data
       .filter((site: CompanySite) => site.site_type === 'warehouse')
       .sort((a: CompanySite, b: CompanySite) => a.title.localeCompare(b.title));
+    console.log('UserCartOrders useMemo - Filtered warehouses:', filtered);
+    return filtered;
   }, [companySites.data]);
 
   // Fetch data when warehouse filter changes
   useEffect(() => {
+    console.log('UserCartOrders useEffect - Warehouse filter changed:', selectedWarehouse);
     const fetchFilteredData = async () => {
+      console.log('UserCartOrders useEffect - Starting fetch...');
       setLoading(true);
       try {
         const endpoint = selectedWarehouse
           ? `/user_cart_orders/warehouse/${selectedWarehouse}?page=1&per_page=30`
           : `/user_cart_orders?page=1&per_page=30`;
+        console.log('UserCartOrders useEffect - Endpoint:', endpoint);
 
         const response = await customFetch.get(endpoint, {
           headers: {
@@ -114,6 +135,7 @@ const UserCartOrders = () => {
           },
         });
         console.log('UserCartOrders warehouse filter - Response:', response.data);
+        console.log('UserCartOrders warehouse filter - Response data count:', response.data?.data?.length);
         setUserCartOrdersData(response.data);
       } catch (error: any) {
         console.error('UserCartOrders warehouse filter - Failed to load data:', error);
@@ -122,6 +144,7 @@ const UserCartOrders = () => {
         toast.error(`Failed to load filtered cart orders: ${error.response?.data?.error || error.message}`);
       } finally {
         setLoading(false);
+        console.log('UserCartOrders useEffect - Fetch complete');
       }
     };
 
@@ -132,14 +155,17 @@ const UserCartOrders = () => {
     console.log('UserCartOrders handleWarehouseChange - Selected warehouse ID:', warehouseId);
     setSelectedWarehouse(warehouseId);
     setSearchWord(''); // Clear search when changing warehouses
+    console.log('UserCartOrders handleWarehouseChange - Search word cleared');
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchWord(e.target.value);
-    console.log('UserCartOrders handleSearchChange - Search term:', e.target.value);
+    const value = e.target.value;
+    setSearchWord(value);
+    console.log('UserCartOrders handleSearchChange - Search term:', value);
   };
 
   const handlePagination = async (page: number) => {
+    console.log('UserCartOrders handlePagination - Page requested:', page);
     if (!page || page < 1) return;
     setLoading(true);
 
@@ -147,15 +173,18 @@ const UserCartOrders = () => {
       const endpoint = selectedWarehouse
         ? `/user_cart_orders/warehouse/${selectedWarehouse}?page=${page}&per_page=30`
         : `/user_cart_orders?page=${page}&per_page=30`;
+      console.log('UserCartOrders handlePagination - Endpoint:', endpoint);
 
       const response = await customFetch.get(endpoint);
       console.log('UserCartOrders handlePagination - Response:', response.data);
+      console.log('UserCartOrders handlePagination - Response data count:', response.data?.data?.length);
       setUserCartOrdersData(response.data);
     } catch (error: any) {
       console.error('UserCartOrders handlePagination - Failed to load pagination data:', error);
       toast.error('Failed to load pagination data');
     } finally {
       setLoading(false);
+      console.log('UserCartOrders handlePagination - Complete');
     }
   };
 
@@ -186,7 +215,11 @@ const UserCartOrders = () => {
 
   // Filter cart orders based on search
   const filteredCartOrders = useMemo(() => {
-    return userCartOrdersData.data
+    console.log('UserCartOrders useMemo - Filtering cart orders');
+    console.log('UserCartOrders useMemo - Total orders:', userCartOrdersData.data?.length);
+    console.log('UserCartOrders useMemo - Search word:', searchWord);
+    
+    const filtered = userCartOrdersData.data
       .filter((order: UserCartOrder) => {
         if (!searchWord) return true;
 
@@ -206,6 +239,9 @@ const UserCartOrders = () => {
         (a: UserCartOrder, b: UserCartOrder) =>
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       );
+    
+    console.log('UserCartOrders useMemo - Filtered count:', filtered.length);
+    return filtered;
   }, [userCartOrdersData.data, searchWord]);
 
   const { current_page, total_pages } = userCartOrdersData.pagination || {
@@ -215,6 +251,8 @@ const UserCartOrders = () => {
     next_page: null,
     previous_page: null,
   };
+  console.log('UserCartOrders component - Pagination:', { current_page, total_pages });
+  console.log('UserCartOrders component - Filtered orders count:', filteredCartOrders.length);
 
   return (
     <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
