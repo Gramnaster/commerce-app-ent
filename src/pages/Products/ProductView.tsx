@@ -25,7 +25,9 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
   };
 
   try {
-    const ProductDetails = await queryClient.ensureQueryData(ProductDetailsQuery);
+    // Always fetch fresh data by invalidating the query first
+    await queryClient.invalidateQueries({ queryKey: ['ProductDetails', id] });
+    const ProductDetails = await queryClient.fetchQuery(ProductDetailsQuery);
     console.log('ProductView ProductDetails:', ProductDetails);
     return { ProductDetails };
   } catch (error: any) {
