@@ -35,7 +35,7 @@ export const loader = (queryClient: any) => async () => {
 
 const ProducerCreate = () => {
   const { countries } = useLoaderData() as {
-    countries: Country[];
+    countries: { data: Country[] };
   };
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.userState.user);
@@ -78,7 +78,7 @@ const ProducerCreate = () => {
         return {
       ...prev,
       [parentKey]: {
-      ...prev[parentKey],
+      ...(prev[parentKey as keyof typeof prev] as any),
       [name]: value,
         },
       }

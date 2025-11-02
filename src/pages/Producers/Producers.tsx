@@ -21,7 +21,7 @@ interface Address {
   country: string;
 }
 
-interface Producer {
+export interface Producer {
   id: number;
   title: string;
   products_count: number;
