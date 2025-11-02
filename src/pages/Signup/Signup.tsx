@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { FormInput, SubmitBtn } from '../../components/index';
 import {
   Form,
