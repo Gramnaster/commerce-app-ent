@@ -54,7 +54,7 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 
 const PromotionView = () => {
   const { promotion } = useLoaderData() as {
-   promotion: Promotion;
+   promotion: { data: Promotion };
   }
 
   const { id, discount_amount, products_count, product_categories, products, created_at } = promotion.data

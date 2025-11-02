@@ -44,7 +44,7 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 
 const CategoryEdit = () => {
   const { CategoryDetails } = useLoaderData() as {
-    CategoryDetails: ProductCategory;
+    CategoryDetails: { data: ProductCategory };
   }
   const navigate = useNavigate();
   const queryClient = useQueryClient();

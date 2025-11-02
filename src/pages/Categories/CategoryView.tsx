@@ -40,7 +40,7 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 
 const CategoryView = () => {
   const { CategoryDetails } = useLoaderData() as {
-    CategoryDetails: ProductCategory;
+    CategoryDetails: { data: ProductCategory };
   }
   const { id, title, products_count, created_at } = CategoryDetails.data;
 

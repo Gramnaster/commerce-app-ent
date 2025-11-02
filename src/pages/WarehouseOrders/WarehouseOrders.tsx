@@ -38,6 +38,10 @@ export interface WareHouseOrder {
   company_site: CompanySite;
   inventory: Inventory;
   user_cart_order_id: number;
+  user?: {
+    id: number;
+    email: string;
+  };
   created_at: string;
 }
 
