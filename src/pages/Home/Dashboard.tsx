@@ -8,6 +8,7 @@ import type { RootState } from "../../store";
 import type { Pagination } from "../Products/Products";
 import type { WareHouseOrder } from "../WarehouseOrders/WarehouseOrders";
 import type { SocialProgram } from "../Users/Users";
+import { SearchBar, PaginationControls } from "../../components";
 
 interface Address {
   id: number,
@@ -209,7 +210,7 @@ const Dashboard = () => {
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     ) : [];
 
-    const { current_page, total_pages, next_page, previous_page } = cartOrderData.pagination || {
+    const { current_page, total_pages } = cartOrderData.pagination || {
       current_page: 1,
       per_page: 20,
       total_pages: 1,
@@ -252,55 +253,18 @@ const Dashboard = () => {
           >
             Rejected Orders
           </button>
-
         </div>
 
         {/* Search and Filter */}
-                {/* Conditional Content based on active tab */}
-        {(
+        {/* Conditional Content based on active tab */}
+        {
           <>
             {/* Search and Filter */}
-            <div className="bg-primary rounded-lg p-6 border border-primary mb-6">
-              <div className="flex items-center gap-4">
-                <div className="flex-1 relative">
-                  <input
-                    type="text"
-                    placeholder="Search by Name or Date"
-                    value={searchWord}
-                    onChange={(e) => setSearchWord(e.target.value)}
-                    className="w-full bg-white border border-primary rounded-lg p-3 pl-10 text-black placeholder-[#666666]"
-                  />
-                  <svg
-                    className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-primary"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
-                </div>
-                <button className="p-3 bg-primary hover:bg-[#03529c] border border-[white] rounded-lg hover:cursor-pointer transition-colors">
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </div>
+            <SearchBar
+              searchValue={searchWord}
+              onSearchChange={(e) => setSearchWord(e.target.value)}
+            />
+
             {/* Traders Table */}
             <div className="bg-transparent rounded-lg border border-primary overflow-hidden">
               <div className="overflow-x-auto">
@@ -319,9 +283,11 @@ const Dashboard = () => {
                       <th className="text-center p-4 text-s font-normal text-white">
                         Creation date
                       </th>
-                      <th className={`p-4 text-s font-extralight text-white ${
-                        activeTab === 'pending' ? 'text-center' : 'text-right'
-                      }`}>
+                      <th
+                        className={`p-4 text-s font-extralight text-white ${
+                          activeTab === 'pending' ? 'text-center' : 'text-right'
+                        }`}
+                      >
                         Items Count
                       </th>
                       <th className="text-center p-4 text-s font-extralight text-white">
@@ -333,90 +299,106 @@ const Dashboard = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    { loading ?     
-                    <tr className='border-b text-[#000000] border-primary hover:bg-[hsl(0,0%,87%)] transition-colors'>
-                      <td className="p-8 text-center" colSpan={10}>
-                        <div className="h-screen flex items-center justify-center">
-                          <span className="loading loading-ring loading-lg text-black">LOADING</span>
-                        </div>
-                      </td> 
-                    </tr>
-                    : filteredOrders.length > 0 ? (
-                      filteredOrders.map((order: UserCartOrder, index: number) => (
-                        <tr
-                          key={order.id}
-                          className={`border-b text-[#000000] border-primary hover:bg-white transition-colors ${
-                            index % 2 === 0 ? 'bg-transparent' : 'bg-[#f3f3f3]'
-                          }`}
-                        >
-                          <td className="p-4 text-m text-left">
-                            {order.id}
-                          </td>
-                          <td className="p-4 text-m text-center">
-                             {order.cart_status}
-                          </td>
-                          <td className="p-4 text-m text-center">
-                            {order.total_cost}
-                          </td>
-                          <td className="p-4 text-m text-center">
-                            {formatDate(order.created_at)}
-                          </td>
-                          <td className={`p-4 text-m  ${activeTab === 'pending' ? 'text-center' : 'text-right'}`}>
-                            {order.items_count}
-                          </td>
-                          <td className="p-4">
-                            <div className="flex items-center text-m justify-center gap-2">
-                              {activeTab === 'pending' ? (
-                                <>
-                                  <button
-                                    onClick={() => handleReject(order.id)}
-                                    disabled={rejectMutation.isPending || order.cart_status === 'rejected'}
-                                    className={`px-4 py-1 rounded-full text-sm font-medium transition-colors ${
-                                      order.cart_status === 'rejected'
-                                        ? 'bg-red-500 text-white cursor-default'
-                                        : 'bg-transparent text-red-500 border border-red-500 hover:bg-red-500 hover:text-white disabled:opacity-50'
-                                    }`}
-                                  >
-                                    Rejected
-                                  </button>
-                                  <button
-                                    disabled
-                                    className={`px-4 py-1 rounded-full text-sm font-medium cursor-default ${
-                                      order.cart_status === 'pending'
-                                        ? 'bg-yellow-500 text-black'
-                                        : 'bg-transparent text-yellow-500 border border-yellow-500'
-                                    }`}
-                                  >
-                                    Pending
-                                  </button>
-                                  <button
-                                    onClick={() => handleApprove(order.id)}
-                                    disabled={approveMutation.isPending || order.cart_status === 'approved'}
-                                    className={`px-4 py-1 rounded-full text-sm font-medium transition-colors ${
-                                      order.cart_status === 'approved'
-                                        ? 'bg-green-500 text-white cursor-default'
-                                        : 'bg-transparent text-green-500 border border-green-500 hover:bg-green-500 hover:text-white disabled:opacity-50'
-                                    }`}
-                                  >
-                                    Approved
-                                  </button>
-                                </>
-                              ) : ( activeTab === 'approved' ?
-                                <span className="text-sm font-medium text-green-500">
-                                  {order.cart_status}
-                                </span>
-                                :
-                                <span className="text-sm font-medium text-[#AE2012]">
-                                  {order.cart_status}
-                                </span>
-                              )}
-                            </div>
-                          </td>
-                          <td className={`p-4 text-m ${activeTab === 'pending' ? 'text-center' : 'text-right'}`}>
-                            <NavLink to={`/user_cart_order/${order.id}`}>View cart order info</NavLink>
-                          </td>
-                        </tr>
-                      ))
+                    {loading ? (
+                      <tr className="border-b text-[#000000] border-primary hover:bg-[hsl(0,0%,87%)] transition-colors">
+                        <td className="p-8 text-center" colSpan={10}>
+                          <div className="h-screen flex items-center justify-center">
+                            <span className="loading loading-ring loading-lg text-black">
+                              LOADING
+                            </span>
+                          </div>
+                        </td>
+                      </tr>
+                    ) : filteredOrders.length > 0 ? (
+                      filteredOrders.map(
+                        (order: UserCartOrder, index: number) => (
+                          <tr
+                            key={order.id}
+                            className={`border-b text-[#000000] border-primary hover:bg-white transition-colors ${
+                              index % 2 === 0
+                                ? 'bg-transparent'
+                                : 'bg-[#f3f3f3]'
+                            }`}
+                          >
+                            <td className="p-4 text-m text-left">{order.id}</td>
+                            <td className="p-4 text-m text-center">
+                              {order.cart_status}
+                            </td>
+                            <td className="p-4 text-m text-center">
+                              {order.total_cost}
+                            </td>
+                            <td className="p-4 text-m text-center">
+                              {formatDate(order.created_at)}
+                            </td>
+                            <td
+                              className={`p-4 text-m  ${activeTab === 'pending' ? 'text-center' : 'text-right'}`}
+                            >
+                              {order.items_count}
+                            </td>
+                            <td className="p-4">
+                              <div className="flex items-center text-m justify-center gap-2">
+                                {activeTab === 'pending' ? (
+                                  <>
+                                    <button
+                                      onClick={() => handleReject(order.id)}
+                                      disabled={
+                                        rejectMutation.isPending ||
+                                        order.cart_status === 'rejected'
+                                      }
+                                      className={`px-4 py-1 rounded-full text-sm font-medium transition-colors ${
+                                        order.cart_status === 'rejected'
+                                          ? 'bg-red-500 text-white cursor-default'
+                                          : 'bg-transparent text-red-500 border border-red-500 hover:bg-red-500 hover:text-white disabled:opacity-50'
+                                      }`}
+                                    >
+                                      Rejected
+                                    </button>
+                                    <button
+                                      disabled
+                                      className={`px-4 py-1 rounded-full text-sm font-medium cursor-default ${
+                                        order.cart_status === 'pending'
+                                          ? 'bg-yellow-500 text-black'
+                                          : 'bg-transparent text-yellow-500 border border-yellow-500'
+                                      }`}
+                                    >
+                                      Pending
+                                    </button>
+                                    <button
+                                      onClick={() => handleApprove(order.id)}
+                                      disabled={
+                                        approveMutation.isPending ||
+                                        order.cart_status === 'approved'
+                                      }
+                                      className={`px-4 py-1 rounded-full text-sm font-medium transition-colors ${
+                                        order.cart_status === 'approved'
+                                          ? 'bg-green-500 text-white cursor-default'
+                                          : 'bg-transparent text-green-500 border border-green-500 hover:bg-green-500 hover:text-white disabled:opacity-50'
+                                      }`}
+                                    >
+                                      Approved
+                                    </button>
+                                  </>
+                                ) : activeTab === 'approved' ? (
+                                  <span className="text-sm font-medium text-green-500">
+                                    {order.cart_status}
+                                  </span>
+                                ) : (
+                                  <span className="text-sm font-medium text-[#AE2012]">
+                                    {order.cart_status}
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+                            <td
+                              className={`p-4 text-m ${activeTab === 'pending' ? 'text-center' : 'text-right'}`}
+                            >
+                              <NavLink to={`/user_cart_order/${order.id}`}>
+                                View cart order info
+                              </NavLink>
+                            </td>
+                          </tr>
+                        )
+                      )
                     ) : (
                       <tr>
                         <td
@@ -432,45 +414,19 @@ const Dashboard = () => {
               </div>
             </div>
           </>
-        )}
+        }
       </div>
-      {total_pages && total_pages > 1 && (
-        <div className="join mt-6 flex justify-center">
-          <input
-            className="join-item btn btn-square border-black" 
-            type="radio" 
-            name="options" 
-            onClick={() => handlePagination(previous_page)}
-            disabled={!previous_page}
-            aria-label="❮" 
-          />
-          {[...Array(total_pages).keys()].map((_, i) => {
-            const pageNum = i + 1;
-            return (
-              <input 
-                key={i} 
-                className="join-item btn btn-square border-black" 
-                type="radio" 
-                name="options" 
-                checked={current_page === pageNum}
-                onClick={() => handlePagination(pageNum)}
-                aria-label={`${pageNum}`} 
-                readOnly
-              />
-            );
-          })}
-          <input
-            className="join-item btn btn-square border-black" 
-            type="radio" 
-            name="options" 
-            onClick={() => handlePagination(next_page)}
-            disabled={!next_page}
-            aria-label="❯" 
-          />
-        </div>
+
+      {/* Pagination Controls */}
+      {current_page && total_pages && (
+        <PaginationControls
+          currentPage={current_page}
+          totalPages={total_pages}
+          onPageChange={(page) => handlePagination(page)}
+        />
       )}
     </div>
-  )
+  );
 }
 
 export default Dashboard
