@@ -52,7 +52,7 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 
 const PromotionEdit = () => {
   const { promotion } = useLoaderData() as {
-    promotion: Promotion;
+    promotion: { data: Promotion };
   }
   console.log(`PromotionEdit PromotionDetails`, promotion)
   const navigate = useNavigate();

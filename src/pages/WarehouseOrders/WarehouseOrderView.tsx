@@ -34,7 +34,7 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 
 const WarehouseOrderView = () => {
   const { WarehouseOrderDetails } = useLoaderData() as {
-    WarehouseOrderDetails: WareHouseOrder;
+    WarehouseOrderDetails: { data: WareHouseOrder };
   }
   const { id, qty, product_status, company_site: { id: company_site_id, title, site_type }, inventory: { id: inventory_id, sku, qty_in_stock, product_id }, user: { id: user_id, email}, user_cart_order_id, created_at } = WarehouseOrderDetails.data;
 

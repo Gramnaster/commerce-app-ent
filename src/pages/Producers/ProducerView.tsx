@@ -55,9 +55,9 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 
 const ProducerView = () => {
   const { ProducerDetails } = useLoaderData() as {
-    ProducerDetails: Producer;
+    ProducerDetails: { data: Producer };
   }
-  const { id, title, products_count, address: { unit_no, street_no, address_line1, address_line2, city, region, zipcode, country }, created_at } = ProducerDetails.data;
+  const { id, title, products_count, address: { unit_no, street_no, address_line1, address_line2, city, region, country }, created_at } = ProducerDetails.data;
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
