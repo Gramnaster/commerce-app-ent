@@ -55,10 +55,15 @@ const InventoriesView = () => {
     id,
     sku,
     qty_in_stock,
-    company_site: { title, site_type },
-    product: { title: product_title, price },
+    company_site,
+    product,
     created_at
   } = InventoryViewDetails.data;
+
+  const title = company_site?.title || 'N/A';
+  const site_type = company_site?.site_type || 'N/A';
+  const product_title = product?.title || 'N/A';
+  const price = product?.price || 'N/A';
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
