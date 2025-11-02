@@ -112,7 +112,7 @@ const SocialProgramEdit = () => {
     updateProgramMutation.mutate(payload);
   };
 
-  const handleDelete = async (e: React.FormEvent) => {
+  const handleDelete = async () => {
   if (!confirm("Are you sure you want to delete this program?")) return;
   
     console.log(`handleSubmit formData:`, formData)

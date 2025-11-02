@@ -1,4 +1,4 @@
-import { NavLink, redirect, useLoaderData, useLocation } from 'react-router-dom';
+import { redirect, useLoaderData } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
 import type { Product, User } from '../Products/Products';
@@ -77,7 +77,7 @@ const ReceiptView = () => {
   const { ReceiptViewDetails } = useLoaderData() as {
     ReceiptViewDetails: ReceiptShow;
   }
-  const { id, transaction_type, amount, description, user, order, items_count, total_quantity } = ReceiptViewDetails;
+  const { id, transaction_type, amount, description, user, order } = ReceiptViewDetails;
 
   const user_id = user?.id ?? 'N/A';
   const email = user?.email ?? 'Unknown';

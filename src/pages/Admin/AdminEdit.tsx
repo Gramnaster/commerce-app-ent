@@ -230,7 +230,7 @@ const handleInputChange = (
     updateAdminMutation.mutate(payload);
   };
 
-  const handleDelete = async (e: React.FormEvent) => {
+  const handleDelete = async () => {
     if (!confirm("Are you sure you want to delete this admin?")) return;
     
       console.log(`handleSubmit formData:`, formData)

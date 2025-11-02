@@ -1,12 +1,7 @@
-import { NavLink, redirect, useLoaderData } from "react-router-dom";
-import { toast } from "react-toastify";
-import { customFetch } from "../../utils";
-import { BackButton } from "../../components";
-
-interface ProductCategory {
-  id: number;
-  title: string;
-}
+import { NavLink, redirect, useLoaderData } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { customFetch } from '../../utils';
+import { BackButton } from '../../components';
 
 interface Address {
   id: number,

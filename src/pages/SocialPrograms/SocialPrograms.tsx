@@ -57,7 +57,6 @@ const SocialPrograms = () => {
   const [socialProgramsData, setSocialProgramsData] = useState(SocialPrograms)
   console.log(`socialProgramsData`, socialProgramsData)
   const [searchWord, setSearchWord] = useState('');
-  const user = useSelector((state: RootState) => state.userState.user);
   const [loading, setLoading] = useState(false);
 
   const handlePagination = async (page: number | null) => {

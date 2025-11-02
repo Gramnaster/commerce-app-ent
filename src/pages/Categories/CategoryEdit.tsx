@@ -109,7 +109,7 @@ const CategoryEdit = () => {
     updateCategoryMutation.mutate(payload);
   };
 
-  const handleDelete = async (e: React.FormEvent) => {
+  const handleDelete = async () => {
   if (!confirm("Are you sure you want to delete this category?")) return;
     navigate(`/categories`)
     // Create the payload matching the API format
