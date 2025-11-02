@@ -116,7 +116,7 @@ const Promotions = () => {
         promotion.id?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
         promotion.discount_amount?.toLowerCase().includes(searchWord.toLowerCase()) ||
         promotion.products_count?.toString().includes(searchWord.toLowerCase()) ||
-        promotion.product_categories?.toString().includes(searchWord.toLowerCase());
+        promotion.product_categories?.toString().toLowerCase().includes(searchWord.toLowerCase());
 
       return matchesSearch;
       })
