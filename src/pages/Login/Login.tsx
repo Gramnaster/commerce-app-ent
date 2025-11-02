@@ -1,7 +1,6 @@
 import { FormInput, SubmitBtn } from '../../components/index';
 import {
   Form,
-  Link,
   redirect,
   useNavigate,
   type ActionFunctionArgs,
@@ -53,7 +52,7 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const loginAsGuestUser = async () => {
+  const _loginAsGuestUser = async () => {
     try {
       const formData = new FormData();
       formData.append('user[email]', 'manuel@test.com');

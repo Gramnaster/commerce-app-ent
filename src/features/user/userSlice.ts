@@ -13,9 +13,10 @@ interface UserState {
   user: User | null;
 }
 
-const getUserFromLocalStorage = () => {
+const getUserFromLocalStorage = (): User | null => {
   try {
-    return JSON.parse(localStorage.getItem('user')) || null;
+    const userString = localStorage.getItem('user');
+    return userString ? JSON.parse(userString) : null;
   } catch {
     return null;
   }
