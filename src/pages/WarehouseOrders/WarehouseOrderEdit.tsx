@@ -63,7 +63,7 @@ const WarehouseOrderEdit = () => {
   console.log(`CompanySites.data`, CompanySites.data)
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const user = useSelector((state: RootState) => state.userState.user);
+  const storeUser = useSelector((state: RootState) => state.userState.user);
 
   const { qty, product_status, company_site: { id: company_site_id }, inventory: { id: inventory_id,  }, user, user_cart_order_id, } = WarehouseOrderDetails.data;
   
@@ -86,7 +86,7 @@ const WarehouseOrderEdit = () => {
         orderData,
         {
           headers: {
-            Authorization: user?.token,
+            Authorization: storeUser?.token,
             // Content-Type will be set automatically for FormData
           },
         }
@@ -145,7 +145,7 @@ const WarehouseOrderEdit = () => {
       const response = await customFetch.delete(`/warehouse_orders/${WarehouseOrderDetails.data.id}`,
         {
           headers: {
-            Authorization: user?.token,
+            Authorization: storeUser?.token,
             'Content-Type': 'application/json',
           },
         }
@@ -302,12 +302,12 @@ const WarehouseOrderEdit = () => {
               type="button"
               onClick={() => {
                 setFormData({
-                  company_site_id: '',
-                  inventory_id: '',
-                  user_id: '',
-                  user_cart_order_id: '',
-                  qty: '',
-                  product_status: ''
+                  company_site_id: 0,
+                  inventory_id: 0,
+                  user_id: 0,
+                  user_cart_order_id: 0,
+                  qty: 0,
+                  product_status: 'storage'
                 });
               }}
               className="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg transition-colors"

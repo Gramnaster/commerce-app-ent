@@ -1,15 +1,10 @@
-import { redirect, useLoaderData, useNavigate, useNavigation } from "react-router-dom";
+import { redirect, useNavigate, useNavigation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { customFetch } from "../../utils";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store";
 import { SubmitBtn } from "../../components";
-
-interface ProductCategory {
-  id: number;
-  title: string;
-}
 
 export interface User {
   id: number;

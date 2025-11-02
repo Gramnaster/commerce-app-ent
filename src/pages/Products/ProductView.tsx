@@ -114,13 +114,13 @@ const ProductView = () => {
                       <label className="block text-l font-bold mb-2">
                         Product Category:
                       </label>
-                      {product_category.title}
+                      {product_category?.title || 'Not Available'}
                     </div>
                     <div className="m-1">
                       <label className="block text-l font-bold mb-2">
                         Producer:
                       </label>
-                      {producer.title}
+                      {producer?.title || 'Not Available'}
                     </div>
                     <div className="m-1">
                       <label className="block text-l font-bold mb-2">

@@ -91,7 +91,7 @@ const UserCartOrderView = () => {
     refetchOnWindowFocus: false,
   });
 
-  const { id: cartOrderId, total_cost, is_paid, social_program_id, user_address, warehouse_orders } = UserCartOrderViewDetails.data;
+  const { id: _cartOrderId, total_cost, is_paid, social_program_id, user_address, warehouse_orders } = UserCartOrderViewDetails.data;
   const { unit_no, street_no, barangay, city, region, zipcode } = user_address.address;
 
   // State for bulk status update
