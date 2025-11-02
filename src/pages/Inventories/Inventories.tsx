@@ -131,7 +131,7 @@ const Inventories = () => {
     <div>
         <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
           <div className="max-w-7xl mx-auto">
-            <NavLink to={`/social_programs/create`} className={'btn bg-primary border-primary rounded-[8px] text-white p-2 pt-1 pb-1 m-1 hover:bg-white hover:text-primary hover:border-primary'}>
+            <NavLink to={`/inventories/create`} className={'btn bg-primary border-primary rounded-[8px] text-white p-2 pt-1 pb-1 m-1 hover:bg-white hover:text-primary hover:border-primary'}>
               Create Inventory
             </NavLink>
                     <div className='text-primary font-bold'>

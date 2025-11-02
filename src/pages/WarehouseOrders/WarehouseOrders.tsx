@@ -9,7 +9,7 @@ import WarehouseOrderCreate from "./WarehouseOrderCreate";
 export interface CompanySite {
   id: number;
   title: string;
-  site_type: 'headquarters' | 'warehouse';
+  site_type: 'management' | 'warehouse';
 }
 
 export interface Inventory {

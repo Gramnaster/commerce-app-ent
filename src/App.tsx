@@ -63,9 +63,9 @@ import {loader as socialProgramEditLoader} from './pages/SocialPrograms/SocialPr
 
 import {loader as inventoriesHomeLoader} from './pages/Inventories/InventoriesHome.tsx';
 import {loader as inventoriesLoader} from './pages/Inventories/Inventories.tsx';
-// import {loader as inventoriesViewLoader} from './pages/Inventories/InventoriesView.tsx';
-// import {action as inventoriesCreateAction} from './pages/Inventories/InventoriesCreate.tsx';
-// import {loader as inventoriesEditLoader} from './pages/Inventories/InventoriesEdit.tsx';
+import {loader as inventoryViewLoader} from './pages/Inventories/InventoriesView.tsx';
+import {loader as inventoriesCreateLoader} from './pages/Inventories/InventoriesCreate.tsx';
+import {loader as inventoriesEditLoader} from './pages/Inventories/InventoriesEdit.tsx';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -258,19 +258,19 @@ const router = createBrowserRouter([
           {
             path: ':id',
             element: <InventoriesView />,
-            // loader: socialProgramViewLoader(queryClient, store)
+            loader: inventoryViewLoader(queryClient, store)
           },
           {
             // create
             path: 'create',
             element: <InventoriesCreate  />,
-            // action: socialProgramCreateAction
+            loader: inventoriesCreateLoader(queryClient, store)
           },
           {
             // edit / update / delete
             path: 'edit/:id',
             element: <InventoriesEdit  />,
-            // loader: socialProgramEditLoader(queryClient, store)
+            loader: inventoriesEditLoader(queryClient, store)
           },
         ]
       },

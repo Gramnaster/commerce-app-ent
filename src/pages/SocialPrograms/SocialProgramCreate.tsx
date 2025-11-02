@@ -143,9 +143,6 @@ const SocialProgramCreate = () => {
                 />
               </div>
             </div>
-            <h2 className="text-xl font-bold text-white mb-4 pb-2 border-b border-white">
-              Social Program Description
-            </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-white text-sm font-medium mb-2">
