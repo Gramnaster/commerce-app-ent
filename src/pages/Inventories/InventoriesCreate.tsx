@@ -57,10 +57,12 @@ const InventoriesCreate = () => {
 
   // Format products for the searchable dropdown
   const productDropdownItems = useMemo(() => {
-    return products.data.map((product: Product) => ({
-      id: product.id,
-      label: `${product.id} - ${product.title}`
-    }));
+    return products.data
+      .sort((a: Product, b: Product) => a.id - b.id)
+      .map((product: Product) => ({
+        id: product.id,
+        label: `${product.id} - ${product.title}`
+      }));
   }, [products.data]);
 
   const handleInputChange = (
