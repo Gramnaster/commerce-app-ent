@@ -92,7 +92,7 @@ const ReceiptView = () => {
    <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
       <div className="max-w-7xl mx-auto place-items-center ">
         <div className="mb-6 text-black">
-          <BackButton text="Back to Receipts list" />
+          <BackButton text="Back to Receipts list" to="/receipts" />
         </div>
 
           <div className="w-[60%] bg-primary rounded-lg p-6 border border-gray-700">

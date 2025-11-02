@@ -51,7 +51,7 @@ const ProductView = () => {
     <div className="min-h-screen bg-[#8d8d8d2a] text-white p-6">
       <div className="max-w-7xl mx-auto place-items-center">
       <div className="mb-6 text-black">
-          <BackButton text="Back to Products list" />
+          <BackButton text="Back to Products list" to="/products" />
         </div>          <div className="w-[60%] bg-primary rounded-lg p-6 border border-gray-700">
             <div className="mb-4 pb-2 border-b border-white flex items-center justify-between gap-1">
               <h2 className="text-xl font-bold text-white">
