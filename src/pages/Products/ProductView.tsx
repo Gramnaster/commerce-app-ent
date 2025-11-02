@@ -101,6 +101,14 @@ const ProductView = () => {
                   <div className="px-6 py-3 rounded-2xl bg-white">
                     <div className="m-1">
                       <label className="block text-l font-bold mb-2">
+                        Product ID:
+                      </label>
+                      <div>
+                        {id}
+                      </div>
+                    </div>
+                    <div className="m-1">
+                      <label className="block text-l font-bold mb-2">
                         Product Name:
                       </label>
                       <div>
