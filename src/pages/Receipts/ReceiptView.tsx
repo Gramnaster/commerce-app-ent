@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
 import type { Product, User } from '../Products/Products';
 import type { Address } from '../Admin/AdminEdit';
+import type { WareHouseOrder } from '../WarehouseOrders/WarehouseOrders';
 import { BackButton } from '../../components';
 
 export interface Item {
@@ -12,6 +13,11 @@ export interface Item {
   product: Product;
   product_title: string;
   price: string;
+  warehouse?: {
+    id: number;
+    title: string;
+  };
+  product_status?: string;
 }
 
 interface Order {
@@ -21,7 +27,8 @@ interface Order {
   total_cost: number;
   created_at: string;
   delivery_address: Address;
-  items: Item[];
+  items?: Item[]; // Keep for backward compatibility
+  warehouse_orders?: WareHouseOrder[]; // New structure
 }
 
 interface ReceiptShow {
@@ -78,7 +85,10 @@ const ReceiptView = () => {
   const cart_status = order?.cart_status ?? 'N/A';
   const is_paid = order?.is_paid ?? false;
   const created_at = order?.created_at ?? '';
-  const items = order?.items ?? [];
+  
+  // Use warehouse_orders (new structure) or fallback to items (old structure)
+  const warehouse_orders = order?.warehouse_orders ?? [];
+  const legacy_items = order?.items ?? [];
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -154,19 +164,40 @@ const ReceiptView = () => {
                       <label className="block text-l font-bold mb-2">
                         Items ordered:
                       </label>
-                        {}
                       <div>
-                        {items.map((item: Item) => {
-                          const { id, qty, subtotal, product: {title, price}} = item;
-                          return (
-                            <div key={id}>
-                              <div>Name: {title}</div>
-                              <div>Quantity: {qty}</div>
-                              <div>Price: {price}</div>
-                              <div className='underline'>Subtotal: {subtotal}</div>
-                            </div>
-                          )
-                        })}
+                        {/* New structure: warehouse_orders */}
+                        {warehouse_orders.length > 0 ? (
+                          warehouse_orders.map((order: WareHouseOrder) => {
+                            const { id, qty, subtotal, inventory: { product }, company_site, product_status } = order;
+                            return (
+                              <div key={id} className="mb-3 pb-2 border-b border-gray-300">
+                                <div>Name: {product.title}</div>
+                                <div>Quantity: {qty}</div>
+                                <div>Price: {product.price}</div>
+                                {subtotal && <div className='underline'>Subtotal: {subtotal}</div>}
+                                <div className="text-sm text-gray-600">
+                                  <div>Warehouse: {company_site.title}</div>
+                                  <div>Status: {product_status}</div>
+                                </div>
+                              </div>
+                            )
+                          })
+                        ) : legacy_items.length > 0 ? (
+                          /* Fallback to old structure if warehouse_orders not available */
+                          legacy_items.map((item: Item) => {
+                            const { id, qty, subtotal, product: {title, price}} = item;
+                            return (
+                              <div key={id}>
+                                <div>Name: {title}</div>
+                                <div>Quantity: {qty}</div>
+                                <div>Price: {price}</div>
+                                <div className='underline'>Subtotal: {subtotal}</div>
+                              </div>
+                            )
+                          })
+                        ) : (
+                          <div>No items</div>
+                        )}
                       </div>
                     </div>
                     <div className="m-1">
