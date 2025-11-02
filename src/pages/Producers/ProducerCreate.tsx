@@ -1,4 +1,4 @@
-import { redirect, useLoaderData, useNavigate, useNavigation } from "react-router-dom";
+import { redirect, useLoaderData, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { customFetch } from "../../utils";
 import { useState } from "react";
@@ -12,7 +12,7 @@ interface Country {
   code: string;
 }
 
-export const loader = (queryClient: any, store: any) => async () => {
+export const loader = (queryClient: any) => async () => {
   const countriesQuery = {
     queryKey: ['countries'],
     queryFn: async () => {
