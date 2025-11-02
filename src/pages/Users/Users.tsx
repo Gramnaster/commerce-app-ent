@@ -155,9 +155,9 @@ const Users = () => {
       user.id?.toString().toLowerCase().includes(searchWord.toLowerCase()) ||
       user.email?.toLowerCase().includes(searchWord.toLowerCase()) ||
       user.is_verified?.toString().includes(searchWord.toLowerCase()) ||
-      user.user_detail?.first_name.includes(searchWord.toLowerCase()) ||
-      user.user_detail?.middle_name?.includes(searchWord.toLowerCase()) ||
-      user.user_detail?.last_name.includes(searchWord.toLowerCase()) ||
+      user.user_detail?.first_name.toLowerCase().includes(searchWord.toLowerCase()) ||
+      user.user_detail?.middle_name?.toLowerCase().includes(searchWord.toLowerCase()) ||
+      user.user_detail?.last_name.toLowerCase().includes(searchWord.toLowerCase()) ||
       user.created_at.includes(searchWord.toLowerCase()) ||
       user.phones?.some(
         (phone) =>
