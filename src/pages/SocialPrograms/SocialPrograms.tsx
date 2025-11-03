@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import { NavLink, useLoaderData } from 'react-router-dom';
 import type { Pagination } from '../Products/Products';
 import { useState } from 'react';
-import type { Address } from '../Admin/AdminEdit';
+import type { Address } from '../Products/Products';
 import { SearchBar, PaginationControls } from '../../components';
 
 export interface SocialProgram {

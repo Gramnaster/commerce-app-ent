@@ -5,23 +5,10 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { RootState } from "../../store";
-import type { Pagination } from "../Products/Products";
+import type { Pagination, Address } from "../Products/Products";
 import type { WareHouseOrder } from "../WarehouseOrders/WarehouseOrders";
 import type { SocialProgram } from "../Users/Users";
 import { SearchBar, PaginationControls } from "../../components";
-
-interface Address {
-  id: number,
-  unit_no: string;
-  street_no: string;
-  address_line1: string;
-  address_line2: string;
-  city: string;
-  region: string;
-  zipcode: string;
-  country_id: number;
-  country: string;
-}
 
 export interface UserCartOrder {
   id: number;

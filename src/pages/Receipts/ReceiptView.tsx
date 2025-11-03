@@ -2,7 +2,7 @@ import { redirect, useLoaderData } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
 import type { Product, User } from '../Products/Products';
-import type { Address } from '../Admin/AdminEdit';
+import type { Address } from '../Products/Products';
 import type { WareHouseOrder } from '../WarehouseOrders/WarehouseOrders';
 import { BackButton } from '../../components';
 

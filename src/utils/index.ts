@@ -1,5 +1,7 @@
 import axios from "axios";
 
+export { usePhilippineAddress } from './usePhilippineAddress';
+
 // Use proxy in development, full URL in production
 const isDevelopment = import.meta.env.DEV;
 const productionUrl = import.meta.env.VITE_API_URL;

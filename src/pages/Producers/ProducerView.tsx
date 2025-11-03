@@ -2,27 +2,7 @@ import { NavLink, redirect, useLoaderData } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
 import { BackButton } from '../../components';
-
-interface Address {
-  id: number,
-  unit_no: string;
-  street_no: string;
-  address_line1: string;
-  address_line2: string;
-  city: string;
-  region: string;
-  zipcode: string;
-  country_id: number;
-  country: string;
-}
-
-interface Producer {
-  id: number;
-  title: string;
-  products_count: number;
-  address: Address;
-  created_at: string;
-}
+import type { Producer } from '../Products/Products';
 
 export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
   const storeState = store.getState();
@@ -57,7 +37,7 @@ const ProducerView = () => {
   const { ProducerDetails } = useLoaderData() as {
     ProducerDetails: { data: Producer };
   }
-  const { id, title, products_count, address: { unit_no, street_no, address_line1, address_line2, city, region, country }, created_at } = ProducerDetails.data;
+  const { id, title, products_count, address: { unit_no, street_no, address_line1, address_line2, barangay, city, region, country }, created_at } = ProducerDetails.data;
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -111,6 +91,7 @@ const ProducerView = () => {
                         <div>Street #: {street_no}</div>
                         <div>Address Line 1: {address_line1}</div>
                         <div>Address Line 2: {address_line2}</div>
+                        <div>Barangay: {barangay}</div>
                         <div>City: {city}</div>
                         <div>Region: {region}</div>
                         <div>Country: {country}</div>

@@ -3,10 +3,10 @@ import { toast } from "react-toastify";
 import { customFetch } from "../../utils";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { Producer } from "./Producers";
+import type { Producer } from '../Products/Products';
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store";
-import { SubmitBtn } from "../../components";
+import { SubmitBtn, PhilippineAddressFields } from "../../components";
 
 export interface User {
   id: number;
@@ -66,7 +66,7 @@ const ProducerEdit = () => {
   }
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { id, title, address: { id: address_id, unit_no, street_no, address_line1, address_line2, city, region, zipcode, country_id} } = ProducerDetails.data
+  const { id, title, address: { id: address_id, unit_no, street_no, address_line1, address_line2, barangay, city, region, zipcode, country_id} } = ProducerDetails.data
 
   const user = useSelector((state: RootState) => state.userState.user);
 
@@ -78,6 +78,7 @@ const ProducerEdit = () => {
       street_no: street_no,
       address_line1: address_line1,
       address_line2: address_line2,
+      barangay: barangay,
       city: city,
       region: region,
       zipcode: zipcode,
@@ -119,6 +120,7 @@ const ProducerEdit = () => {
       street_no: "address_attributes",
       address_line1: "address_attributes",
       address_line2: "address_attributes",
+      barangay: "address_attributes",
       city: "address_attributes",
       region: "address_attributes",
       zipcode:  "address_attributes",
@@ -146,6 +148,17 @@ const ProducerEdit = () => {
       [name]: value,
     }
   });
+  };
+
+  // Handler for Philippine address fields
+  const handleAddressFieldChange = (field: string, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      address_attributes: {
+        ...prev.address_attributes,
+        [field]: value,
+      },
+    }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -291,32 +304,19 @@ const ProducerEdit = () => {
                   required
                 />
               </div>
-              <div>
-                <label className="block text-white text-sm font-medium mb-2">
-                  City
-                </label>
-                <input
-                  type="text"
-                  name="city"
-                  value={formData.address_attributes.city}
-                  onChange={handleInputChange}
-                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-white text-sm font-medium mb-2">
-                  Region
-                </label>
-                <input
-                  type="text"
-                  name="region"
-                  value={formData.address_attributes.region}
-                  onChange={handleInputChange}
-                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
-                  required
-                />
-              </div>
+            </div>
+
+            {/* Philippine Address Fields */}
+            <div className="mt-6">
+              <PhilippineAddressFields
+                initialRegion={region || ''}
+                initialCity={city || ''}
+                initialBarangay={barangay || ''}
+                onAddressChange={handleAddressFieldChange}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
               <div>
                 <label className="block text-white text-sm font-medium mb-2">
                   Zipcode

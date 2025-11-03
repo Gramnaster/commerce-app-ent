@@ -11,12 +11,13 @@ export interface ProductCategory {
   title: string;
 }
 
-interface Address {
+export interface Address {
   id: number,
   unit_no: string;
   street_no: string;
   address_line1: string;
   address_line2: string;
+  barangay: string;
   city: string;
   region: string;
   zipcode: string;
@@ -24,7 +25,7 @@ interface Address {
   country: string;
 }
 
-interface Producer {
+export interface Producer {
   id: number;
   title: string;
   products_count: number;

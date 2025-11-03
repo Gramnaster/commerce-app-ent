@@ -5,13 +5,9 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store';
 import { SubmitBtn } from '../../components';
+import type { Producer } from './Products';
 
 interface ProductCategory {
-  id: number;
-  title: string;
-}
-
-interface Producer {
   id: number;
   title: string;
 }
