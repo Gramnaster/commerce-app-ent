@@ -1,4 +1,4 @@
-import { redirect, useLoaderData, useParams } from "react-router-dom";
+import { redirect, useLoaderData, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { customFetch } from "../../utils";
 import type { Item } from "../Receipts/ReceiptView";
@@ -83,6 +83,7 @@ const UserCartOrderView = () => {
   const { UserCartOrderViewDetails: initialData } = useLoaderData() as {
     UserCartOrderViewDetails: UserCartOrderResponse;
   };
+  const navigate = useNavigate();
   console.log('UserCartOrderView component - initialData:', initialData);
   const { id } = useParams();
   console.log('UserCartOrderView component - Order ID from params:', id);
@@ -214,6 +215,7 @@ const UserCartOrderView = () => {
     } finally {
       setIsUpdating(false);
       console.log('UserCartOrderView handleBulkUpdate - COMPLETE');
+      navigate(`/orders/${id}`)
     }
   };
 
