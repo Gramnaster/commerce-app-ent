@@ -33,7 +33,7 @@ export const loader = (queryClient: any, store: any) => async () => {
 
   if (!user || user.admin_role !== 'management' &&  user.admin_role !== 'warehouse') {
     toast.warn('There must be something wrong. Please refresh the page.');
-    return redirect('/');
+    return redirect('/dashboard');
   }
 
   const userCartOrdersQuery = {

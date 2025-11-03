@@ -7,7 +7,7 @@ export const loader = (_queryClient: any, store: any) => async () => {
 
   if (!admin_user) {
     toast.warn('There must be something wrong. Please refresh the page.');
-    return redirect('/');
+    return redirect('/dashboard');
   }
 
   return {};

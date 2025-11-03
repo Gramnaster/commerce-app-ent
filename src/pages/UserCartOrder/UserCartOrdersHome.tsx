@@ -12,7 +12,7 @@ export const loader = (_queryClient: any, store: any) => async () => {
   if (!admin_user || (admin_user.admin_role !== 'management' && admin_user.admin_role !== 'warehouse')) {
     console.log('UserCartOrdersHome loader - UNAUTHORIZED - Redirecting to /');
     toast.warn('There must be something wrong. Please refresh the page.');
-    return redirect('/');
+    return redirect('/dashboard');
   }
 
   console.log('UserCartOrdersHome loader - AUTHORIZED - Returning empty object');

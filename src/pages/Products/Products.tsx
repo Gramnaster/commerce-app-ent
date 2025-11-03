@@ -56,8 +56,8 @@ export interface Product {
   id: number;
   title: string;
   product_title: string;
-  product_category?: ProductCategory; // Optional because /product_categories/:id doesn't include it
-  producer?: Producer; // Optional because /product_categories/:id doesn't include it
+  product_category?: ProductCategory; 
+  producer?: Producer;
   description: string;
   price: number;
   promotion_id: number | null;
