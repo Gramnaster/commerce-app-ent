@@ -1,11 +1,12 @@
 import { redirect, useLoaderData, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store';
 import { SubmitBtn } from '../../components';
 import type { Producer } from './Products';
+import SearchableDropdown from '../../components/SearchableDropdown';
 
 interface ProductCategory {
   id: number;
@@ -18,6 +19,16 @@ interface ProducersResponse {
 
 interface ProductCategoriesResponse {
   data: ProductCategory[];
+}
+
+interface Promotion {
+  id: number;
+  discount_amount: string;
+  products_count: number;
+}
+
+interface PromotionsResponse {
+  data: Promotion[];
 }
 
 export interface User {
@@ -46,6 +57,19 @@ export const loader =
       },
     };
 
+    const promotionsQuery = {
+      queryKey: ['promotionsDetails', id],
+      queryFn: async () => {
+        const response = await customFetch.get(`/promotions`, {
+          headers: {
+            Authorization: admin_user.token,
+          },
+        });
+        console.log('ProductCreate loader - promotions response.data:', response.data);
+        return response.data;
+      },
+    }
+
     const ProductCategoriesQuery = {
       queryKey: ['ProductCategoriesDetails', id],
       queryFn: async () => {
@@ -59,16 +83,15 @@ export const loader =
       },
     };
     try {
-      const [ProducersDetails, ProductCategoriesDetails] = await Promise.all([
+      const [ProducersDetails, ProductCategoriesDetails, PromotionsDetails] = await Promise.all([
         queryClient.ensureQueryData(ProducersQuery),
         queryClient.ensureQueryData(ProductCategoriesQuery),
+        queryClient.ensureQueryData(promotionsQuery)
       ]);
       console.log('ProductCreate loader - ProducersDetails:', ProducersDetails);
-      console.log(
-        'ProductCreate loader - ProductCategoriesDetails:',
-        ProductCategoriesDetails
-      );
-      return { ProducersDetails, ProductCategoriesDetails };
+      console.log('ProductCreate loader - ProductCategoriesDetails:', ProductCategoriesDetails);
+      console.log('ProductCreate loader - PromotionsDetails:', PromotionsDetails);
+      return { ProducersDetails, ProductCategoriesDetails, PromotionsDetails };
     } catch (error: any) {
       console.error('Failed to load product:', error);
       toast.error('Failed to load product details');
@@ -77,9 +100,10 @@ export const loader =
   };
 
 const ProductCreate = () => {
-  const { ProducersDetails, ProductCategoriesDetails } = useLoaderData() as {
+  const { ProducersDetails, ProductCategoriesDetails, PromotionsDetails } = useLoaderData() as {
     ProducersDetails: ProducersResponse;
     ProductCategoriesDetails: ProductCategoriesResponse;
+    PromotionsDetails: PromotionsResponse;
     userDetails: User;
   };
   const navigate = useNavigate();
@@ -98,8 +122,9 @@ const ProductCreate = () => {
     product_image_url: '',
     product_category_id: '',
     producer_id: '',
-    promotion: null,
+    promotion_id: 0,
   });
+  console.log(`formData`, formData)
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -130,6 +155,16 @@ const ProductCreate = () => {
     }
   };
 
+    // Format products for the searchable dropdown
+    const promotionDropownItems = useMemo(() => {
+      return PromotionsDetails.data
+        .sort((a: Promotion, b: Promotion) => a.id - b.id)
+        .map((promotion: Promotion) => ({
+          id: promotion.id,
+          label: `${promotion.id} - ${promotion.discount_amount}%`
+        }));
+    }, [PromotionsDetails.data]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -142,6 +177,7 @@ const ProductCreate = () => {
       formDataToSend.append('product[title]', formData.title);
       formDataToSend.append('product[description]', formData.description);
       formDataToSend.append('product[price]', formData.price.toString());
+      formDataToSend.append('product[promotion_id]', formData.promotion_id.toString());
       formDataToSend.append('product[product_category_id]', formData.product_category_id.toString());
       formDataToSend.append('product[producer_id]', formData.producer_id.toString());
       
@@ -290,6 +326,18 @@ const ProductCreate = () => {
                   required
                 />
               </div> */}
+              <div>
+                <label className="block text-white text-sm font-medium mb-2">
+                  Promotion ID
+                </label>
+                <SearchableDropdown
+                  items={promotionDropownItems}
+                  value={formData.promotion_id}
+                  onChange={(value) => setFormData((prev) => ({ ...prev, promotion_id: Number(value) }))}
+                  placeholder="Select a promotion..."
+                  name="promotion_id"
+                />
+              </div>
               <div>
                 <label className="block text-white text-sm font-medium mb-2">
                   Producers

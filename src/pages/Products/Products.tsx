@@ -49,7 +49,7 @@ export interface Pagination {
 
 export interface Promotion {
   id: number;
-  discount_amount: number;
+  discount_percentage: number;
 }
 
 export interface Product {
@@ -328,7 +328,7 @@ const Products = () => {
                             {product.price}
                           </td>
                           <td className={`p-4 text-m`}>
-                            {product.promotion_id || "No active promotions"}
+                            { product.promotion ? `${product.promotion?.discount_percentage}%` : "No active promotions"}
                           </td>
                         </tr>
                       ))
