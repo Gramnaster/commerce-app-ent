@@ -11,7 +11,7 @@ const Navbar = () => {
   const dispatch = useDispatch();
 
   const handleLogout = () => {
-    navigate('/');
+    navigate('/dashboard');
     dispatch(logoutUser());
 
     console.log("logout function here")
