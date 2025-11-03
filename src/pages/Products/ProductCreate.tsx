@@ -122,7 +122,7 @@ const ProductCreate = () => {
     product_image_url: '',
     product_category_id: '',
     producer_id: '',
-    promotion_id: 0,
+    promotion_id: '',
   });
   console.log(`formData`, formData)
 
@@ -333,7 +333,7 @@ const ProductCreate = () => {
                 <SearchableDropdown
                   items={promotionDropownItems}
                   value={formData.promotion_id}
-                  onChange={(value) => setFormData((prev) => ({ ...prev, promotion_id: Number(value) }))}
+                  onChange={(value) => setFormData((prev) => ({ ...prev, promotion_id: value }))}
                   placeholder="Select a promotion..."
                   name="promotion_id"
                 />
