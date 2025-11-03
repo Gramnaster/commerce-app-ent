@@ -26,7 +26,7 @@ export const loader = (queryClient: any, store: any) => async () => {
 
   if (!admin_user || admin_user.admin_role !== 'management') {
     toast.warn('There must be something wrong. Please refresh the page.');
-    return redirect('/');
+    return redirect('/dashboard');
   }
 
   const AdminUsersQuery = {

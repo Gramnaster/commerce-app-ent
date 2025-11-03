@@ -13,7 +13,7 @@ export const loader = (queryClient: any, store: any) => async ({ params }: any) 
 
     if (!admin_user || admin_user.admin_role !== 'management') {
       toast.warn('There must be something wrong. Please refresh the page.');
-      return redirect('/');
+      return redirect('/dashboard');
     }
 
   const ProducersQuery = {
