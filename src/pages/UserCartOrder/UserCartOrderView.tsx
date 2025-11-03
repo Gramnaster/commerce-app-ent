@@ -213,9 +213,9 @@ const UserCartOrderView = () => {
       console.error('UserCartOrderView handleBulkUpdate - Failed to update warehouse orders:', error);
       toast.error('Failed to update some warehouse orders');
     } finally {
-      navigate(`/orders/${id}`)
       setIsUpdating(false);
       console.log('UserCartOrderView handleBulkUpdate - COMPLETE');
+      navigate(`/orders/${id}`)
     }
   };
 
