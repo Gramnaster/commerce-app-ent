@@ -215,7 +215,7 @@ const UserCartOrderView = () => {
     } finally {
       setIsUpdating(false);
       console.log('UserCartOrderView handleBulkUpdate - COMPLETE');
-      navigate(`/orders`)
+      navigate(`/orders/${id}`)
     }
   };
 
