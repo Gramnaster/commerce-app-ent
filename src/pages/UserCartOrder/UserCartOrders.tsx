@@ -1,6 +1,6 @@
 import { toast } from "react-toastify";
 import { customFetch } from "../../utils";
-import type { Pagination } from "../Products/Products";
+import type { Pagination, Address } from "../Products/Products";
 import { useState, useEffect, useMemo } from "react";
 import { NavLink, useLoaderData } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -8,15 +8,6 @@ import { SearchBar, PaginationControls } from "../../components";
 import type { CompanySite, CompanySiteResponse } from "../WarehouseOrders/WarehouseOrders";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store";
-
-interface Address {
-  unit_no: string;
-  street_no: string;
-  barangay: string;
-  city: string;
-  region: string;
-  zipcode: string;
-}
 
 interface UserAddress {
   id: number;

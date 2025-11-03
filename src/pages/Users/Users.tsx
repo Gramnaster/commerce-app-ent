@@ -1,6 +1,6 @@
 import { toast } from "react-toastify";
 import { customFetch } from "../../utils";
-import type { Address } from "../Admin/AdminEdit";
+import type { Address } from "../Products/Products";
 import type { Pagination } from "../Products/Products";
 import { NavLink, useLoaderData } from "react-router-dom";
 import { useState } from "react";

@@ -4,7 +4,7 @@ import { customFetch } from "../../utils";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store";
-import { SubmitBtn } from "../../components";
+import { SubmitBtn, PhilippineAddressFields } from "../../components";
 
 interface Country {
   id: number;
@@ -47,6 +47,7 @@ const ProducerCreate = () => {
       street_no: "",
       address_line1: "",
       address_line2: "",
+      barangay: "",
       city: "",
       region: "",
       zipcode: "",
@@ -60,6 +61,7 @@ const ProducerCreate = () => {
       street_no: "address_attributes",
       address_line1: "address_attributes",
       address_line2: "address_attributes",
+      barangay: "address_attributes",
       city: "address_attributes",
       region: "address_attributes",
       zipcode:  "address_attributes",
@@ -88,6 +90,17 @@ const ProducerCreate = () => {
       [name]: value,
     }
   });
+  };
+
+  // Handler for Philippine address fields
+  const handleAddressFieldChange = (field: string, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      address_attributes: {
+        ...prev.address_attributes,
+        [field]: value,
+      },
+    }));
   };
 
 
@@ -227,32 +240,16 @@ const ProducerCreate = () => {
                   required
                 />
               </div>
-              <div>
-                <label className="block text-white text-sm font-medium mb-2">
-                  City
-                </label>
-                <input
-                  type="text"
-                  name="city"
-                  value={formData.address_attributes.city}
-                  onChange={handleInputChange}
-                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-white text-sm font-medium mb-2">
-                  Region
-                </label>
-                <input
-                  type="text"
-                  name="region"
-                  value={formData.address_attributes.region}
-                  onChange={handleInputChange}
-                  className="w-full bg-white border border-gray-600 rounded-lg p-3 text-black focus:ring-2 focus:ring-[#5290ca] focus:border-transparent"
-                  required
-                />
-              </div>
+            </div>
+
+            {/* Philippine Address Fields */}
+            <div className="mt-6">
+              <PhilippineAddressFields
+                onAddressChange={handleAddressFieldChange}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
               <div>
                 <label className="block text-white text-sm font-medium mb-2">
                   Zipcode

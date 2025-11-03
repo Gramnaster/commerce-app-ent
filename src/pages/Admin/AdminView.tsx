@@ -2,19 +2,7 @@ import { NavLink, redirect, useLoaderData } from "react-router-dom";
 import { toast } from "react-toastify";
 import { customFetch } from "../../utils";
 import { BackButton } from "../../components";
-
-interface Address {
-  id: number,
-  unit_no: string;
-  street_no: string;
-  address_line1: string;
-  address_line2: string;
-  city: string;
-  region: string;
-  zipcode: string;
-  country_id: number;
-  country: string;
-}
+import type { Address } from "../Products/Products";
 
 interface AdminPhone {
   id: number;
