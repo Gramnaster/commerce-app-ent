@@ -3,29 +3,8 @@ import { toast } from 'react-toastify';
 import { customFetch } from '../../utils';
 import { NavLink } from 'react-router-dom';
 import { useState } from 'react';
-import type { ProducersResponse } from '../Products/Products';
+import type { ProducersResponse, Producer } from '../Products/Products';
 import { SearchBar, PaginationControls } from '../../components';
-
-interface Address {
-  id: number,
-  unit_no: string;
-  street_no: string;
-  address_line1: string;
-  address_line2: string;
-  city: string;
-  region: string;
-  zipcode: string;
-  country_id: number;
-  country: string;
-}
-
-export interface Producer {
-  id: number;
-  title: string;
-  products_count: number;
-  address: Address;
-  created_at: string;
-}
 
 export const loader = (queryClient: any, store: any) => async ({ params }: any) => {
   const storeState = store.getState();

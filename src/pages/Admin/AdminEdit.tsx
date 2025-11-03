@@ -6,20 +6,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store";
 import { SubmitBtn } from "../../components";
-
-export interface Address {
-  id: number,
-  unit_no: string;
-  street_no: string;
-  address_line1: string;
-  address_line2: string;
-  city: string;
-  region: string;
-  barangay?: string;
-  zipcode: string;
-  country_id: number;
-  country: string;
-}
+import type { Address } from "../Products/Products";
 
 interface CompanySite {
   id: number;
